@@ -99,51 +99,69 @@ export default function Products() {
   return (
     <div ref={containerRef} className="pt-20">
       {/* Hero Section */}
-      <section className="min-h-screen flex items-center justify-center px-6 bg-gradient-to-b from-primary-dark to-primary-darker">
-        <div className="hero-content max-w-4xl mx-auto text-center space-y-8">
-          <div className="space-y-4">
-            <h1 className="font-clash text-5xl md:text-7xl font-bold leading-tight">
-              <span className="text-white">Premium</span>{' '}
-              <span className="text-gradient">Products</span>
-            </h1>
-            <div className="text-outline font-clash text-2xl md:text-3xl font-light">
-              Luxury Collection
-            </div>
-          </div>
-          
-          <p className="font-inter text-lg text-primary-gray max-w-2xl mx-auto leading-relaxed">
-            Discover our curated collection of premium tiles, surfaces, and materials. 
-            Each piece is carefully selected for its exceptional quality, design, and craftsmanship.
-          </p>
-        </div>
-      </section>
+    {/* Hero Section */}
+<section className="relative h-[60vh] flex items-center justify-center px-6 overflow-hidden">
+  {/* Animated Background Layer */}
+  <div className="absolute inset-0 bg-gradient-to-b from-primary-dark via-primary-darker to-black" />
 
-      {/* Category Filter */}
-      <section className="py-12 px-6 bg-primary-darker border-b border-primary-gold/10">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="category-filter flex flex-wrap justify-center gap-4"
-          >
-            {categories.map((category) => (
-              <motion.button
-                key={category.id}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setSelectedCategory(category.id)}
-                className={`px-6 py-3 rounded-full font-machina font-medium transition-all duration-300 ${
-                  selectedCategory === category.id
-                    ? 'bg-primary-gold text-primary-dark'
-                    : 'bg-primary-dark/50 text-primary-gray hover:text-white border border-primary-gold/20 hover:border-primary-gold/50'
-                }`}
-              >
-                {category.label}
-              </motion.button>
-            ))}
-          </motion.div>
-        </div>
-      </section>
+  {/* Floating Gradient Orbs */}
+  <motion.div
+    className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-tr from-primary-gold/40 to-transparent rounded-full blur-3xl"
+    animate={{ y: [0, 30, 0], scale: [1, 1.1, 1] }}
+    transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
+  />
+  <motion.div
+    className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-tr from-primary-gold/30 to-transparent rounded-full blur-3xl"
+    animate={{ y: [0, -40, 0], scale: [1, 1.05, 1] }}
+    transition={{ repeat: Infinity, duration: 10, ease: "easeInOut" }}
+  />
+
+  {/* Overlay Pattern (subtle grid / texture) */}
+  <div className="absolute inset-0 opacity-10 bg-[url('https://www.toptal.com/designers/subtlepatterns/patterns/double-bubble.png')] mix-blend-overlay" />
+
+  {/* Hero Content */}
+  <div className="hero-content relative z-10 max-w-4xl mx-auto text-center space-y-8">
+    <div className="space-y-4">
+      <h1 className="font-clash text-5xl md:text-7xl font-bold leading-tight">
+        <span className="text-white">Premium</span>{" "}
+        <span className="text-gradient">Products</span>
+      </h1>
+      <div className="text-outline font-clash text-2xl md:text-3xl font-light">
+        Luxury Collection
+      </div>
+    </div>
+
+    <p className="font-inter text-lg text-primary-gray max-w-2xl mx-auto leading-relaxed">
+      Discover our curated collection of premium tiles, surfaces, and materials.
+      Each piece is carefully selected for its exceptional quality, design, and craftsmanship.
+    </p>
+  </div>
+</section>
+
+
+ {/* Category Filter */}
+<section className="py-12 px-6 bg-primary-darker border-b border-primary-gold/10 sticky top-16 z-20">
+  <div className="max-w-7xl mx-auto">
+    <div className="category-filter flex flex-wrap justify-center gap-4">
+      {categories.map((category) => (
+        <motion.button
+          key={category.id}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setSelectedCategory(category.id)}
+          className={`px-6 py-3 rounded-full font-machina font-medium transition-all duration-300 ${
+            selectedCategory === category.id
+              ? "bg-primary-gold text-primary-dark"
+              : "bg-primary-dark/50 text-primary-gray hover:text-white border border-primary-gold/20 hover:border-primary-gold/50"
+          }`}
+        >
+          {category.label}
+        </motion.button>
+      ))}
+    </div>
+  </div>
+</section>
+
 
       {/* Products Grid */}
       <section className="py-24 px-6">

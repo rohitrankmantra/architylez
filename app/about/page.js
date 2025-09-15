@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { Lightbulb, Award, Leaf, Users } from "lucide-react"; 
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -39,24 +40,28 @@ export default function About() {
     return () => ctx.revert();
   }, []);
 
-  const values = [
-    {
-      title: 'Innovation',
-      description: 'Pushing boundaries with cutting-edge design solutions and emerging technologies.'
-    },
-    {
-      title: 'Excellence',
-      description: 'Uncompromising quality in every detail, from concept to completion.'
-    },
-    {
-      title: 'Sustainability',
-      description: 'Creating eco-conscious designs that respect our environment and future generations.'
-    },
-    {
-      title: 'Collaboration',
-      description: 'Working closely with clients to bring their unique vision to life.'
-    }
-  ];
+const values = [
+  {
+    title: 'Innovation',
+    description: 'Pushing boundaries with cutting-edge design solutions and emerging technologies.',
+    icon: Lightbulb,
+  },
+  {
+    title: 'Excellence',
+    description: 'Uncompromising quality in every detail, from concept to completion.',
+    icon: Award,
+  },
+  {
+    title: 'Sustainability',
+    description: 'Creating eco-conscious designs that respect our environment and future generations.',
+    icon: Leaf,
+  },
+  {
+    title: 'Collaboration',
+    description: 'Working closely with clients to bring their unique vision to life.',
+    icon: Users,
+  },
+];
 
   const team = [
     {
@@ -82,15 +87,11 @@ export default function About() {
   return (
     <div ref={containerRef} className="pt-20">
       {/* Hero Section */}
-      <section className="min-h-screen flex items-center px-6 bg-gradient-to-b from-primary-dark to-primary-darker">
+<section className="min-h-screen flex items-center px-6 bg-gradient-to-b from-primary-dark to-primary-darker">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1 }}
-              className="split-content space-y-8"
-            >
+            {/* Text Side */}
+            <motion.div className="split-content space-y-8">
               <div className="space-y-4">
                 <h1 className="font-clash text-5xl md:text-7xl font-bold leading-tight">
                   <span className="text-white">About</span>{' '}
@@ -100,20 +101,19 @@ export default function About() {
                   Design Philosophy
                 </div>
               </div>
-              
+
               <div className="space-y-6 font-inter text-primary-gray leading-relaxed">
                 <p className="text-lg">
-                  Founded on the principles of innovation, sustainability, and timeless design, 
+                  Founded on the principles of innovation, sustainability, and timeless design,
                   Architylezz has been at the forefront of architectural excellence for over a decade.
                 </p>
                 <p>
-                  Our multidisciplinary team of architects, interior designers, and creative professionals 
-                  work collaboratively to transform spaces into extraordinary experiences that reflect 
-                  our clients' unique visions while setting new standards in luxury design.
+                  Our multidisciplinary team of architects, interior designers, and creative professionals
+                  work collaboratively to transform spaces into extraordinary experiences.
                 </p>
                 <p>
-                  From residential masterpieces to commercial landmarks, we approach each project 
-                  with fresh perspective, cutting-edge technology, and unwavering commitment to quality.
+                  From residential masterpieces to commercial landmarks, we approach each project
+                  with fresh perspective and unwavering commitment to quality.
                 </p>
               </div>
 
@@ -129,12 +129,8 @@ export default function About() {
               </div>
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1, delay: 0.3 }}
-              className="split-image relative"
-            >
+            {/* Image Side */}
+            <motion.div className="split-image relative">
               <div className="relative h-[600px] rounded-3xl overflow-hidden">
                 <img
                   src="https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=800"
@@ -169,27 +165,29 @@ export default function About() {
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {values.map((value, index) => (
-              <motion.div
-                key={value.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                whileHover={{ y: -10 }}
-                className="text-center group"
-              >
-                <div className="w-20 h-20 mx-auto mb-6 bg-primary-gold/10 border border-primary-gold/20 rounded-full flex items-center justify-center group-hover:bg-primary-gold/20 transition-all duration-300">
-                  <div className="w-8 h-8 bg-primary-gold rounded-full group-hover:scale-110 transition-transform duration-300" />
-                </div>
-                <h3 className="font-space text-xl font-semibold text-white mb-4">
-                  {value.title}
-                </h3>
-                <p className="font-inter text-primary-gray leading-relaxed">
-                  {value.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
+  {values.map((value, index) => (
+    <motion.div
+      key={value.title}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: index * 0.1 }}
+      whileHover={{ y: -10 }}
+      className="text-center group"
+    >
+      <div className="w-20 h-20 mx-auto mb-6 bg-primary-gold/10 border border-primary-gold/20 rounded-full flex items-center justify-center group-hover:bg-primary-gold/20 transition-all duration-300">
+        {/* Icon */}
+        <value.icon className="w-8 h-8 text-primary-gold group-hover:scale-110 transition-transform duration-300" />
+      </div>
+      <h3 className="font-space text-xl font-semibold text-white mb-4">
+        {value.title}
+      </h3>
+      <p className="font-inter text-primary-gray leading-relaxed">
+        {value.description}
+      </p>
+    </motion.div>
+  ))}
+</div>
+
         </div>
       </section>
 

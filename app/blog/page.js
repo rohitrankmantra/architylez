@@ -103,7 +103,7 @@ export default function Blog() {
   return (
     <div ref={containerRef} className="pt-20">
       {/* Hero Section */}
-      <section className="min-h-screen flex items-center justify-center px-6 bg-gradient-to-b from-primary-dark to-primary-darker">
+      <section className="min-h-[65vh] flex items-center justify-center px-6 bg-gradient-to-b from-primary-dark to-primary-darker">
         <div className="hero-content max-w-4xl mx-auto text-center space-y-8">
           <div className="space-y-4">
             <h1 className="font-clash text-5xl md:text-7xl font-bold leading-tight">

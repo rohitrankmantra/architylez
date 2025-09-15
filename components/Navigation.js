@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState('home');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
 
   const menuItems = [
@@ -27,36 +27,74 @@ const Navigation = () => {
   }, []);
 
   return (
-    <motion.nav
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled ? 'bg-primary-dark/95 backdrop-blur-md border-b border-primary-gold/20' : 'bg-transparent'
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="z-10"
-          >
-            <Link href="/" className="font-clash text-2xl font-bold text-gradient">
-              Architylezz
-            </Link>
-          </motion.div>
+    <>
+      {/* Navbar */}
+      <motion.nav
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+          isScrolled
+            ? 'bg-primary-dark/95 backdrop-blur-md border-b border-primary-gold/20'
+            : 'bg-transparent'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            {/* Logo */}
+            <motion.div whileHover={{ scale: 1.05 }} className="z-50">
+              <Link href="/" className="font-clash text-2xl font-bold text-gradient">
+                Architylezz
+              </Link>
+            </motion.div>
 
-          {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8">
-            {menuItems.map((item) => (
+            {/* Hamburger Button */}
+            <motion.button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="z-50 flex flex-col justify-center items-center w-10 h-10 space-y-1 md:w-12 md:h-12"
+              whileTap={{ scale: 0.9 }}
+            >
+              <span
+                className={`block h-0.5 w-6 rounded-full transition-all duration-300 ${
+                  isMenuOpen ? 'rotate-45 translate-y-2 bg-primary-gold' : 'bg-white'
+                }`}
+              />
+              <span
+                className={`block h-0.5 w-6 rounded-full transition-all duration-300 ${
+                  isMenuOpen ? 'opacity-0' : 'bg-white'
+                }`}
+              />
+              <span
+                className={`block h-0.5 w-6 rounded-full transition-all duration-300 ${
+                  isMenuOpen ? '-rotate-45 -translate-y-2 bg-primary-gold' : 'bg-white'
+                }`}
+              />
+            </motion.button>
+          </div>
+        </div>
+      </motion.nav>
+
+      {/* Fullscreen Menu Overlay */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            key="menu"
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ duration: 0.6, ease: 'easeInOut' }}
+            className="fixed inset-0 bg-primary-dark flex flex-col items-center justify-center space-y-8 z-[9999]"
+          >
+            {menuItems.map((item, index) => (
               <motion.div
                 key={item.id}
-                whileHover={{ y: -2 }}
-                className="relative group"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
               >
                 <Link
                   href={item.href}
-                  className={`font-space text-sm font-medium tracking-wide transition-all duration-300 ${
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`text-3xl md:text-5xl font-space tracking-wider transition-all duration-300 ${
                     pathname === item.href
                       ? 'text-primary-gold'
                       : 'text-white hover:text-primary-gold'
@@ -64,32 +102,12 @@ const Navigation = () => {
                 >
                   {item.label}
                 </Link>
-                <motion.div
-                  className="absolute -bottom-1 left-0 h-0.5 bg-primary-gold"
-                  initial={{ width: 0 }}
-                  whileHover={{ width: '100%' }}
-                  transition={{ duration: 0.3 }}
-                />
               </motion.div>
             ))}
-          </div>
-
-          {/* CTA Button */}
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="hidden md:block"
-          >
-            <Link
-              href="/contact"
-              className="px-6 py-2 bg-primary-gold text-primary-dark font-machina font-medium rounded-full hover:bg-yellow-400 transition-all duration-300 glow-gold"
-            >
-              Get Quote
-            </Link>
           </motion.div>
-        </div>
-      </div>
-    </motion.nav>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
