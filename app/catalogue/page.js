@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { gsap } from 'gsap';
+import Loader from '@/components/ui/Loader';
 
 export default function Catalogue() {
   const containerRef = useRef(null);
@@ -68,7 +69,8 @@ export default function Catalogue() {
   }, []);
 
   return (
-    <div ref={containerRef} className="pt-20">
+    <Loader>
+        <div ref={containerRef} className="pt-20">
       {/* Hero Section */}
       <section className="min-h-screen flex items-center justify-center px-6 bg-gradient-to-b from-primary-dark to-primary-darker">
         <div className="hero-content max-w-4xl mx-auto text-center space-y-8">
@@ -330,5 +332,8 @@ export default function Catalogue() {
         </div>
       </section>
     </div>
+
+    </Loader>
+  
   );
 }

@@ -36,34 +36,44 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           {/* Brand */}
-          <div className="col-span-1 md:col-span-2">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="space-y-6"
-            >
-              <div className="font-clash text-3xl font-bold text-gradient">
-                Architylezz
-              </div>
-              <p className="font-inter text-primary-gray max-w-md leading-relaxed">
-                Crafting exceptional architectural experiences and luxury interior designs 
-                that transform spaces into timeless masterpieces.
-              </p>
-              <div className="flex space-x-6">
-                {socialLinks.map((social, index) => (
-                  <motion.a
-                    key={social.name}
-                    href={social.href}
-                    whileHover={{ scale: 1.1, y: -2 }}
-                    className="w-12 h-12 bg-primary-gold/10 border border-primary-gold/20 rounded-full flex items-center justify-center text-primary-gold hover:bg-primary-gold hover:text-primary-dark transition-all duration-300"
-                  >
-                    <span className="text-lg">{social.icon}</span>
-                  </motion.a>
-                ))}
-              </div>
-            </motion.div>
-          </div>
+          {/* Brand */}
+<div className="col-span-1 md:col-span-2">
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.6 }}
+    className="space-y-6"
+  >
+    {/* Logo instead of text */}
+    <Link href="/">
+      <img
+        src="/logo.png"  
+        alt="Architylezz Logo"
+        className="h-18 md:h-32 w-auto md:ml-[-30px]"   
+      />
+    </Link>
+
+    <p className="font-inter text-primary-gray max-w-md leading-relaxed">
+      Crafting exceptional architectural experiences and luxury interior designs 
+      that transform spaces into timeless masterpieces.
+    </p>
+
+    {/* Social Links */}
+    <div className="flex space-x-6">
+      {socialLinks.map((social) => (
+        <motion.a
+          key={social.name}
+          href={social.href}
+          whileHover={{ scale: 1.1, y: -2 }}
+          className="w-12 h-12 bg-primary-gold/10 border border-primary-gold/20 rounded-full flex items-center justify-center text-primary-gold hover:bg-primary-gold hover:text-primary-dark transition-all duration-300"
+        >
+          <span className="text-lg">{social.icon}</span>
+        </motion.a>
+      ))}
+    </div>
+  </motion.div>
+</div>
+
 
           {/* Quick Links */}
           <div>
@@ -101,9 +111,9 @@ const Footer = () => {
                 Get in Touch
               </h3>
               <div className="space-y-4 font-inter text-primary-gray">
-                <p>📍 123 Design Street, Architecture City, AC 12345</p>
-                <p>📞 +1 (555) 123-4567</p>
-                <p>✉️ hello@architylezz.com</p>
+                <p>📍 No3,1st Cross Cabridge Layout Someshwarapura Halsuru Banglore KA-560008 IND</p>
+                <p>📞 +91 8341311147</p>
+                <p>✉️ amar@architylezz.com</p>
               </div>
             </motion.div>
           </div>

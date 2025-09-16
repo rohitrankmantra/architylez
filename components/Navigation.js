@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -38,36 +39,29 @@ const Navigation = () => {
             : 'bg-transparent'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="max-w-7xl mx-auto px-6 py-1">
           <div className="flex items-center justify-between">
             {/* Logo */}
             <motion.div whileHover={{ scale: 1.05 }} className="z-50">
-              <Link href="/" className="font-clash text-2xl font-bold text-gradient">
-                Architylezz
+              <Link href="/">
+                {/* If using import Logo as component: <Logo className="h-10 w-auto" /> */}
+                <img
+                  src="/logo.png"
+                  alt="Architylezz Logo"
+                  className="h-32 w-full"
+                />
               </Link>
             </motion.div>
 
             {/* Hamburger Button */}
             <motion.button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              onClick={() => setIsMenuOpen(true)}
               className="z-50 flex flex-col justify-center items-center w-10 h-10 space-y-1 md:w-12 md:h-12"
               whileTap={{ scale: 0.9 }}
             >
-              <span
-                className={`block h-0.5 w-6 rounded-full transition-all duration-300 ${
-                  isMenuOpen ? 'rotate-45 translate-y-2 bg-primary-gold' : 'bg-white'
-                }`}
-              />
-              <span
-                className={`block h-0.5 w-6 rounded-full transition-all duration-300 ${
-                  isMenuOpen ? 'opacity-0' : 'bg-white'
-                }`}
-              />
-              <span
-                className={`block h-0.5 w-6 rounded-full transition-all duration-300 ${
-                  isMenuOpen ? '-rotate-45 -translate-y-2 bg-primary-gold' : 'bg-white'
-                }`}
-              />
+              <span className="block h-0.5 w-6 rounded-full bg-white transition-all duration-300" />
+              <span className="block h-0.5 w-6 rounded-full bg-white transition-all duration-300" />
+              <span className="block h-0.5 w-6 rounded-full bg-white transition-all duration-300" />
             </motion.button>
           </div>
         </div>
@@ -84,6 +78,14 @@ const Navigation = () => {
             transition={{ duration: 0.6, ease: 'easeInOut' }}
             className="fixed inset-0 bg-primary-dark flex flex-col items-center justify-center space-y-8 z-[9999]"
           >
+            {/* Close Button */}
+            <button
+              onClick={() => setIsMenuOpen(false)}
+              className="absolute top-6 right-6 text-white text-4xl hover:text-primary-gold transition-colors"
+            >
+              ✕
+            </button>
+
             {menuItems.map((item, index) => (
               <motion.div
                 key={item.id}

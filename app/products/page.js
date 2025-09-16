@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Loader from '@/components/ui/Loader';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -97,7 +98,8 @@ export default function Products() {
   }, []);
 
   return (
-    <div ref={containerRef} className="pt-20">
+    <Loader>
+       <div ref={containerRef} className="pt-20">
       {/* Hero Section */}
     {/* Hero Section */}
 <section className="relative h-[60vh] flex items-center justify-center px-6 overflow-hidden">
@@ -287,5 +289,8 @@ export default function Products() {
         </div>
       </section>
     </div>
+
+    </Loader>
+   
   );
 }

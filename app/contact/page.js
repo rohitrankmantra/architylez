@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
+import Loader from '@/components/ui/Loader';
 
 export default function Contact() {
   const containerRef = useRef(null);
@@ -25,27 +26,22 @@ export default function Contact() {
     {
       icon: '📍',
       title: 'Visit Our Showroom',
-      details: ['123 Design Street', 'Architecture City, AC 12345'],
+      details: ['No3, 1st Cross Cabridge Layout Someshwarapura Halsuru Bangalore KA-560008 IND'],
       link: 'https://maps.google.com'
     },
     {
       icon: '📞',
       title: 'Call Us',
-      details: ['+1 (555) 123-4567', '+1 (555) 123-4568'],
-      link: 'tel:+15551234567'
+      details: ['+91 8341311147'],
+      link: 'tel:8341311147'
     },
     {
       icon: '✉️',
       title: 'Email Us',
-      details: ['hello@architylezz.com', 'info@architylezz.com'],
-      link: 'mailto:hello@architylezz.com'
+      details: ['amar@architylezz.com'],
+      link: 'mailto:amar@architylezz.com'
     },
-    {
-      icon: '🕐',
-      title: 'Business Hours',
-      details: ['Mon - Fri: 9:00 AM - 6:00 PM', 'Sat: 10:00 AM - 4:00 PM'],
-      link: null
-    }
+ 
   ];
 
   useEffect(() => {
@@ -91,7 +87,8 @@ export default function Contact() {
   };
 
   return (
-    <div ref={containerRef} className="pt-20">
+    <Loader>
+      <div ref={containerRef} className="pt-20">
       {/* Hero Section */}
       <section className="min-h-[65vh] flex items-center justify-center px-6 bg-gradient-to-b from-primary-dark to-primary-darker">
         <div className="hero-content max-w-4xl mx-auto text-center space-y-8">
@@ -387,5 +384,8 @@ export default function Contact() {
         </div>
       </section>
     </div>
+      
+    </Loader>
+    
   );
 }

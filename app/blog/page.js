@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 import Link from 'next/link';
+import Loader from '@/components/ui/Loader';
 
 export default function Blog() {
   const containerRef = useRef(null);
@@ -101,7 +102,8 @@ export default function Blog() {
   }, []);
 
   return (
-    <div ref={containerRef} className="pt-20">
+    <Loader>
+          <div ref={containerRef} className="pt-20">
       {/* Hero Section */}
       <section className="min-h-[65vh] flex items-center justify-center px-6 bg-gradient-to-b from-primary-dark to-primary-darker">
         <div className="hero-content max-w-4xl mx-auto text-center space-y-8">
@@ -340,5 +342,8 @@ export default function Blog() {
         </div>
       </section>
     </div>
+
+    </Loader>
+
   );
 }

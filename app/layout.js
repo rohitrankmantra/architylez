@@ -2,6 +2,7 @@ import './globals.css';
 import { Inter } from 'next/font/google';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import CustomCursor from './../components/ui/CustomCursor';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -23,6 +24,7 @@ export default function RootLayout({ children }) {
       <body className={`${inter.variable} bg-primary-dark text-white overflow-x-hidden`}>
         <Navigation />
         <main className="relative">
+          <CustomCursor/>
           {children}
         </main>
         <Footer />
