@@ -90,7 +90,7 @@ export default function GvtTiles() {
               className="font-clash text-5xl md:text-7xl font-bold mb-6 leading-tight"
             >
               <span className="text-gradient">Premium</span>{" "}
-              <span className="text-outline">Subway Tiles</span>
+              <span className="text-outline">Wood Tiles</span>
             </motion.h1>
             <motion.p
               initial={{ y: 30, opacity: 0 }}

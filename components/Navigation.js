@@ -3,17 +3,29 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [openSubmenu, setOpenSubmenu] = useState(null);
   const pathname = usePathname();
 
   const menuItems = [
     { href: '/', label: 'Home', id: 'home' },
     { href: '/about', label: 'About', id: 'about' },
-    { href: '/products', label: 'Products', id: 'products' },
+    { 
+      href: '/products', 
+      label: 'Products', 
+      id: 'products',
+      submenu: [
+        { href: '/products/gvt', label: 'GVT' },
+        { href: '/products/subway', label: 'Subway' },
+        { href: '/products/wall', label: 'Wall' },
+        { href: '/products/wood', label: 'Wood' },
+
+      ]
+    },
     { href: '/catalogue', label: 'Catalogue', id: 'catalogue' },
     { href: '/blog', label: 'Blog', id: 'blog' },
     { href: '/contact', label: 'Contact', id: 'contact' }
@@ -44,7 +56,6 @@ const Navigation = () => {
             {/* Logo */}
             <motion.div whileHover={{ scale: 1.05 }} className="z-50">
               <Link href="/">
-                {/* If using import Logo as component: <Logo className="h-10 w-auto" /> */}
                 <img
                   src="/logo.png"
                   alt="Architylezz Logo"
@@ -59,9 +70,9 @@ const Navigation = () => {
               className="z-50 flex flex-col justify-center items-center w-10 h-10 space-y-1 md:w-12 md:h-12"
               whileTap={{ scale: 0.9 }}
             >
-              <span className="block h-0.5 w-6 rounded-full bg-white transition-all duration-300" />
-              <span className="block h-0.5 w-6 rounded-full bg-white transition-all duration-300" />
-              <span className="block h-0.5 w-6 rounded-full bg-white transition-all duration-300" />
+              <span className="block h-0.5 w-6 rounded-full bg-white" />
+              <span className="block h-0.5 w-6 rounded-full bg-white" />
+              <span className="block h-0.5 w-6 rounded-full bg-white" />
             </motion.button>
           </div>
         </div>
@@ -92,18 +103,62 @@ const Navigation = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
+                className="flex flex-col items-center"
               >
-                <Link
-                  href={item.href}
-                  onClick={() => setIsMenuOpen(false)}
-                  className={`text-3xl md:text-5xl font-space tracking-wider transition-all duration-300 ${
-                    pathname === item.href
-                      ? 'text-primary-gold'
-                      : 'text-white hover:text-primary-gold'
-                  }`}
-                >
-                  {item.label}
-                </Link>
+                {/* Parent Link with Chevron if submenu exists */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() =>
+                      item.submenu
+                        ? setOpenSubmenu(openSubmenu === item.id ? null : item.id)
+                        : setIsMenuOpen(false)
+                    }
+                    className={`text-3xl md:text-5xl font-space tracking-wider transition-all duration-300 ${
+                      pathname === item.href
+                        ? 'text-primary-gold'
+                        : 'text-white hover:text-primary-gold'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                  {item.submenu && (
+                    <button
+                      onClick={() =>
+                        setOpenSubmenu(openSubmenu === item.id ? null : item.id)
+                      }
+                      className="text-white hover:text-primary-gold transition-colors"
+                    >
+                      {openSubmenu === item.id ? (
+                        <ChevronUp size={28} />
+                      ) : (
+                        <ChevronDown size={28} />
+                      )}
+                    </button>
+                  )}
+                </div>
+
+                {/* Submenu (toggle) */}
+                <AnimatePresence>
+                  {item.submenu && openSubmenu === item.id && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="mt-3 flex flex-col space-y-3"
+                    >
+                      {item.submenu.map((sub, i) => (
+                        <Link
+                          key={i}
+                          href={sub.href}
+                          onClick={() => setIsMenuOpen(false)}
+                          className="text-xl md:text-2xl text-gray-300 hover:text-primary-gold transition-colors"
+                        >
+                          {sub.label}
+                        </Link>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
             ))}
           </motion.div>
