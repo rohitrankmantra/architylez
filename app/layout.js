@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import CustomCursor from './../components/ui/CustomCursor';
+import { Toaster } from 'react-hot-toast';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -22,6 +23,48 @@ export default function RootLayout({ children }) {
         <link href="https://api.fontshare.com/v2/css?f[]=clash-display@200,400,700&f[]=neue-machina@100,200,400,500,700,900&display=swap" rel="stylesheet" />
       </head>
       <body className={`${inter.variable} bg-primary-dark text-white overflow-x-hidden`}>
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            success: {
+              style: {
+                background: "rgba(0,0,0,0.9)",
+                border: "1px solid #FFD700",
+                color: "#FFD700",
+                fontWeight: "600",
+                boxShadow: "0 0 15px rgba(255, 215, 0, 0.5)",
+                borderRadius: "12px",
+              },
+              iconTheme: {
+                primary: "#FFD700",
+                secondary: "#000",
+              },
+            },
+            error: {
+              style: {
+                background: "rgba(0,0,0,0.9)",
+                border: "1px solid #FF4C4C",
+                color: "#FF4C4C",
+                fontWeight: "600",
+                boxShadow: "0 0 15px rgba(255, 76, 76, 0.5)",
+                borderRadius: "12px",
+              },
+              iconTheme: {
+                primary: "#FF4C4C",
+                secondary: "#000",
+              },
+            },
+            loading: {
+              style: {
+                background: "rgba(0,0,0,0.85)",
+                border: "1px solid #FFD700",
+                color: "#FFD700",
+                fontWeight: "600",
+                borderRadius: "12px",
+              },
+            },
+          }}
+        />
         <Navigation />
         <main className="relative">
           <CustomCursor/>
