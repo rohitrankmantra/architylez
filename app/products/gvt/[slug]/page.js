@@ -1,7 +1,5 @@
 // ✅ Server Component
 import ProductDetailClient from "./ProductDetailClient";
- import Navigation from "@/Components/Navigation";
- import Footer from "@/Components/Footer";
 
 
 
@@ -67,10 +65,6 @@ export default function ProductDetailPage({ params }) {
   }
 
   return
-  <>
-  <Navigation/>
   <ProductDetailClient product={product} />;
-  <Footer/>
-  </>
    
 }
