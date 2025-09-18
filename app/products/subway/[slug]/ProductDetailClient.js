@@ -3,6 +3,8 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Navigation from "@/Components/Navigation"
+import Footer from "@/Components/Footer";
 
 /* ---------- Lucide-style inline icons ---------- */
 const IconWrapper = ({ children }) => (
@@ -79,7 +81,9 @@ export default function ProductDetailClient({ product }) {
   const images = product?.images ?? [product.image];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-[#0b0b0b] to-black text-white">
+    <>
+    <Navigation/>
+     <div className="min-h-screen bg-gradient-to-b from-black via-[#0b0b0b] to-black text-white">
       {/* Hero Section with product.thumbnail */}
       {product.thumbnail && (
         <div className="relative w-full h-[60vh] md:h-[100vh] ">
@@ -208,5 +212,8 @@ export default function ProductDetailClient({ product }) {
         )}
       </AnimatePresence>
     </div>
+    <Footer/>
+    </>
+   
   );
 }

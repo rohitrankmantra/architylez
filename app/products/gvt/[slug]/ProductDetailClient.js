@@ -3,8 +3,11 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Navigation from "@/Components/Navigation";
 import Footer from "@/Components/Footer";
+import Navigation from "@/Components/Navigation";
+
+
+
 
 /* ---------- Lucide-style inline icons ---------- */
 const IconWrapper = ({ children }) => (
@@ -82,7 +85,7 @@ export default function ProductDetailClient({ product }) {
 
   return (
     <>
-      <Navigation/>
+    <Navigation/>
         <div className="min-h-screen bg-gradient-to-b from-black via-[#0b0b0b] to-black text-white">
       {/* Hero Section with product.thumbnail */}
       {product.thumbnail && (
