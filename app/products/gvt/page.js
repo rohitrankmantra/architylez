@@ -6,13 +6,14 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Loader from "@/components/ui/Loader";
 import Link from "next/link";
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
-
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
+
+
 
 export default function GvtTiles() {
   const containerRef = useRef(null);
@@ -37,14 +38,8 @@ export default function GvtTiles() {
     return () => ctx.revert();
   }, []);
 
-  // ✅ Later replace this with API fetch
   useEffect(() => {
     async function fetchProducts() {
-      // Example:
-      // const res = await fetch("/api/products?category=GVT");
-      // const data = await res.json();
-      // setProducts(data);
-
       setProducts([
         {
           id: "elegant-marble-finish",
@@ -74,8 +69,8 @@ export default function GvtTiles() {
 
   return (
     <Loader>
-      <Navigation/>
-      <div ref={containerRef} className="relative">
+      <Navigation />
+      <div ref={containerRef} className="relative bg-white text-black">
         {/* Hero Section */}
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
           <div
@@ -84,7 +79,7 @@ export default function GvtTiles() {
               backgroundImage: `url('https://images.pexels.com/photos/1435752/pexels-photo-1435752.jpeg?auto=compress&cs=tinysrgb&w=1600')`,
             }}
           />
-          <div className="absolute inset-0 bg-black/60" />
+          <div className="absolute inset-0 bg-black/70" />
 
           <div className="relative z-10 text-center text-white px-6 max-w-4xl">
             <motion.h1
@@ -93,8 +88,8 @@ export default function GvtTiles() {
               transition={{ duration: 1 }}
               className="font-clash text-5xl md:text-7xl font-bold mb-6 leading-tight"
             >
-              <span className="text-gradient">Premium</span>{" "}
-              <span className="text-outline">GVT Tiles</span>
+              <span className="text-white">Premium</span>{" "}
+              <span className="text-outline text-white">GVT Tiles</span>
             </motion.h1>
             <motion.p
               initial={{ y: 30, opacity: 0 }}
@@ -109,7 +104,7 @@ export default function GvtTiles() {
         </section>
 
         {/* Product Showcase */}
-        <section className="reveal-section py-24 px-6 bg-primary-darker">
+        <section className="reveal-section py-24 px-6 bg-white text-black">
           <div className="max-w-7xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -118,10 +113,10 @@ export default function GvtTiles() {
               className="text-center mb-16"
             >
               <h2 className="font-clash text-4xl md:text-6xl font-bold mb-6">
-                <span className="text-white">Our</span>{" "}
+                <span className="text-black">Our</span>{" "}
                 <span className="text-outline">Collections</span>
               </h2>
-              <p className="font-inter text-primary-gray text-lg max-w-2xl mx-auto">
+              <p className="font-inter text-gray-600 text-lg max-w-2xl mx-auto">
                 Discover premium GVT tile collections designed for durability,
                 elegance, and timeless appeal.
               </p>
@@ -133,7 +128,7 @@ export default function GvtTiles() {
                   <motion.div
                     whileHover={{ scale: 1.03 }}
                     transition={{ type: "spring", stiffness: 200 }}
-                    className="group relative rounded-2xl overflow-hidden shadow-lg bg-primary-dark cursor-pointer"
+                    className="group relative rounded-2xl overflow-hidden shadow-lg bg-black cursor-pointer"
                   >
                     <img
                       src={product.image}
@@ -141,14 +136,14 @@ export default function GvtTiles() {
                       className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-80 group-hover:opacity-90 transition-all duration-300" />
-                    <div className="absolute top-4 left-4 bg-primary-gold text-primary-dark px-4 py-1 rounded-full text-sm font-medium shadow-lg">
+                    <div className="absolute top-4 left-4 bg-white text-black px-4 py-1 rounded-full text-sm font-medium shadow-lg">
                       {product.category}
                     </div>
                     <div className="absolute bottom-0 p-6 text-white">
                       <h3 className="font-space text-xl font-semibold">
                         {product.title}
                       </h3>
-                      <p className="text-primary-gray text-sm">{product.size}</p>
+                      <p className="text-gray-300 text-sm">{product.size}</p>
                     </div>
                   </motion.div>
                 </Link>
@@ -157,7 +152,7 @@ export default function GvtTiles() {
           </div>
         </section>
       </div>
-      <Footer/>
+      <Footer />
     </Loader>
   );
 }

@@ -30,9 +30,7 @@ const Navigation = () => {
   ];
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -45,7 +43,7 @@ const Navigation = () => {
         animate={{ opacity: 1, y: 0 }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           isScrolled
-            ? 'bg-primary-dark/95 backdrop-blur-md border-b border-primary-gold/20'
+            ? 'bg-white/95 backdrop-blur-md border-b border-black/10 shadow-sm'
             : 'bg-transparent'
         }`}
       >
@@ -57,7 +55,7 @@ const Navigation = () => {
                 <img
                   src="/logo.png"
                   alt="Architylezz Logo"
-                  className="h-32 w-full"
+                  className="h-32 w-auto"
                 />
               </Link>
             </motion.div>
@@ -68,9 +66,9 @@ const Navigation = () => {
               className="flex flex-col justify-center items-center w-10 h-10 space-y-1 md:w-12 md:h-12"
               whileTap={{ scale: 0.9 }}
             >
-              <span className="block h-0.5 w-6 rounded-full bg-white" />
-              <span className="block h-0.5 w-6 rounded-full bg-white" />
-              <span className="block h-0.5 w-6 rounded-full bg-white" />
+              <span className="block h-0.5 w-6 rounded-full bg-black" />
+              <span className="block h-0.5 w-6 rounded-full bg-black" />
+              <span className="block h-0.5 w-6 rounded-full bg-black" />
             </motion.button>
           </div>
         </div>
@@ -85,12 +83,12 @@ const Navigation = () => {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ duration: 0.6, ease: 'easeInOut' }}
-            className="fixed inset-0 bg-primary-dark flex flex-col items-center justify-center space-y-8 z-[9999]"
+            className="fixed inset-0 bg-white flex flex-col items-center justify-center space-y-8 z-[50]"
           >
             {/* Close Button */}
             <button
               onClick={() => setIsMenuOpen(false)}
-              className="absolute top-6 right-6 text-white text-4xl hover:text-primary-gold transition-colors"
+              className="absolute top-6 right-6 text-black text-4xl hover:text-gray-700 transition-colors"
             >
               ✕
             </button>
@@ -105,7 +103,6 @@ const Navigation = () => {
               >
                 <div className="flex items-center gap-2">
                   {item.submenu ? (
-                    // Products -> toggle only, no navigation
                     <button
                       onClick={() =>
                         setOpenSubmenu(
@@ -114,28 +111,27 @@ const Navigation = () => {
                       }
                       className={`text-3xl md:text-5xl font-space tracking-wider transition-all duration-300 ${
                         openSubmenu === item.id
-                          ? 'text-primary-gold'
-                          : 'text-white hover:text-primary-gold'
+                          ? 'text-black font-bold'
+                          : 'text-gray-800 hover:text-black'
                       }`}
                     >
                       {item.label}
                     </button>
                   ) : (
-                    // Other links -> navigate
                     <Link
                       href={item.href}
                       onClick={() => setIsMenuOpen(false)}
                       className={`text-3xl md:text-5xl font-space tracking-wider transition-all duration-300 ${
                         pathname === item.href
-                          ? 'text-primary-gold'
-                          : 'text-white hover:text-primary-gold'
+                          ? 'text-black font-bold'
+                          : 'text-gray-800 hover:text-black'
                       }`}
                     >
                       {item.label}
                     </Link>
                   )}
 
-                  {/* Chevron for submenu only */}
+                  {/* Chevron for submenu */}
                   {item.submenu && (
                     <button
                       onClick={() =>
@@ -143,7 +139,7 @@ const Navigation = () => {
                           openSubmenu === item.id ? null : item.id
                         )
                       }
-                      className="text-white hover:text-primary-gold transition-colors"
+                      className="text-gray-700 hover:text-black transition-colors"
                     >
                       {openSubmenu === item.id ? (
                         <ChevronUp size={28} />
@@ -154,7 +150,7 @@ const Navigation = () => {
                   )}
                 </div>
 
-                {/* Submenu items */}
+                {/* Submenu */}
                 <AnimatePresence>
                   {item.submenu && openSubmenu === item.id && (
                     <motion.div
@@ -168,7 +164,7 @@ const Navigation = () => {
                           key={i}
                           href={sub.href}
                           onClick={() => setIsMenuOpen(false)}
-                          className="text-xl md:text-2xl text-gray-300 hover:text-primary-gold transition-colors"
+                          className="text-xl md:text-2xl text-gray-500 hover:text-black transition-colors"
                         >
                           {sub.label}
                         </Link>

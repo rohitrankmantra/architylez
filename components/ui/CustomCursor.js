@@ -8,7 +8,6 @@ export default function CustomCursor() {
 
   useEffect(() => {
     const move = (e) => setPos({ x: e.clientX, y: e.clientY });
-
     const addHover = () => setHover(true);
     const removeHover = () => setHover(false);
 
@@ -29,46 +28,50 @@ export default function CustomCursor() {
 
   return (
     <>
-      {/* Inner orb */}
+      {/* Inner orb (always visible) */}
       <motion.div
-        className="fixed top-0 left-0 w-5 h-5 rounded-full bg-yellow-400 z-[9999] pointer-events-none"
+        className="fixed top-0 left-0 w-6 h-6 rounded-full z-[9999] pointer-events-none"
+        style={{
+          background: hover
+            ? "radial-gradient(circle at center, rgba(100,149,237,0.9), rgba(30,30,60,0.8))"
+            : "black", // fallback solid black like before
+        }}
         animate={{
-          x: pos.x - 10,
-          y: pos.y - 10,
+          x: pos.x - 12,
+          y: pos.y - 12,
           scale: hover ? 1.6 : 1,
           boxShadow: hover
-            ? "0 0 25px rgba(255,215,0,1), 0 0 50px rgba(255,215,0,0.8)"
-            : "0 0 15px rgba(255,215,0,0.7)"
+            ? "0 0 25px rgba(100,149,237,0.8)"
+            : "0 0 12px rgba(100,149,237,0.5)",
         }}
-        transition={{ type: "spring", stiffness: 600, damping: 28 }}
+        transition={{ type: "spring", stiffness: 500, damping: 30 }}
       />
 
-      {/* Outer trailing neon ring */}
+      {/* Outer ring with blend effect */}
       <motion.div
-        className="fixed top-0 left-0 w-12 h-12 rounded-full border-2 border-yellow-400 z-[9998] pointer-events-none"
+        className="fixed top-0 left-0 w-14 h-14 rounded-full z-[9998] pointer-events-none mix-blend-difference"
+        style={{ border: "2px solid rgba(100,149,237,0.6)" }}
         animate={{
-          x: pos.x - 24,
-          y: pos.y - 24,
-          scale: hover ? 1.4 : 1,
-          opacity: hover ? 0.9 : 0.5,
-          boxShadow: hover
-            ? "0 0 30px rgba(255,215,0,0.8)"
-            : "0 0 15px rgba(255,215,0,0.5)"
+          x: pos.x - 28,
+          y: pos.y - 28,
+          scale: hover ? 1.3 : 1,
+          opacity: hover ? 0.8 : 0.5,
         }}
-        transition={{ type: "spring", stiffness: 180, damping: 25 }}
+        transition={{ type: "spring", stiffness: 200, damping: 25 }}
       />
 
       {/* Pulse effect */}
       {hover && (
         <motion.div
-          className="fixed top-0 left-0 w-16 h-16 rounded-full bg-yellow-400 z-[9997] pointer-events-none opacity-30"
+          className="fixed top-0 left-0 w-20 h-20 rounded-full z-[9997] pointer-events-none"
+          style={{ backgroundColor: "rgba(100,149,237,0.25)" }}
           animate={{
-            x: pos.x - 32,
-            y: pos.y - 32,
+            x: pos.x - 40,
+            y: pos.y - 40,
             scale: [1, 2],
             opacity: [0.3, 0],
           }}
-          transition={{ duration: 0.8, repeat: Infinity }}
+          transition={{ duration: 1, repeat: Infinity }}
         />
       )}
     </>

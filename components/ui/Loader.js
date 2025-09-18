@@ -6,7 +6,6 @@ export default function Loader({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Auto-hide loader after 1.8s
     const timer = setTimeout(() => setLoading(false), 1800);
     return () => clearTimeout(timer);
   }, []);
@@ -20,18 +19,18 @@ export default function Loader({ children }) {
             initial={{ opacity: 1 }}
             exit={{ opacity: 0, y: -100 }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
-            className="fixed inset-0 flex flex-col items-center justify-center bg-primary-dark text-primary-gold z-[9999]"
+            className="fixed inset-0 flex flex-col items-center justify-center bg-white text-black z-[9999]"
           >
             {/* Pulsing Circle */}
             <motion.div
-              className="w-24 h-24 rounded-full border-4 border-primary-gold mb-8"
+              className="w-24 h-24 rounded-full border-4 border-black mb-8"
               animate={{
                 scale: [1, 1.3, 1],
                 opacity: [1, 0.6, 1],
                 boxShadow: [
-                  "0 0 20px rgba(255,215,0,0.7)",
-                  "0 0 40px rgba(255,215,0,1)",
-                  "0 0 20px rgba(255,215,0,0.7)",
+                  "0 0 20px rgba(0,0,0,0.5)",
+                  "0 0 40px rgba(0,0,0,0.8)",
+                  "0 0 20px rgba(0,0,0,0.5)",
                 ],
               }}
               transition={{
@@ -46,7 +45,7 @@ export default function Loader({ children }) {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1 }}
-              className="font-clash text-5xl md:text-7xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-500 bg-clip-text text-transparent"
+              className="font-clash text-5xl md:text-7xl font-bold bg-gradient-to-r from-black via-gray-600 to-black bg-clip-text text-transparent"
             >
               Architylezz
             </motion.h1>
@@ -56,7 +55,7 @@ export default function Loader({ children }) {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.8 }}
-              className="text-lg md:text-xl text-white/70 mt-4 tracking-wide"
+              className="text-lg md:text-xl text-gray-700 mt-4 tracking-wide"
             >
               Luxury Interiors & Innovation
             </motion.p>
