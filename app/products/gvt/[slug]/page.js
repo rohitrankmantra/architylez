@@ -1,5 +1,9 @@
 // ✅ Server Component
 import ProductDetailClient from "./ProductDetailClient";
+ import Navigation from "@/Components/Navigation";
+ import Footer from "@/Components/Footer";
+
+
 
 // Mock product list (later replace with API fetch)
 const products = [
@@ -62,5 +66,11 @@ export default function ProductDetailPage({ params }) {
     );
   }
 
-  return <ProductDetailClient product={product} />;
+  return
+  <>
+  <Navigation/>
+  <ProductDetailClient product={product} />;
+  <Footer/>
+  </>
+   
 }
