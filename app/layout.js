@@ -1,7 +1,5 @@
 import './globals.css';
 import { Inter } from 'next/font/google';
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
 import CustomCursor from './../components/ui/CustomCursor';
 import { Toaster } from 'react-hot-toast';
 
@@ -65,12 +63,10 @@ export default function RootLayout({ children }) {
             },
           }}
         />
-        <Navigation />
         <main className="relative">
           <CustomCursor/>
           {children}
         </main>
-        <Footer />
       </body>
     </html>
   );

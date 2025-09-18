@@ -3,6 +3,9 @@ import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 import Loader from '@/components/ui/Loader';
+import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
+
 
 export default function Contact() {
   const containerRef = useRef(null);
@@ -88,6 +91,7 @@ export default function Contact() {
 
   return (
     <Loader>
+      <Navigation/>
       <div ref={containerRef} className="pt-20">
       {/* Hero Section */}
       <section className="min-h-[65vh] flex items-center justify-center px-6 bg-gradient-to-b from-primary-dark to-primary-darker">
@@ -384,6 +388,7 @@ export default function Contact() {
         </div>
       </section>
     </div>
+    <Footer/>
       
     </Loader>
     

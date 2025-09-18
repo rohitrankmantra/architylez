@@ -14,21 +14,19 @@ const Navigation = () => {
   const menuItems = [
     { href: '/', label: 'Home', id: 'home' },
     { href: '/about', label: 'About', id: 'about' },
-    { 
-      href: '/products', 
-      label: 'Products', 
+    {
+      label: 'Products',
       id: 'products',
       submenu: [
         { href: '/products/gvt', label: 'GVT' },
         { href: '/products/subway', label: 'Subway' },
         { href: '/products/wall', label: 'Wall' },
         { href: '/products/wood', label: 'Wood' },
-
-      ]
+      ],
     },
     { href: '/catalogue', label: 'Catalogue', id: 'catalogue' },
     { href: '/blog', label: 'Blog', id: 'blog' },
-    { href: '/contact', label: 'Contact', id: 'contact' }
+    { href: '/contact', label: 'Contact', id: 'contact' },
   ];
 
   useEffect(() => {
@@ -67,7 +65,7 @@ const Navigation = () => {
             {/* Hamburger Button */}
             <motion.button
               onClick={() => setIsMenuOpen(true)}
-              className="z-50 flex flex-col justify-center items-center w-10 h-10 space-y-1 md:w-12 md:h-12"
+              className="flex flex-col justify-center items-center w-10 h-10 space-y-1 md:w-12 md:h-12"
               whileTap={{ scale: 0.9 }}
             >
               <span className="block h-0.5 w-6 rounded-full bg-white" />
@@ -100,32 +98,50 @@ const Navigation = () => {
             {menuItems.map((item, index) => (
               <motion.div
                 key={item.id}
-                href={item.href}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
                 className="flex flex-col items-center"
               >
-                {/* Parent Link with Chevron if submenu exists */}
                 <div className="flex items-center gap-2">
-                  <button
-                    onClick={() =>
-                      item.submenu
-                        ? setOpenSubmenu(openSubmenu === item.id ? null : item.id)
-                        : setIsMenuOpen(false)
-                    }
-                    className={`text-3xl md:text-5xl font-space tracking-wider transition-all duration-300 ${
-                      pathname === item.href
-                        ? 'text-primary-gold'
-                        : 'text-white hover:text-primary-gold'
-                    }`}
-                  >
-                    {item.label}
-                  </button>
+                  {item.submenu ? (
+                    // Products -> toggle only, no navigation
+                    <button
+                      onClick={() =>
+                        setOpenSubmenu(
+                          openSubmenu === item.id ? null : item.id
+                        )
+                      }
+                      className={`text-3xl md:text-5xl font-space tracking-wider transition-all duration-300 ${
+                        openSubmenu === item.id
+                          ? 'text-primary-gold'
+                          : 'text-white hover:text-primary-gold'
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  ) : (
+                    // Other links -> navigate
+                    <Link
+                      href={item.href}
+                      onClick={() => setIsMenuOpen(false)}
+                      className={`text-3xl md:text-5xl font-space tracking-wider transition-all duration-300 ${
+                        pathname === item.href
+                          ? 'text-primary-gold'
+                          : 'text-white hover:text-primary-gold'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  )}
+
+                  {/* Chevron for submenu only */}
                   {item.submenu && (
                     <button
                       onClick={() =>
-                        setOpenSubmenu(openSubmenu === item.id ? null : item.id)
+                        setOpenSubmenu(
+                          openSubmenu === item.id ? null : item.id
+                        )
                       }
                       className="text-white hover:text-primary-gold transition-colors"
                     >
@@ -138,7 +154,7 @@ const Navigation = () => {
                   )}
                 </div>
 
-                {/* Submenu (toggle) */}
+                {/* Submenu items */}
                 <AnimatePresence>
                   {item.submenu && openSubmenu === item.id && (
                     <motion.div

@@ -4,6 +4,9 @@ import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 import Link from 'next/link';
 import Loader from '@/components/ui/Loader';
+import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
+
 
 export default function Blog() {
   const containerRef = useRef(null);
@@ -103,6 +106,7 @@ export default function Blog() {
 
   return (
     <Loader>
+      <Navigation/>
           <div ref={containerRef} className="pt-20">
       {/* Hero Section */}
       <section className="min-h-[65vh] flex items-center justify-center px-6 bg-gradient-to-b from-primary-dark to-primary-darker">
@@ -342,6 +346,7 @@ export default function Blog() {
         </div>
       </section>
     </div>
+    <Footer/>
 
     </Loader>
 

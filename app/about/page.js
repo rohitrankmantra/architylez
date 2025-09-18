@@ -5,6 +5,9 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Lightbulb, Award, Leaf, Users } from "lucide-react"; 
 import Loader from '@/components/ui/Loader';
+import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
+
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -56,6 +59,7 @@ export default function About() {
 
   return (
     <Loader>
+      <Navigation/>
       <div ref={containerRef} className="pt-20">
         {/* Hero Section */}
         <section className="min-h-screen flex items-center py-16 sm:py-20 px-4 sm:px-6 bg-gradient-to-b from-primary-dark to-primary-darker">
@@ -216,6 +220,7 @@ export default function About() {
           </div>
         </section>
       </div>
+      <Footer/>
     </Loader>
   );
 }

@@ -6,6 +6,9 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Link from 'next/link';
 import Loader from '@/components/ui/Loader';
+import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
+
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -155,6 +158,7 @@ export default function Home() {
 
   return (
     <Loader>
+      <Navigation/>
     <div ref={containerRef} className="relative">
       {/* Hero Section */}
       <section
@@ -354,6 +358,7 @@ export default function Home() {
         </div>
       </section>
     </div>
+    <Footer/>
      </Loader>
   );
 }

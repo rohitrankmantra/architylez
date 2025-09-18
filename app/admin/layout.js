@@ -3,6 +3,7 @@ import { useState } from "react";
 import Sidebar from "@/components/admin/Sidebar";
 import Topbar from "@/components/admin/Topbar";
 import toast, { Toaster } from "react-hot-toast";
+import Loader from "@/components/ui/Loader"
 
 export default function AdminLayout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -67,6 +68,7 @@ export default function AdminLayout({ children }) {
         </div>
       ) : (
         <>
+        <Loader/>
           {/* Sidebar */}
           <Sidebar isOpen={isSidebarOpen} />
 

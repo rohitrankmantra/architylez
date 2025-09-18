@@ -6,6 +6,9 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Loader from "@/components/ui/Loader";
 import Link from "next/link";
+import  Footer  from '@/components/Footer';
+import Navigation from '@/components/Navigation';
+
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -71,6 +74,7 @@ export default function GvtTiles() {
 
   return (
     <Loader>
+      <Navigation/>
       <div ref={containerRef} className="relative">
         {/* Hero Section */}
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -153,6 +157,7 @@ export default function GvtTiles() {
           </div>
         </section>
       </div>
+      <Footer/>
     </Loader>
   );
 }
