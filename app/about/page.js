@@ -71,7 +71,7 @@ export default function About() {
                 <div className="space-y-3 sm:space-y-4">
                   <h1 className="font-clash text-3xl sm:text-5xl md:text-7xl font-bold leading-tight">
                     <span className="text-black">About</span>{' '}
-                    <span className="text-[#001053]">Architylezz</span>
+                    <span className="text-outline">Architylezz</span>
                   </h1>
                   <div className="font-clash text-lg sm:text-2xl md:text-3xl font-light text-gray-600">
                     Design Philosophy
@@ -95,11 +95,11 @@ export default function About() {
 
                 <div className="grid grid-cols-2 gap-4 sm:gap-8 pt-6 sm:pt-8">
                   <div>
-                    <div className="font-clash text-2xl sm:text-4xl font-bold text-[#761c14] mb-1 sm:mb-2">150+</div>
+                    <div className="font-clash text-2xl sm:text-4xl font-bold text-[#001053] mb-1 sm:mb-2">150+</div>
                     <div className="font-space text-xs sm:text-sm text-gray-600">Projects Completed</div>
                   </div>
                   <div>
-                    <div className="font-clash text-2xl sm:text-4xl font-bold text-[#761c14] mb-1 sm:mb-2">25+</div>
+                    <div className="font-clash text-2xl sm:text-4xl font-bold text-[#001053] mb-1 sm:mb-2">25+</div>
                     <div className="font-space text-xs sm:text-sm text-gray-600">Awards Won</div>
                   </div>
                 </div>
@@ -129,7 +129,7 @@ export default function About() {
               className="text-center mb-10 sm:mb-16"
             >
               <h2 className="font-clash text-2xl sm:text-4xl md:text-6xl font-bold mb-3 sm:mb-6 text-black">
-                Our <span className="text-[#001053]">Values</span>
+                Our <span className="text-outline">Values</span>
               </h2>
               <p className="font-inter text-gray-600 text-sm sm:text-lg max-w-2xl mx-auto">
                 The core principles that guide every project and define our approach to exceptional design.
@@ -171,7 +171,7 @@ export default function About() {
               className="text-center mb-10 sm:mb-16"
             >
               <h2 className="font-clash text-2xl sm:text-4xl md:text-6xl font-bold mb-3 sm:mb-6 text-black">
-                Meet Our <span className="text-[#761c14]">Team</span>
+                Meet Our <span className="text-outline">Team</span>
               </h2>
               <p className="font-inter text-gray-600 text-sm sm:text-lg max-w-2xl mx-auto">
                 Talented professionals passionate about creating exceptional spaces and experiences.
@@ -201,7 +201,7 @@ export default function About() {
                   <h3 className="font-space text-base sm:text-xl font-semibold text-black mb-1 sm:mb-2">
                     {member.name}
                   </h3>
-                  <div className="font-machina text-[#761c14] text-xs sm:text-sm font-medium mb-1 sm:mb-2">
+                  <div className="font-machina text-[#001053] text-xs sm:text-sm font-medium mb-1 sm:mb-2">
                     {member.role}
                   </div>
                   <p className="font-inter text-gray-600 text-xs sm:text-sm">
