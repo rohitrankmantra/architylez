@@ -23,7 +23,6 @@ export default function Blog() {
       category: "Sustainability",
       image:
         "https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=800",
-      featured: true,
     },
     {
       id: 2,
@@ -36,7 +35,6 @@ export default function Blog() {
       category: "Interior Design",
       image:
         "https://images.pexels.com/photos/2102587/pexels-photo-2102587.jpeg?auto=compress&cs=tinysrgb&w=800",
-      featured: false,
     },
     {
       id: 3,
@@ -49,7 +47,6 @@ export default function Blog() {
       category: "Technology",
       image:
         "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=800",
-      featured: false,
     },
     {
       id: 4,
@@ -62,7 +59,6 @@ export default function Blog() {
       category: "Materials",
       image:
         "https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=800",
-      featured: false,
     },
     {
       id: 5,
@@ -75,7 +71,6 @@ export default function Blog() {
       category: "Design Tips",
       image:
         "https://images.pexels.com/photos/2102587/pexels-photo-2102587.jpeg?auto=compress&cs=tinysrgb&w=800",
-      featured: false,
     },
     {
       id: 6,
@@ -88,12 +83,16 @@ export default function Blog() {
       category: "Planning",
       image:
         "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=800",
-      featured: false,
     },
   ];
 
-  const featuredPost = blogPosts.find((post) => post.featured);
-  const regularPosts = blogPosts.filter((post) => !post.featured);
+  // Sort posts by latest date
+  const sortedPosts = [...blogPosts].sort(
+    (a, b) => new Date(b.date) - new Date(a.date)
+  );
+
+  const featuredPost = sortedPosts[0]; // Always latest
+  const regularPosts = sortedPosts.slice(1);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -102,14 +101,6 @@ export default function Blog() {
         opacity: 0,
         duration: 1.2,
         ease: "power3.out",
-      });
-
-      gsap.from(".blog-grid", {
-        y: 40,
-        opacity: 0,
-        duration: 1,
-        ease: "power2.out",
-        delay: 0.5,
       });
     }, containerRef);
 
@@ -140,9 +131,10 @@ export default function Blog() {
           <section className="py-24 px-6 bg-white">
             <div className="max-w-7xl mx-auto">
               <motion.article
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
+                transition={{ duration: 0.9, ease: "easeOut" }}
+                viewport={{ once: true, amount: 0.3 }}
                 className="group grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
               >
                 {/* Image */}
@@ -196,6 +188,7 @@ export default function Blog() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
               className="text-center mb-16"
             >
               <h2 className="font-clash text-4xl md:text-6xl font-bold mb-6">
@@ -211,6 +204,7 @@ export default function Blog() {
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
                   whileHover={{ y: -10 }}
                   className="group bg-white rounded-3xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-500"
                 >

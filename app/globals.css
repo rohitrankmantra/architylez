@@ -80,22 +80,22 @@ body {
   }
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - Light Theme (White BG, Black Text) */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1C1C1C;
+  background: #ffffff; /* White track */
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #D4AF37;
+  background: #0E0E0E; /* Black thumb */
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #FFD700;
+  background: #1C1C1C; /* Darker black/gray on hover */
 }
 
 /* Loading animations */

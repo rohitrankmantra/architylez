@@ -150,7 +150,7 @@ export default function Home() {
                 }}
               />
             </AnimatePresence>
-            <div className="absolute inset-0 bg-black/60" />
+            <div className="absolute inset-0 bg-black/30" />
           </div>
 
           <div className="relative z-10 text-center max-w-5xl mx-auto px-6">

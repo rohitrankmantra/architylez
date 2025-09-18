@@ -53,7 +53,7 @@ const Navigation = () => {
             <motion.div whileHover={{ scale: 1.05 }} className="z-50">
               <Link href="/">
                 <img
-                  src="/logo.png"
+                  src="/main-logo.png"
                   alt="Architylezz Logo"
                   className="h-32 w-auto"
                 />

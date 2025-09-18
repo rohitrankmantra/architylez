@@ -13,8 +13,6 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-
-
 export default function GvtTiles() {
   const containerRef = useRef(null);
   const [products, setProducts] = useState([]);
@@ -79,7 +77,7 @@ export default function GvtTiles() {
               backgroundImage: `url('https://images.pexels.com/photos/1435752/pexels-photo-1435752.jpeg?auto=compress&cs=tinysrgb&w=1600')`,
             }}
           />
-          <div className="absolute inset-0 bg-black/70" />
+          <div className="absolute inset-0 bg-black/30" />
 
           <div className="relative z-10 text-center text-white px-6 max-w-4xl">
             <motion.h1

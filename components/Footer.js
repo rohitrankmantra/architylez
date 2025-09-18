@@ -47,9 +47,9 @@ const Footer = () => {
             >
               <Link href="/">
                 <img
-                  src="/logo.png"
+                  src="/main-logo.png"
                   alt="Architylezz Logo"
-                  className="h-18 md:h-32 w-auto md:ml-[-30px]"
+                  className="h-18 md:h-32 w-auto "
                 />
               </Link>
 
