@@ -1,88 +1,73 @@
 "use client";
-import { useEffect, useRef } from "react";
+
+import { useState, useEffect, useRef } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { Home, Package, Folder, FileText, Settings, Menu } from "lucide-react";
 import { motion } from "framer-motion";
-import { LayoutDashboard, Package, FolderKanban, LogOut } from "lucide-react";
-import Link from "next/link";
 import { gsap } from "gsap";
 
-export default function Sidebar({ isOpen }) {
+export default function Sidebar() {
+  const [isOpen, setIsOpen] = useState(true);
   const sidebarRef = useRef(null);
+  const router = useRouter();
+  const pathname = usePathname();
 
-  // 🎬 GSAP animation for Sidebar slide
   useEffect(() => {
     if (sidebarRef.current) {
-      if (isOpen) {
-        gsap.to(sidebarRef.current, {
-          x: 0,
-          duration: 0.6,
-          ease: "power3.out",
-        });
-      } else {
-        gsap.to(sidebarRef.current, {
-          x: -250,
-          duration: 0.6,
-          ease: "power3.in",
-        });
-      }
+      gsap.fromTo(
+        sidebarRef.current,
+        { x: -100, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.6, ease: "power3.out" }
+      );
     }
-  }, [isOpen]);
+  }, []);
+
+  const items = [
+    { icon: <Home size={20} />, label: "Dashboard", path: "/admin" },
+    { icon: <Package size={20} />, label: "Products", path: "/admin/products" },
+    { icon: <Folder size={20} />, label: "Catalogues", path: "/admin/catalogues" },
+    { icon: <FileText size={20} />, label: "Blog", path: "/admin/blog" },
+    { icon: <Settings size={20} />, label: "Settings", path: "/admin/settings" },
+  ];
 
   return (
-    <aside
+    <motion.aside
       ref={sidebarRef}
-      className="fixed left-0 top-0 h-screen w-60 
-                 bg-gradient-to-b from-black via-neutral-900 to-black 
-                 border-r border-yellow-400/40 text-yellow-300 
-                 shadow-[4px_0_20px_rgba(255,215,0,0.2)] z-40"
-      style={{ transform: "translateX(0)" }}
+      animate={{ width: isOpen ? 240 : 64 }}
+      transition={{ duration: 0.3 }}
+      className="bg-black text-white flex flex-col"
     >
-      {/* Logo / Brand */}
-      <div className="p-5 font-extrabold text-xl tracking-widest 
-                      border-b border-yellow-400/30 
-                      bg-gradient-to-r from-yellow-500/20 to-transparent 
-                      text-yellow-400 shadow-inner">
-        👑 Admin Panel
+      {/* Top Section */}
+      <div className="flex items-center justify-between p-4 border-b border-gray-800">
+        {isOpen && <span className="font-bold text-lg">Admin</span>}
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="p-2 hover:bg-gray-800 rounded-lg"
+        >
+          <Menu size={20} />
+        </button>
       </div>
 
-      {/* Menu Items */}
-      <nav className="flex flex-col mt-6 space-y-3 px-4">
-        <Link
-          href="/admin"
-          className="flex items-center gap-3 p-3 rounded-lg 
-                     hover:bg-gradient-to-r hover:from-yellow-400/90 hover:to-yellow-600 
-                     hover:text-black transition-all duration-300 
-                     shadow hover:shadow-[0_0_12px_gold]"
-        >
-          <LayoutDashboard size={20} /> Dashboard
-        </Link>
-        <Link
-          href="/admin/products"
-          className="flex items-center gap-3 p-3 rounded-lg 
-                     hover:bg-gradient-to-r hover:from-yellow-400/90 hover:to-yellow-600 
-                     hover:text-black transition-all duration-300 
-                     shadow hover:shadow-[0_0_12px_gold]"
-        >
-          <Package size={20} /> Products
-        </Link>
-        <Link
-          href="/admin/catalogues"
-          className="flex items-center gap-3 p-3 rounded-lg 
-                     hover:bg-gradient-to-r hover:from-yellow-400/90 hover:to-yellow-600 
-                     hover:text-black transition-all duration-300 
-                     shadow hover:shadow-[0_0_12px_gold]"
-        >
-          <FolderKanban size={20} /> Catalogues
-        </Link>
+      {/* Navigation */}
+      <nav className="flex-1 p-4 space-y-3">
+        {items.map((item, idx) => {
+          const isActive = pathname === item.path;
 
-        {/* Logout */}
-        <button
-          className="flex items-center gap-3 p-3 rounded-lg mt-6 
-                     hover:bg-red-600 hover:text-white transition-all duration-300 
-                     shadow hover:shadow-[0_0_10px_red]"
-        >
-          <LogOut size={20} /> Logout
-        </button>
+          return (
+            <motion.div
+              key={idx}
+              whileHover={{ scale: 1.05 }}
+              onClick={() => router.push(item.path)}
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition ${
+                isActive ? "bg-gray-800 text-blue-400" : "hover:bg-gray-800"
+              }`}
+            >
+              {item.icon}
+              {isOpen && <span>{item.label}</span>}
+            </motion.div>
+          );
+        })}
       </nav>
-    </aside>
+    </motion.aside>
   );
 }

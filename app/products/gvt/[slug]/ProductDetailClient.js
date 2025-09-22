@@ -1,21 +1,20 @@
-// ProductDetailClient.jsx
 "use client";
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-/* ---------- Lucide-style inline icons (black/white theme) ---------- */
-const IconWrapper = ({ children }) => (
+/* ---------- Lucide-style inline icons ---------- */
+const IconWrapper = ({ children, className }) => (
   <svg
-    width="42"
-    height="42"
+    width="24"
+    height="24"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
     strokeWidth="1.6"
     strokeLinecap="round"
     strokeLinejoin="round"
-    className="text-black"
+    className={`text-black ${className}`}
     aria-hidden="true"
     dangerouslySetInnerHTML={{ __html: children }}
   />
@@ -54,131 +53,158 @@ export default function ProductDetailClient({ product }) {
   const images = product?.images ?? [product.image];
 
   return (
-    <>
-      <div className="min-h-screen bg-white text-black">
-        {/* Hero Section */}
-        {product.thumbnail && (
-          <div className="relative w-full h-[60vh] md:h-[90vh]">
-            <img
-              src={product.thumbnail}
-              alt={`${product.title} hero`}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-black/20 flex items-center justify-center" />
-          </div>
-        )}
-
-        {/* Main content */}
-        <div className="px-6 md:px-20 py-16 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-          {/* LEFT: Thumbnails */}
-          <div className="grid grid-cols-2 gap-6">
-            {images.map((img, i) => (
-              <motion.div
-                key={i}
-                whileHover={{ scale: 1.04 }}
-                className="relative rounded-xl overflow-hidden border border-gray-300 shadow-md cursor-pointer transition-all"
-                onClick={() => setSelectedImage(img)}
-              >
-                <img
-                  src={img}
-                  alt={`${product.title} ${i}`}
-                  className="w-full h-[220px] md:h-[280px] object-cover"
-                />
-                <div className="absolute left-3 bottom-3 px-3 py-1 rounded-full bg-white/80 text-sm text-black font-semibold shadow">
-                  {product.title}
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* RIGHT: Info */}
-          <div className="flex flex-col">
-            <h2 className="text-lg text-gray-600 mb-4">Product Details</h2>
-            <h2 className="text-2xl font-semibold mb-8">{product.title}</h2>
-
-            <div className="rounded-2xl overflow-hidden border border-gray-300 bg-white shadow-sm mb-10">
-              <div className="grid grid-cols-2 gap-6 p-8">
-                <div className="text-sm font-medium text-gray-700">Category</div>
-                <div className="text-sm text-gray-900">{product.category}</div>
-
-                <div className="text-sm font-medium text-gray-700">Size</div>
-                <div className="text-sm text-gray-900">{product.size}</div>
-
-                <div className="text-sm font-medium text-gray-700">Finish</div>
-                <div className="text-sm text-gray-900">{product.finish ?? "-"}</div>
-
-                <div className="text-sm font-medium text-gray-700">Series</div>
-                <div className="text-sm text-gray-900">{product.series ?? "-"}</div>
-              </div>
-            </div>
-
-            {/* Applications */}
-            <div className="mb-12">
-              <h3 className="text-2xl font-semibold mb-6">Applications</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                {usageOptions.map((u, idx) => {
-                  const Icon = u.Icon;
-                  return (
-                    <div
-                      key={idx}
-                      className="flex flex-col items-center text-center gap-4 p-6 rounded-xl bg-gray-100 border border-gray-300 hover:scale-105 transition-transform shadow-sm"
-                    >
-                      <div className="w-14 h-14 flex items-center justify-center">
-                        <Icon />
-                      </div>
-                      <div className="text-sm text-gray-800 font-medium">{u.label}</div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Similar Products */}
-            {product.similar?.length > 0 && (
-              <div className="mt-auto">
-                <h4 className="font-semibold mb-4">Similar Products</h4>
-                <div className="flex gap-6 flex-wrap">
-                  {product.similar.map((s, i) => (
-                    <div
-                      key={i}
-                      className="w-32 cursor-pointer hover:scale-105 transition-transform"
-                    >
-                      <img
-                        src={s.image}
-                        alt={s.title}
-                        className="w-full h-24 object-cover rounded-lg border border-gray-300 shadow-sm"
-                      />
-                      <div className="text-xs text-gray-700 mt-2 text-center">{s.title}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+    <div className="min-h-screen bg-white text-black">
+      {/* Hero */}
+      {product.thumbnail && (
+        <div className="relative w-full h-[60vh] md:h-[85vh]">
+          <img
+            src={product.thumbnail}
+            alt={`${product.title} hero`}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/70 flex items-center justify-center">
+            <motion.h1
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1 }}
+              className="text-white text-4xl md:text-6xl font-bold tracking-wide text-center"
+            >
+              {product.title}
+            </motion.h1>
           </div>
         </div>
+      )}
 
-        {/* Lightbox */}
-        <AnimatePresence>
-          {selectedImage && (
+      {/* Content */}
+      <div className="px-6 md:px-20 py-16 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+        {/* LEFT: Images */}
+        <div className="grid grid-cols-2 gap-6">
+          {images.map((img, i) => (
             <motion.div
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-6"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedImage(null)}
+              key={i}
+              whileHover={{ scale: 1.03 }}
+              className="relative rounded-xl overflow-hidden border border-black/20 shadow-lg cursor-pointer"
+              onClick={() => setSelectedImage(img)}
             >
-              <motion.img
-                src={selectedImage}
-                alt="zoom"
-                className="max-w-[90%] max-h-[90%] rounded-2xl border-4 border-white shadow-lg"
-                initial={{ scale: 0.95 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0.95 }}
+              <img
+                src={img}
+                alt={`${product.title} ${i}`}
+                className="w-full h-[220px] md:h-[260px] object-cover  hover:grayscale-0 transition-all"
               />
+              <div className="absolute left-3 bottom-3 px-3 py-1 rounded-full bg-black/70 text-xs text-white font-medium shadow">
+                {product.title}
+              </div>
             </motion.div>
+          ))}
+        </div>
+
+        {/* RIGHT: Info */}
+        <div>
+          <h2 className="text-lg text-gray-500 mb-3">Product Details</h2>
+          <h2 className="text-3xl font-bold mb-8">{product.title}</h2>
+
+          <div className="rounded-2xl overflow-hidden border border-black/20 bg-white shadow-md mb-10">
+            <div className="grid grid-cols-2 gap-6 p-8">
+              <div className="text-sm font-medium text-gray-600">Category</div>
+              <div className="text-sm">{product.category}</div>
+
+              <div className="text-sm font-medium text-gray-600">Size</div>
+              <div className="text-sm">{product.size}</div>
+
+              <div className="text-sm font-medium text-gray-600">Finish</div>
+              <div className="text-sm">{product.finish ?? "-"}</div>
+
+              <div className="text-sm font-medium text-gray-600">Series</div>
+              <div className="text-sm">{product.series ?? "-"}</div>
+            </div>
+          </div>
+
+          {/* Applications */}
+          <section className="py-16">
+            <motion.h3
+              className="text-3xl md:text-4xl font-bold mb-14  text-black"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              Applications :
+            </motion.h3>
+
+            <motion.div
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8"
+              initial="hidden"
+              whileInView="visible"
+              variants={{
+                hidden: {},
+                visible: { transition: { staggerChildren: 0.15 } },
+              }}
+            >
+              {usageOptions.map((u, idx) => (
+                <motion.div
+                  key={idx}
+                  className="flex flex-col items-center justify-center gap-3 p-6 border border-black/20 rounded-xl bg-white shadow hover:shadow-lg transition"
+                  variants={{
+                    hidden: { opacity: 0, y: 30 },
+                    visible: { opacity: 1, y: 0 },
+                  }}
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <u.Icon />
+                  <div className="text-sm font-medium text-center">{u.label}</div>
+                </motion.div>
+              ))}
+            </motion.div>
+
+           
+          </section>
+
+          {/* Similar Products */}
+          {product.similar?.length > 0 && (
+            <div className="mt-12">
+              <h4 className="font-semibold mb-4">Similar Products</h4>
+              <div className="flex gap-6 flex-wrap">
+                {product.similar.map((s, i) => (
+                  <div
+                    key={i}
+                    className="w-32 cursor-pointer hover:scale-105 transition-transform"
+                  >
+                    <img
+                      src={s.image}
+                      alt={s.title}
+                      className="w-full h-24 object-cover rounded-lg border border-black/20 shadow-sm"
+                    />
+                    <div className="text-xs text-gray-800 mt-2 text-center">
+                      {s.title}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
-        </AnimatePresence>
+        </div>
       </div>
-    </>
+
+      {/* Lightbox */}
+      <AnimatePresence>
+        {selectedImage && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedImage(null)}
+          >
+            <motion.img
+              src={selectedImage}
+              alt="zoom"
+              className="max-w-[90%] max-h-[90%] rounded-2xl border-4 border-white shadow-lg"
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

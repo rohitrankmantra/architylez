@@ -1,15 +1,14 @@
 // ✅ Server Component
+import Link from "next/link";
 import ProductDetailClient from "./ProductDetailClient";
-
-
-
-// Mock product list (later replace with API fetch)
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 const products = [
   {
     id: "elegant-marble-finish",
     title: "Elegant Marble Finish",
     description: "Premium marble look GVT tile for modern interiors.",
-    thumbnail:"https://picsum.photos/1200/800?random=10",  // 👈 landscape
+    thumbnail: "https://picsum.photos/1200/800?random=10",
     images: [
       "https://picsum.photos/1200/800?random=11",
       "https://picsum.photos/1200/800?random=12",
@@ -25,7 +24,7 @@ const products = [
     id: "textured-stone-look",
     title: "Textured Stone Look",
     description: "Durable stone-like finish ideal for flooring.",
-    thumbnail:"https://picsum.photos/1200/800?random=20",
+    thumbnail: "https://picsum.photos/1200/800?random=20",
     images: [
       "https://picsum.photos/1200/800?random=21",
       "https://picsum.photos/1200/800?random=22",
@@ -38,7 +37,7 @@ const products = [
     id: "glossy-white-tile",
     title: "Glossy White Tile",
     description: "Bright glossy surface for elegant spaces.",
-    thumbnail:"https://picsum.photos/1200/800?random=30",
+    thumbnail: "https://picsum.photos/1200/800?random=30",
     images: [
       "https://picsum.photos/1200/800?random=31",
       "https://picsum.photos/1200/800?random=32",
@@ -48,7 +47,6 @@ const products = [
     finish: "High Gloss",
   },
 ];
-
 
 // ✅ Required for `output: export`
 export async function generateStaticParams() {
@@ -64,7 +62,11 @@ export default function ProductDetailPage({ params }) {
     );
   }
 
-  return
-  <ProductDetailClient product={product} />;
-   
+  return (
+    <>
+    <Navigation/>
+      <ProductDetailClient product={product} products={products} />
+      <Footer/>
+    </>
+  );
 }

@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
       </head>
       <body className={`${inter.variable} bg-primary-dark text-white overflow-x-hidden`}>
         <Toaster
-          position="top-right"
+          position="top-center"
           toastOptions={{
             success: {
               style: {

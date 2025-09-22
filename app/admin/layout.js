@@ -1,87 +1,112 @@
 "use client";
-import { useState } from "react";
+
+import { useState, useEffect, useRef } from "react";
 import Sidebar from "@/components/admin/Sidebar";
 import Topbar from "@/components/admin/Topbar";
-import toast, { Toaster } from "react-hot-toast";
-import Loader from "@/components/ui/Loader"
-
+import { motion, AnimatePresence } from "framer-motion";
+import { gsap } from "gsap";
+import { Eye, EyeOff } from "lucide-react";
+import toast from "react-hot-toast";
 export default function AdminLayout({ children }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-
-  // 🔑 Credentials (replace with backend auth later)
-  const ADMIN_EMAIL = "admin@site.com";
-  const ADMIN_PASS = "12345";
+  const [showPassword, setShowPassword] = useState(false);
+  const dashboardRef = useRef(null);
 
   const handleLogin = (e) => {
     e.preventDefault();
+    const email = e.target.email.value;
+    const password = e.target.password.value;
 
-    setTimeout(() => {
-      if (email === ADMIN_EMAIL && password === ADMIN_PASS) {
-        toast.success("Welcome back, Admin!");
-        setIsAuthenticated(true);
-      } else {
-        toast.error("Invalid email or password!");
-      }
-    }, 1200);
+    if (email === "admin@site.com" && password === "12345") {
+      setIsAuthenticated(true);
+      toast.success("Welcome Admin")
+    } else {
+      toast.error("Invalid Credentials")
+    }
   };
 
+  useEffect(() => {
+    if (isAuthenticated && dashboardRef.current) {
+      gsap.fromTo(
+        dashboardRef.current,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }
+      );
+    }
+  }, [isAuthenticated]);
+
   return (
-    <div className="flex min-h-screen bg-black text-yellow-500">
-      <Toaster position="top-right" />
+    <>
+    
+      {/* Overlay Login */}
+      <AnimatePresence>
+        {!isAuthenticated && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-sm"
+            >
+              <h2 className="text-2xl font-bold text-center mb-6 text-gray-900">
+                Admin Login
+              </h2>
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    required
+                    className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black text-gray-900 placeholder-gray-500"
+                  />
+                </div>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    placeholder="Password"
+                    required
+                    className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black text-gray-900 placeholder-gray-500 pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-black"
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
+                <button
+                  type="submit"
+                  className="w-full py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-900 transition"
+                >
+                  Login
+                </button>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* 🔒 Overlay Login */}
-      {!isAuthenticated ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-sm">
-          <div className="w-full max-w-md bg-black/70 border border-yellow-500/30 rounded-2xl shadow-[0_0_25px_rgba(255,215,0,0.4)] p-8">
-            <h1 className="text-3xl font-bold text-center text-yellow-400 mb-8 tracking-wide">
-              Admin Login
-            </h1>
-            <form onSubmit={handleLogin} className="space-y-6">
-              <input
-                type="email"
-                placeholder="Enter email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg bg-black/50 border border-yellow-500/30 text-yellow-100 placeholder-yellow-200/50 focus:ring-2 focus:ring-yellow-400 outline-none"
-              />
-              <input
-                type="password"
-                placeholder="Enter password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg bg-black/50 border border-yellow-500/30 text-yellow-100 placeholder-yellow-200/50 focus:ring-2 focus:ring-yellow-400 outline-none"
-              />
-
-              <button
-                type="submit"
-                className="w-full flex justify-center items-center gap-2 px-4 py-3 rounded-lg bg-yellow-400 text-black font-semibold shadow-lg hover:scale-105 transition-transform disabled:opacity-70"
-              >
-                Login
-              </button>
-            </form>
+      {/* Dashboard */}
+      {isAuthenticated && (
+        <div ref={dashboardRef} className="h-screen flex bg-white">
+          <Sidebar />
+          <div className="flex-1 flex flex-col">
+            <Topbar onLogout={() => setIsAuthenticated(false)} />
+            <main className="flex-1 overflow-y-auto p-6 text-gray-900">
+              {children}
+            </main>
           </div>
         </div>
-      ) : (
-        <>
-        <Loader/>
-          {/* Sidebar */}
-          <Sidebar isOpen={isSidebarOpen} />
-
-          {/* Main Content Area */}
-          <div className="flex flex-col flex-1">
-            {/* Topbar */}
-            <Topbar toggleSidebar={toggleSidebar} />
-
-            {/* Page Content */}
-            <main className="flex-1 p-6">{children}</main>
-          </div>
-        </>
       )}
-    </div>
+    </>
   );
 }
