@@ -29,19 +29,19 @@ export default function Home() {
       title: "Architectural Excellence",
       subtitle: "Where visionary design meets uncompromising craftsmanship.",
       image:
-        "https://images.pexels.com/photos/313705/pexels-photo-313705.jpeg?auto=compress&cs=tinysrgb&w=1600",
+        "bg-4.jpg",
     },
     {
       title: "Luxury Interiors",
       subtitle: "Spaces redefined with elegance, detail, and sophistication.",
       image:
-        "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1600",
+       "bg-5.jpg"
     },
     {
       title: "Modern Innovation",
       subtitle: "Blending technology and creativity for future-ready designs.",
       image:
-        "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=1600",
+        "bg-3.jpg"
     },
   ];
 
@@ -71,7 +71,6 @@ export default function Home() {
         });
       });
     }, containerRef);
-
     return () => ctx.revert();
   }, []);
 
@@ -150,7 +149,7 @@ export default function Home() {
                 }}
               />
             </AnimatePresence>
-            <div className="absolute inset-0 bg-black/30" />
+            <div className="absolute inset-0 bg-gray-600/30" />
           </div>
 
           <div className="relative z-10 text-center max-w-5xl mx-auto px-6">
