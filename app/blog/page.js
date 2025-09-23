@@ -1,99 +1,44 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { gsap } from "gsap";
 import Link from "next/link";
 import Loader from "@/components/ui/Loader";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import api from "@/utils/api";
 
 export default function Blog() {
   const containerRef = useRef(null);
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const blogPosts = [
-    {
-      id: 1,
-      title: "The Future of Sustainable Architecture",
-      excerpt:
-        "Exploring innovative eco-friendly materials and design principles that are reshaping modern architecture.",
-      author: "Alexandra Chen",
-      date: "March 15, 2024",
-      readTime: "8 min read",
-      category: "Sustainability",
-      image:
-        "https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=800",
-    },
-    {
-      id: 2,
-      title: "Luxury Interior Trends 2024",
-      excerpt:
-        "Discover the latest trends in luxury interior design, from maximalist aesthetics to minimalist elegance.",
-      author: "Marcus Rodriguez",
-      date: "March 12, 2024",
-      readTime: "6 min read",
-      category: "Interior Design",
-      image:
-        "https://images.pexels.com/photos/2102587/pexels-photo-2102587.jpeg?auto=compress&cs=tinysrgb&w=800",
-    },
-    {
-      id: 3,
-      title: "Smart Home Integration in Modern Design",
-      excerpt:
-        "How to seamlessly incorporate cutting-edge technology into contemporary architectural projects.",
-      author: "Sophie Williams",
-      date: "March 10, 2024",
-      readTime: "10 min read",
-      category: "Technology",
-      image:
-        "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=800",
-    },
-    {
-      id: 4,
-      title: "Material Innovations in Tile Design",
-      excerpt:
-        "Revolutionary materials and manufacturing techniques that are transforming tile design possibilities.",
-      author: "Alexandra Chen",
-      date: "March 8, 2024",
-      readTime: "7 min read",
-      category: "Materials",
-      image:
-        "https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=800",
-    },
-    {
-      id: 5,
-      title: "Creating Timeless Bathroom Spaces",
-      excerpt:
-        "Design principles and material choices for bathrooms that stand the test of time.",
-      author: "Marcus Rodriguez",
-      date: "March 5, 2024",
-      readTime: "9 min read",
-      category: "Design Tips",
-      image:
-        "https://images.pexels.com/photos/2102587/pexels-photo-2102587.jpeg?auto=compress&cs=tinysrgb&w=800",
-    },
-    {
-      id: 6,
-      title: "The Art of Space Planning",
-      excerpt:
-        "Master the fundamentals of effective space planning in residential and commercial projects.",
-      author: "Sophie Williams",
-      date: "March 3, 2024",
-      readTime: "5 min read",
-      category: "Planning",
-      image:
-        "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=800",
-    },
-  ];
+  // Fetch blogs from backend
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const response = await api.get("/blogs");
+        setBlogs(response.data); // Assuming your backend returns an array of blogs
+      } catch (error) {
+        console.error("Failed to fetch blogs:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Sort posts by latest date
-  const sortedPosts = [...blogPosts].sort(
-    (a, b) => new Date(b.date) - new Date(a.date)
+    fetchBlogs();
+  }, []);
+
+  // Sort blogs by date (latest first)
+  const sortedBlogs = [...blogs].sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
 
-  const featuredPost = sortedPosts[0]; // Always latest
-  const regularPosts = sortedPosts.slice(1);
+  const featuredPost = sortedBlogs[0];
+  const regularPosts = sortedBlogs.slice(1);
 
+  // GSAP hero animation
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.from(".hero-content", {
@@ -107,8 +52,10 @@ export default function Blog() {
     return () => ctx.revert();
   }, []);
 
+  if (loading) return <Loader />;
+
   return (
-    <Loader>
+    <>
       <Navigation />
       <div ref={containerRef} className="bg-white text-black">
         {/* Hero Section */}
@@ -137,10 +84,9 @@ export default function Blog() {
                 viewport={{ once: true, amount: 0.3 }}
                 className="group grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
               >
-                {/* Image */}
                 <div className="relative h-96 rounded-3xl overflow-hidden">
                   <img
-                    src={featuredPost.image}
+                    src={featuredPost.thumbnail?.url}
                     alt={featuredPost.title}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
@@ -148,7 +94,6 @@ export default function Blog() {
                     Featured
                   </div>
                 </div>
-                {/* Content */}
                 <div className="space-y-6">
                   <h3 className="font-clash text-3xl md:text-4xl font-bold text-black leading-tight">
                     {featuredPost.title}
@@ -162,14 +107,14 @@ export default function Blog() {
                         {featuredPost.author}
                       </span>
                       <span>•</span>
-                      <span>{featuredPost.date}</span>
+                      <span>{new Date(featuredPost.createdAt).toLocaleDateString()}</span>
                     </div>
                     <span className="font-machina">
-                      {featuredPost.readTime}
+                      {featuredPost.readTime || "5 min read"}
                     </span>
                   </div>
                   <Link
-                    href={`/blog/${featuredPost.id}`}
+                    href={`/blog/${featuredPost._id}`}
                     className="inline-flex items-center space-x-2 px-8 py-4 bg-black text-white font-machina font-semibold rounded-full hover:bg-gray-900 transition-colors duration-300"
                   >
                     <span>Read Article</span>
@@ -200,7 +145,7 @@ export default function Blog() {
             <div className="blog-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
               {regularPosts.map((post, index) => (
                 <motion.article
-                  key={post.id}
+                  key={post._id}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
@@ -210,7 +155,7 @@ export default function Blog() {
                 >
                   <div className="relative h-64 overflow-hidden">
                     <img
-                      src={post.image}
+                      src={post.thumbnail?.url}
                       alt={post.title}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
@@ -227,16 +172,14 @@ export default function Blog() {
                     </p>
                     <div className="flex items-center justify-between text-xs text-gray-500 pt-4 border-t border-gray-200">
                       <div className="flex items-center space-x-2">
-                        <span className="font-space font-medium">
-                          {post.author}
-                        </span>
+                        <span className="font-space font-medium">{post.author}</span>
                         <span>•</span>
-                        <span>{post.date}</span>
+                        <span>{new Date(post.createdAt).toLocaleDateString()}</span>
                       </div>
-                      <span className="font-machina">{post.readTime}</span>
+                      <span className="font-machina">{post.readTime || "5 min read"}</span>
                     </div>
                     <Link
-                      href={`/blog/${post.id}`}
+                      href={`/blog/${post._id}`}
                       className="inline-flex items-center space-x-2 text-black hover:text-gray-600 transition-colors duration-300 font-machina font-medium text-sm"
                     >
                       <span>Read More</span>
@@ -250,6 +193,6 @@ export default function Blog() {
         </section>
       </div>
       <Footer />
-    </Loader>
+    </>
   );
 }
