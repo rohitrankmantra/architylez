@@ -21,13 +21,13 @@ export default function Topbar({ onLogout }) {
       ref={topbarRef}
       className="h-16 bg-white shadow flex items-center justify-between px-6"
     >
-      <h1 className="text-lg font-bold">Admin Dashboard</h1>
-      <button
+      <h1 className="text-lg font-bold text-black">Admin Dashboard</h1>
+      {/* <button
         onClick={onLogout}
         className="text-red-500 font-medium hover:underline"
       >
         Logout
-      </button>
+      </button> */}
     </header>
   );
 }

@@ -1,16 +1,35 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Package, Folder, FileText, Users, BarChart } from "lucide-react";
+import { Package, Folder, FileText, Users } from "lucide-react";
+import api from "@/utils/api"; // assuming you have a helper to call your backend
 
 export default function AdminPage() {
-  const stats = [
-    { icon: <Package size={28} />, label: "Products", value: 120 },
-    { icon: <Folder size={28} />, label: "Catalogues", value: 15 },
-    { icon: <FileText size={28} />, label: "Blogs", value: 8 },
-    { icon: <Users size={28} />, label: "Users", value: 340 },
-    { icon: <BarChart size={28} />, label: "Reports", value: 12 },
-  ];
+  const [stats, setStats] = useState([
+    { icon: <Package size={28} />, label: "Products", value: 0 },
+    { icon: <Folder size={28} />, label: "Catalogues", value: 0 },
+    { icon: <FileText size={28} />, label: "Blogs", value: 0 },
+    { icon: <Users size={28} />, label: "Contact Forms", value: 0 },
+  ]);
+
+  // fetch stats from backend
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await api.get("/admin/stats"); // call your backend API
+        setStats((prev) => [
+          { ...prev[0], value: res.data.products },
+          { ...prev[1], value: res.data.catalogues },
+          { ...prev[2], value: res.data.blogs },
+          { ...prev[3], value: res.data.contacts },
+        ]);
+      } catch (err) {
+        console.error("❌ Failed to fetch dashboard stats:", err);
+      }
+    };
+    fetchStats();
+  }, []);
 
   return (
     <div className="space-y-10">

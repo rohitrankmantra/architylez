@@ -8,6 +8,7 @@ import {
   Plus,
   Image as ImageIcon,
   Trash,
+  Loader
 } from "lucide-react";
 import api from "@/utils/api";
 import toast from "react-hot-toast";
@@ -33,6 +34,9 @@ const FINISH_OPTIONS = [
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState(null);
 
   // modal state
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -58,22 +62,6 @@ export default function ProductsPage() {
     };
     fetchProducts();
   }, []);
-
-  // === upload helper (calls backend /upload) ===
-  const uploadToBackend = async (file) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    try {
-      const res = await api.post("/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      return res.data.url; // backend returns { url }
-    } catch (err) {
-      console.error("❌ Upload failed:", err);
-      toast.error("Upload failed");
-      return null;
-    }
-  };
 
   // === modal helpers ===
   const openAdd = () => {
@@ -137,20 +125,19 @@ export default function ProductsPage() {
     setFinishInput("");
   };
 
-// === file uploads ===
-const handleThumbnailUpload = (e) => {
-  const file = e.target.files?.[0];
-  if (!file) return;
-  setThumbnailPreview(URL.createObjectURL(file)); // preview only
-};
+  // === file uploads ===
+  const handleThumbnailUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setThumbnailPreview(URL.createObjectURL(file)); // preview only
+  };
 
-const handleImagesUpload = (e) => {
-  const files = Array.from(e.target.files || []);
-  if (!files.length) return;
-  const previews = files.map((file) => URL.createObjectURL(file));
-  setImagePreviews((prev) => [...prev, ...previews]); // preview only
-};
-
+  const handleImagesUpload = (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    const previews = files.map((file) => URL.createObjectURL(file));
+    setImagePreviews((prev) => [...prev, ...previews]); // preview only
+  };
 
   const handleDeleteImage = (index) =>
     setImagePreviews((prev) => prev.filter((_, i) => i !== index));
@@ -159,7 +146,7 @@ const handleImagesUpload = (e) => {
 
   // === API delete ===
   const handleDeleteProduct = async (id) => {
-    if (!confirm("Delete this product?")) return;
+    setDeletingId(id);
     try {
       await api.delete(`/products/${id}`);
       setProducts((prev) => prev.filter((p) => p._id !== id));
@@ -167,59 +154,61 @@ const handleImagesUpload = (e) => {
     } catch (err) {
       console.error("❌ Error deleting product:", err);
       toast.error("Failed to delete product");
+    } finally {
+      setDeletingId(null);
+      setConfirmDelete(null);
     }
   };
 
   const handleSave = async (e) => {
-  e.preventDefault();
-  const form = e.target;
-  const isEdit = !!selectedProduct?._id;
+    e.preventDefault();
+    setSaving(true);
+    const form = e.target;
+    const isEdit = !!selectedProduct?._id;
 
-  const formData = new FormData();
-  formData.append("title", form.title.value.trim() || "Untitled");
-  formData.append("description", form.description.value.trim() || "");
-  formData.append("category", form.category.value);
-  selectedSizes.forEach((s) => formData.append("size", s));
-  selectedFinishes.forEach((f) => formData.append("finish", f));
+    const formData = new FormData();
+    formData.append("title", form.title.value.trim() || "Untitled");
+    formData.append("description", form.description.value.trim() || "");
+    formData.append("category", form.category.value);
+    selectedSizes.forEach((s) => formData.append("size", s));
+    selectedFinishes.forEach((f) => formData.append("finish", f));
 
-  // ✅ append thumbnail
-  if (form.thumbnail?.files?.[0]) {
-    formData.append("thumbnail", form.thumbnail.files[0]);
-  }
-
-  // ✅ append images
-  if (form.images?.files?.length) {
-    Array.from(form.images.files).forEach((file) =>
-      formData.append("images", file)
-    );
-  }
-
-  try {
-    let res;
-    if (isEdit) {
-      res = await api.put(`/products/${selectedProduct._id}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setProducts((prev) =>
-        prev.map((p) => (p._id === selectedProduct._id ? res.data.product : p))
-      );
-      toast.success("✅ Product updated");
-    } else {
-      res = await api.post("/products", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setProducts((prev) => [res.data.product, ...prev]);
-      toast.success("✅ Product created");
+    if (form.thumbnail?.files?.[0]) {
+      formData.append("thumbnail", form.thumbnail.files[0]);
     }
-    closeModal();
-  } catch (err) {
-    console.error("❌ Error saving product:", err);
-    toast.error("Failed to save product");
-  }
-};
 
+    if (form.images?.files?.length) {
+      Array.from(form.images.files).forEach((file) =>
+        formData.append("images", file)
+      );
+    }
 
-  // === render ===
+    try {
+      let res;
+      if (isEdit) {
+        res = await api.put(`/products/${selectedProduct._id}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        setProducts((prev) =>
+          prev.map((p) => (p._id === selectedProduct._id ? res.data.product : p))
+        );
+        toast.success("✅ Product updated");
+      } else {
+        res = await api.post("/products", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        setProducts((prev) => [res.data.product, ...prev]);
+        toast.success("✅ Product created");
+      }
+      closeModal();
+    } catch (err) {
+      console.error("❌ Error saving product:", err);
+      toast.error("Failed to save product");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="p-4">
       <div className="flex items-center justify-between mb-3">
@@ -232,7 +221,6 @@ const handleImagesUpload = (e) => {
         </button>
       </div>
 
-      {/* table */}
       {loading ? (
         <p className="text-sm text-gray-500">Loading products...</p>
       ) : (
@@ -255,7 +243,7 @@ const handleImagesUpload = (e) => {
                 <tr key={p._id} className="hover:bg-gray-50 align-top text-xs">
                   <td className="p-2 border w-14">
                     <img
-                      src={p.thumbnail.url}
+                      src={p.thumbnail?.url}
                       alt={p.title}
                       className="w-10 h-10 object-cover rounded"
                     />
@@ -309,11 +297,15 @@ const handleImagesUpload = (e) => {
                         <Pencil size={14} />
                       </button>
                       <button
-                        onClick={() => handleDeleteProduct(p._id)}
+                        onClick={() => setConfirmDelete(p._id)}
                         className="text-red-600 hover:text-red-800 p-1 rounded"
                         title="Delete"
                       >
-                        <Trash2 size={14} />
+                        {deletingId === p._id ? (
+                          <Loader size={14} className="animate-spin" />
+                        ) : (
+                          <Trash2 size={14} />
+                        )}
                       </button>
                     </div>
                   </td>
@@ -519,12 +511,39 @@ const handleImagesUpload = (e) => {
                 </button>
                 <button
                   type="submit"
-                  className="px-3 py-1 bg-indigo-600 text-white rounded text-xs"
+                  className="px-3 py-1 bg-indigo-600 text-white rounded text-xs flex items-center gap-2"
+                  disabled={saving}
                 >
+                  {saving && <Loader size={14} className="animate-spin" />}
                   Save
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete confirmation overlay */}
+      {confirmDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white p-6 rounded shadow-md text-center">
+            <p className="mb-4">Are you sure you want to delete this product?</p>
+            <div className="flex justify-center gap-2">
+              <button
+                onClick={() => setConfirmDelete(null)}
+                className="px-3 py-1 border rounded text-sm"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDeleteProduct(confirmDelete)}
+                className="px-3 py-1 bg-red-600 text-white rounded text-sm flex items-center gap-2"
+                disabled={deletingId === confirmDelete}
+              >
+                {deletingId === confirmDelete && <Loader size={14} className="animate-spin" />}
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       )}
