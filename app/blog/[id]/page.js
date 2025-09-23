@@ -1,29 +1,27 @@
 // app/blog/[id]/page.js
-import React from "react";
-import api from "@/utils/api";
-import BlogContent from "./BlogContent"; // Client component
+"use client";
 
-export async function generateStaticParams() {
-  const response = await api.get("/blogs");
-  const blogs = response.data;
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import api from "@/utils/api"; // or fetch, whatever you like
+import BlogContent from "./BlogContent";
 
-  return blogs.map((blog) => ({
-    id: blog._id.toString(),
-  }));
-}
+export default function BlogPage() {
+  const { id } = useParams();
+  const [blog, setBlog] = useState(null);
 
-export default async function BlogPage({ params }) {
-  const { id } = params;
+  useEffect(() => {
+    const loadBlog = async () => {
+      try {
+        const res = await api.get(`/blogs/${id}`);
+        setBlog(res.data);
+      } catch (err) {
+        console.error("Failed to load blog", err);
+      }
+    };
+    if (id) loadBlog();
+  }, [id]);
 
-  // Fetch blog data (server-side)
-  let blog = null;
-  try {
-    const response = await api.get(`/blogs/${id}`);
-    blog = response.data;
-  } catch (error) {
-    console.error("Failed to fetch blog:", error);
-    return <div>Blog not found</div>;
-  }
-
+  if (!blog) return <div>Loading…</div>;
   return <BlogContent blog={blog} />;
 }
