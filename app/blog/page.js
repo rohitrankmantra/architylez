@@ -6,11 +6,11 @@ import { gsap } from "gsap";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import api from "@/utils/api";
+import Loader from "@/components/ui/Loader"
 
 export default function Blog() {
   const containerRef = useRef(null);
   const [blogs, setBlogs] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [openBlog, setOpenBlog] = useState(null); // for modal overlay
   const [commentsMap, setCommentsMap] = useState({}); // store comments per blog
 
@@ -23,7 +23,6 @@ export default function Blog() {
       } catch (error) {
         console.error("Failed to fetch blogs:", error);
       } finally {
-        setLoading(false);
       }
     };
     fetchBlogs();
@@ -50,7 +49,6 @@ export default function Blog() {
     return () => ctx.revert();
   }, []);
 
-  if (loading) return <div className="p-12 text-center">Loading...</div>;
 
   // Handle adding frontend-only comments
   const handleAddComment = (blogId, content) => {
@@ -69,6 +67,7 @@ export default function Blog() {
 
   return (
     <>
+    <Loader>
       <Navigation />
       <div ref={containerRef} className="bg-white text-black">
         {/* Hero Section */}
@@ -257,7 +256,7 @@ export default function Blog() {
 
         {/* Comments Section */}
         <div className="px-6 pb-6 border-t pt-4">
-          <h2 className="text-xl font-semibold mb-4">Comments</h2>
+          <h2 className="text-xl font-semibold mb-4 text-black">Comments</h2>
           <div className="space-y-3 max-h-60 overflow-y-auto mb-3">
             {(commentsMap[openBlog._id] || []).map((c) => (
               <div key={c.id} className="p-3 border rounded-md bg-gray-50">
@@ -291,6 +290,7 @@ export default function Blog() {
     </motion.div>
   )}
 </AnimatePresence>
+</Loader>
 
     </>
   );
