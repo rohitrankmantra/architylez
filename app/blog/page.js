@@ -14,23 +14,22 @@ export default function Blog() {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch blogs from backend
+  // Fetch blogs client-side
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
         const response = await api.get("/blogs");
-        setBlogs(response.data); // Assuming your backend returns an array of blogs
+        setBlogs(response.data);
       } catch (error) {
         console.error("Failed to fetch blogs:", error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchBlogs();
   }, []);
 
-  // Sort blogs by date (latest first)
+  // Sort blogs by date
   const sortedBlogs = [...blogs].sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
@@ -48,7 +47,6 @@ export default function Blog() {
         ease: "power3.out",
       });
     }, containerRef);
-
     return () => ctx.revert();
   }, []);
 
@@ -103,15 +101,11 @@ export default function Blog() {
                   </p>
                   <div className="flex items-center justify-between text-sm text-gray-500">
                     <div className="flex items-center space-x-4">
-                      <span className="font-space font-medium">
-                        {featuredPost.author}
-                      </span>
+                      <span className="font-space font-medium">{featuredPost.author}</span>
                       <span>•</span>
                       <span>{new Date(featuredPost.createdAt).toLocaleDateString()}</span>
                     </div>
-                    <span className="font-machina">
-                      {featuredPost.readTime || "5 min read"}
-                    </span>
+                    <span className="font-machina">{featuredPost.readTime || "5 min read"}</span>
                   </div>
                   <Link
                     href={`/blog/${featuredPost._id}`}
