@@ -3,15 +3,21 @@ import Footer from "@/components/Footer";
 import BlogClient from "./BlogClient";
 import api from "@/utils/api";
 
-// Required for static export (for output: 'export')
+// Required for static export
 export async function generateStaticParams() {
-  const blogs = await api.get("/blogs").then(res => res.data);
+  let blogs = [];
+  try {
+    const res = await api.get("/blogs");
+    blogs = res.data;
+  } catch (err) {
+    console.error("Failed to fetch blogs for static params:", err.message);
+  }
+
   return blogs.map(blog => ({ slug: blog._id }));
 }
 
 export default async function BlogPage({ params }) {
-  // params is a plain object; no need to await
-  const { slug } = params;
+  const slug = params?.slug;
 
   if (!slug) {
     return <div className="p-12 text-center">Blog not found</div>;
@@ -23,10 +29,16 @@ export default async function BlogPage({ params }) {
     const res = await api.get(`/blogs/${slug}`);
     blog = res.data;
   } catch (err) {
-    console.error("Failed to fetch blog:", err);
+    console.error("Failed to fetch blog:", err.message);
+    if (err.response) {
+      console.error("Status:", err.response.status);
+      console.error("Data:", err.response.data);
+    }
   }
 
-  if (!blog) return <div className="p-12 text-center">Blog not found</div>;
+  if (!blog) {
+    return <div className="p-12 text-center">Blog not found</div>;
+  }
 
   return (
     <>
