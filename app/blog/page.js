@@ -275,7 +275,7 @@ export default function Blog() {
               setOpenBlog({ ...openBlog, newComment: e.target.value })
             }
             placeholder="Write your comment..."
-            className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 mb-2"
+            className="w-full text-black p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 mb-2"
           />
           <button
             onClick={() => {
