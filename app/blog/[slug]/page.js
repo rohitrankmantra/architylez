@@ -3,16 +3,15 @@ import Footer from "@/components/Footer";
 import BlogClient from "./BlogClient";
 import api from "@/utils/api";
 
-// Required for static export
+// Required for static export (for output: 'export')
 export async function generateStaticParams() {
   const blogs = await api.get("/blogs").then(res => res.data);
   return blogs.map(blog => ({ slug: blog._id }));
 }
 
 export default async function BlogPage({ params }) {
-  // Await params before using
-  const resolvedParams = await params;
-  const { slug } = resolvedParams;
+  // params is a plain object; no need to await
+  const { slug } = params;
 
   if (!slug) {
     return <div className="p-12 text-center">Blog not found</div>;
