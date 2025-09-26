@@ -6,6 +6,8 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import axios from "@/utils/api"; // your axios instance
+import Loader from "@/components/ui/Loader"
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -56,62 +58,23 @@ const usageOptions = [
   { label: "Religious Place", Icon: ReligiousIcon },
 ];
 
-// Sample products
-const products = [
-  {
-    id: "elegant-marble-finish",
-    title: "Elegant Marble Finish",
-    description: "Premium marble look GVT tile for modern interiors.",
-    thumbnail: "https://picsum.photos/1200/800?random=10",
-    images: [
-      "https://picsum.photos/1200/800?random=11",
-      "https://picsum.photos/1200/800?random=12",
-      "https://picsum.photos/1200/800?random=13",
-    ],
-    size: "600x600 mm",
-    category: "GVT",
-    finish: "Glossy",
-    series: "Luxury",
-  },
-  {
-    id: "textured-stone-look",
-    title: "Textured Stone Look",
-    description: "Durable stone-like finish ideal for flooring.",
-    thumbnail: "https://picsum.photos/1200/800?random=20",
-    images: [
-      "https://picsum.photos/1200/800?random=21",
-      "https://picsum.photos/1200/800?random=22",
-    ],
-    size: "800x800 mm",
-    category: "GVT",
-    finish: "Rustic Matt",
-  },
-  {
-    id: "glossy-white-tile",
-    title: "Glossy White Tile",
-    description: "Bright glossy surface for elegant spaces.",
-    thumbnail: "https://picsum.photos/1200/800?random=30",
-    images: [
-      "https://picsum.photos/1200/800?random=31",
-      "https://picsum.photos/1200/800?random=32",
-    ],
-    size: "600x1200 mm",
-    category: "GVT",
-    finish: "High Gloss",
-  },
-];
-
 export default function ProductDetailPage({ params }) {
   const containerRef = useRef(null);
   const [product, setProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  // Simulate fetching product from params.slug
   useEffect(() => {
-    const slug = params?.slug || "elegant-marble-finish";
-    const found = products.find((p) => p.id === slug);
-    setProduct(found);
-  }, [params]);
+    const fetchProduct = async () => {
+      try {
+        const res = await axios.get(`/products/${params.slug}`);
+        setProduct(res.data);
+      } catch (err) {
+        console.error("Failed to fetch product:", err);
+      } finally {
+      }
+    };
+    fetchProduct();
+  }, [params.slug]);
 
   // GSAP animation
   useEffect(() => {
@@ -134,31 +97,23 @@ export default function ProductDetailPage({ params }) {
     return () => ctx.revert();
   }, [product]);
 
-  if (!product) return <div className="p-10 text-center">Loading...</div>;
+  if (!product) return <div className="p-10 text-center">Product not found</div>;
 
-  const images = product.images ?? [product.thumbnail];
+  const images = product.images?.map(img => img.url) ?? [product.thumbnail?.url];
 
   return (
     <>
+    <Loader>
       <Navigation />
       <div ref={containerRef} className="min-h-screen bg-white text-black">
         {/* Hero */}
         <div className="relative w-full h-[60vh] md:h-[85vh]">
           <img
-            src={product.thumbnail}
+            src={product.thumbnail?.url}
             alt={product.title}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/70 flex items-center justify-center">
-            <motion.h1
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1 }}
-              className="text-white text-4xl md:text-6xl font-bold tracking-wide text-center"
-            >
-              {product.title}
-            </motion.h1>
-          </div>
+       
         </div>
 
         {/* Content */}
@@ -228,47 +183,11 @@ export default function ProductDetailPage({ params }) {
             <section>
               <h3 className="text-xl font-semibold mb-4">Description</h3>
               <p className="text-base leading-relaxed text-gray-800">
-                {product.description ??
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."}
+                {product.description ?? "No description available."}
               </p>
             </section>
           </div>
         </div>
-
-        {/* Similar Products
-        <section className="py-24 px-6 reveal-section">
-          <div className="max-w-7xl mx-auto">
-            <h2 className="text-4xl font-bold mb-12 text-center">
-              You may also like
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {products
-                .filter((p) => p.id !== product.id)
-                .map((p, i) => (
-                  <motion.div
-                    key={i}
-                    whileHover={{ scale: 1.03 }}
-                    transition={{ type: "spring", stiffness: 200 }}
-                    className="group relative rounded-2xl overflow-hidden shadow-lg bg-black cursor-pointer"
-                  >
-                    <img
-                      src={p.thumbnail}
-                      alt={p.title}
-                      className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-80 group-hover:opacity-90 transition-all duration-300" />
-                    <div className="absolute top-4 left-4 bg-white text-black px-4 py-1 rounded-full text-sm font-medium shadow-lg">
-                      {p.category}
-                    </div>
-                    <div className="absolute bottom-0 p-6 text-white">
-                      <h3 className="font-space text-xl font-semibold">{p.title}</h3>
-                      <p className="text-gray-300 text-sm">{p.size}</p>
-                    </div>
-                  </motion.div>
-                ))}
-            </div>
-          </div>
-        </section> */}
       </div>
       <Footer />
 
@@ -293,6 +212,7 @@ export default function ProductDetailPage({ params }) {
           </motion.div>
         )}
       </AnimatePresence>
+      </Loader>
     </>
   );
 }

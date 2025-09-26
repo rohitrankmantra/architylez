@@ -7,7 +7,8 @@ import Loader from "@/components/ui/Loader";
 import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { FiFilter } from "react-icons/fi"; // Filter icon
+import { FiFilter } from "react-icons/fi"; 
+import axios from "@/utils/api"; // Use your axios instance
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -18,6 +19,7 @@ export default function GvtTiles() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchText, setSearchText] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -38,15 +40,21 @@ export default function GvtTiles() {
     return () => ctx.revert();
   }, []);
 
+  // Fetch real products from backend
   useEffect(() => {
-    const data = [
-      { id: "elegant-marble-finish", title: "Elegant Marble Finish", image: "https://picsum.photos/600/400?random=1", size: "600x600 mm", category: "GVT" },
-      { id: "textured-stone-look", title: "Textured Stone Look", image: "https://picsum.photos/600/400?random=2", size: "800x800 mm", category: "GVT" },
-      { id: "glossy-white-tile", title: "Glossy White Tile", image: "https://picsum.photos/600/400?random=3", size: "600x1200 mm", category: "GVT" },
-      { id: "premium-black-tile", title: "Premium Black Tile", image: "https://picsum.photos/600/400?random=4", size: "800x1200 mm", category: "GVT" },
-    ];
-    setProducts(data);
-    setFilteredProducts(data);
+    const fetchProducts = async () => {
+      try {
+        const res = await axios.get("/products");
+        const gvtProducts = res.data.filter((p) => p.category.toLowerCase() === "gvt");
+        setProducts(gvtProducts);
+        setFilteredProducts(gvtProducts);
+      } catch (err) {
+        console.error("Failed to fetch products:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
   }, []);
 
   // Run filtering only when clicking the button
@@ -112,59 +120,61 @@ export default function GvtTiles() {
               </p>
             </motion.div>
 
-            {/* Search + Filter Button */}
-<div className="flex justify-center mb-12">
-  <div className="relative w-full max-w-7xl">
-    <input
-      type="text"
-      placeholder="Search by name, size, category..."
-      value={searchText}
-      onChange={(e) => setSearchText(e.target.value)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") handleFilterClick();
-      }}
-      className="w-full p-5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black pr-32 text-lg"
-      style={{ height: "60px" }}
-    />
-    <button
-      onClick={handleFilterClick}
-      className="absolute right-0 top-0 h-full bg-black text-white px-6 rounded-r-lg hover:bg-gray-900 transition-colors flex items-center justify-center gap-2"
-    >
-      <FiFilter size={22} />
-      Filter
-    </button>
-  </div>
-</div>
-
-
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredProducts.map((product, i) => (
-                <Link key={i} href={`/products/gvt/${product.id}`}>
-                  <motion.div
-                    whileHover={{ scale: 1.03 }}
-                    transition={{ type: "spring", stiffness: 200 }}
-                    className="group relative rounded-2xl overflow-hidden shadow-lg bg-black cursor-pointer"
-                  >
-                    <img
-                      src={product.image}
-                      alt={product.title}
-                      className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-80 group-hover:opacity-90 transition-all duration-300" />
-                    <div className="absolute top-4 left-4 bg-white text-black px-4 py-1 rounded-full text-sm font-medium shadow-lg">
-                      {product.category}
-                    </div>
-                    <div className="absolute bottom-0 p-6 text-white">
-                      <h3 className="font-space text-xl font-semibold">
-                        {product.title}
-                      </h3>
-                      <p className="text-gray-300 text-sm">{product.size}</p>
-                    </div>
-                  </motion.div>
-                </Link>
-              ))}
+            {/* Search + Filter */}
+            <div className="flex justify-center mb-12">
+              <div className="relative w-full max-w-7xl">
+                <input
+                  type="text"
+                  placeholder="Search by name, size, category..."
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleFilterClick();
+                  }}
+                  className="w-full p-5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black pr-32 text-lg"
+                  style={{ height: "60px" }}
+                />
+                <button
+                  onClick={handleFilterClick}
+                  className="absolute right-0 top-0 h-full bg-black text-white px-6 rounded-r-lg hover:bg-gray-900 transition-colors flex items-center justify-center gap-2"
+                >
+                  <FiFilter size={22} />
+                  Filter
+                </button>
+              </div>
             </div>
+
+            {loading ? (
+              <p className="text-center text-gray-500">Loading products...</p>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredProducts.map((product, i) => (
+                  <Link key={product._id} href={`/products/gvt/${product._id}`}>
+                    <motion.div
+                      whileHover={{ scale: 1.03 }}
+                      transition={{ type: "spring", stiffness: 200 }}
+                      className="group relative rounded-2xl overflow-hidden shadow-lg bg-black cursor-pointer"
+                    >
+                      <img
+                        src={product.thumbnail?.url || product.image}
+                        alt={product.title}
+                        className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-80 group-hover:opacity-90 transition-all duration-300" />
+                      <div className="absolute top-4 left-4 bg-white text-black px-4 py-1 rounded-full text-sm font-medium shadow-lg">
+                        {product.category}
+                      </div>
+                      <div className="absolute bottom-0 p-6 text-white">
+                        <h3 className="font-space text-xl font-semibold">
+                          {product.title}
+                        </h3>
+                        <p className="text-gray-300 text-sm">{product.size}</p>
+                      </div>
+                    </motion.div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       </div>

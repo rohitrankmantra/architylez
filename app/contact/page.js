@@ -43,8 +43,8 @@ export default function Contact() {
     {
       icon: "✉️",
       title: "Email Us",
-      details: ["amar@architylezz.com"],
-      link: "mailto:amar@architylezz.com",
+      details: ["namaste@architylezz.com"],
+      link: "mailto:namaste@architylezz.com",
     },
   ];
 

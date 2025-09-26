@@ -16,7 +16,6 @@ const Footer = () => {
 
   const quickLinks = [
     { name: 'About Us', href: '/about' },
-    { name: 'Products', href: '/products' },
     { name: 'Catalogue', href: '/catalogue' },
     { name: 'Blog', href: '/blog' },
     { name: 'Contact', href: '/contact' },
@@ -115,7 +114,7 @@ const Footer = () => {
               <div className="space-y-4 font-inter text-black/60">
                 <p>📍 No3, 1st Cross Cabridge Layout Someshwarapura Halsuru Bangalore KA-560008 IND</p>
                 <p>📞 +91 8341311147</p>
-                <p>✉️ amar@architylezz.com</p>
+                <p>✉️ namaste@architylezz.com</p>
               </div>
             </motion.div>
           </div>
