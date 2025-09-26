@@ -267,7 +267,7 @@ export default function Home() {
             </div>
 
             <Link
-              href="/products"
+              href="/projects"
               className="inline-block mt-12 px-6 py-3 border-2 border-black text-black rounded-full font-medium hover:bg-black hover:text-white transition-all"
             >
               View All Projects →
