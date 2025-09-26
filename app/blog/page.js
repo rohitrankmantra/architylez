@@ -1,18 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { gsap } from "gsap";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import api from "@/utils/api";
-import Loader from "@/components/ui/Loader"
+import Loader from "@/components/ui/Loader";
+import Link from "next/link";
 
 export default function Blog() {
   const containerRef = useRef(null);
   const [blogs, setBlogs] = useState([]);
-  const [openBlog, setOpenBlog] = useState(null); // for modal overlay
-  const [commentsMap, setCommentsMap] = useState({}); // store comments per blog
+  const [loading, setLoading] = useState(true);
 
   // Fetch blogs client-side
   useEffect(() => {
@@ -23,6 +23,7 @@ export default function Blog() {
       } catch (error) {
         console.error("Failed to fetch blogs:", error);
       } finally {
+        setLoading(false);
       }
     };
     fetchBlogs();
@@ -49,25 +50,10 @@ export default function Blog() {
     return () => ctx.revert();
   }, []);
 
-
-  // Handle adding frontend-only comments
-  const handleAddComment = (blogId, content) => {
-    if (!content.trim()) return;
-    const newComment = {
-      id: Date.now(),
-      content,
-      author: "You",
-      createdAt: new Date().toISOString(),
-    };
-    setCommentsMap((prev) => ({
-      ...prev,
-      [blogId]: prev[blogId] ? [...prev[blogId], newComment] : [newComment],
-    }));
-  };
+  if (loading) return <Loader />;
 
   return (
     <>
-    <Loader>
       <Navigation />
       <div ref={containerRef} className="bg-white text-black">
         {/* Hero Section */}
@@ -121,13 +107,13 @@ export default function Blog() {
                     </div>
                     <span className="font-machina">{featuredPost.readTime || "5 min read"}</span>
                   </div>
-                  <button
-                    onClick={() => setOpenBlog(featuredPost)}
+                  <Link
+                    href={`/blog/${featuredPost._id}`}
                     className="inline-flex items-center space-x-2 px-8 py-4 bg-black text-white font-machina font-semibold rounded-full hover:bg-gray-900 transition-colors duration-300"
                   >
                     <span>Read Article</span>
                     <span>→</span>
-                  </button>
+                  </Link>
                 </div>
               </motion.article>
             </div>
@@ -186,13 +172,13 @@ export default function Blog() {
                       </div>
                       <span className="font-machina">{post.readTime || "5 min read"}</span>
                     </div>
-                    <button
-                      onClick={() => setOpenBlog(post)}
+                    <Link
+                      href={`/blog/${post._id}`}
                       className="inline-flex items-center space-x-2 text-black hover:text-gray-600 transition-colors duration-300 font-machina font-medium text-sm"
                     >
                       <span>Read More</span>
                       <span>→</span>
-                    </button>
+                    </Link>
                   </div>
                 </motion.article>
               ))}
@@ -202,96 +188,6 @@ export default function Blog() {
       </div>
 
       <Footer />
-{/* Modal Overlay */}
-<AnimatePresence>
-  {openBlog && (
-    <motion.div
-      key="modal"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-      onClick={() => setOpenBlog(null)}
-    >
-      <motion.div
-        initial={{ scale: 0.95 }}
-        animate={{ scale: 1 }}
-        exit={{ scale: 0.95 }}
-        className="bg-white w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-lg relative flex flex-col"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Close Button */}
-        <button
-          onClick={() => setOpenBlog(null)}
-          className="absolute top-4 right-4 text-gray-500 hover:text-black text-2xl font-bold"
-        >
-          ×
-        </button>
-
-        {/* Blog Header */}
-        <div className="px-6 pt-6">
-          <h1 className="font-clash text-3xl md:text-4xl font-bold text-black leading-tight">{openBlog.title}</h1>
-          <p className="text-gray-500 text-sm mb-4">
-            By {openBlog.author} • {new Date(openBlog.createdAt).toLocaleDateString()}
-          </p>
-          {openBlog.excerpt && (
-            <p className="text-gray-600 mb-6">{openBlog.excerpt}</p>
-          )}
-        </div>
-
-        {/* Blog Thumbnail */}
-        {openBlog.thumbnail?.url && (
-          <img
-            src={openBlog.thumbnail.url}
-            alt={openBlog.title}
-            className="w-full h-auto object-cover mb-6"
-          />
-        )}
-
-        {/* Blog Content */}
-        <div
-          className="prose max-w-full px-6 text-gray-800 mb-6"
-          dangerouslySetInnerHTML={{ __html: openBlog.content }}
-        />
-
-        {/* Comments Section */}
-        <div className="px-6 pb-6 border-t pt-4">
-          <h2 className="text-xl font-semibold mb-4 text-black">Comments</h2>
-          <div className="space-y-3 max-h-60 overflow-y-auto mb-3">
-            {(commentsMap[openBlog._id] || []).map((c) => (
-              <div key={c.id} className="p-3 border rounded-md bg-gray-50">
-                <p className="text-gray-800">{c.content}</p>
-                <p className="text-gray-500 text-sm">
-                  By {c.author} • {new Date(c.createdAt).toLocaleDateString()}
-                </p>
-              </div>
-            ))}
-          </div>
-          <textarea
-            rows={3}
-            value={openBlog.newComment || ""}
-            onChange={(e) =>
-              setOpenBlog({ ...openBlog, newComment: e.target.value })
-            }
-            placeholder="Write your comment..."
-            className="w-full text-black p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 mb-2"
-          />
-          <button
-            onClick={() => {
-              handleAddComment(openBlog._id, openBlog.newComment || "");
-              setOpenBlog({ ...openBlog, newComment: "" });
-            }}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-          >
-            Post Comment
-          </button>
-        </div>
-      </motion.div>
-    </motion.div>
-  )}
-</AnimatePresence>
-</Loader>
-
     </>
   );
 }
