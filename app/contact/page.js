@@ -48,21 +48,21 @@ export default function Contact() {
     },
   ];
 
+  // 🔥 GSAP for page entrance (faster + no delay)
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from(".hero-content", {
-        y: 80,
+      gsap.from(".contact-heading", {
+        y: 50,
         opacity: 0,
-        duration: 1.2,
-        ease: "power3.out",
-      });
-
-      gsap.from(".contact-grid", {
-        y: 40,
-        opacity: 0,
-        duration: 1,
+        duration: 0.6,
         ease: "power2.out",
-        delay: 0.5,
+      });
+      gsap.from(".contact-grid", {
+        y: 30,
+        opacity: 0,
+        duration: 0.6,
+        ease: "power2.out",
+        delay: 0.2,
       });
     }, containerRef);
 
@@ -85,29 +85,11 @@ export default function Contact() {
     <Loader>
       <Navigation />
       <div ref={containerRef} className="bg-white text-black">
-        {/* Hero Section */}
-        <section className="min-h-[65vh] flex items-center justify-center px-6 bg-gray-50">
-          <div className="hero-content max-w-4xl mx-auto text-center space-y-8">
-            <h1 className="font-clash text-5xl md:text-7xl font-bold leading-tight">
-              <span className="text-black">Get In</span>{" "}
-              <span className="text-outline">Touch</span>
-            </h1>
-            <p className="font-inter text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              Ready to transform your space? Let’s discuss your project and
-              bring your architectural vision to life with our expert team.
-            </p>
-          </div>
-        </section>
-
-        {/* Contact Form & Info */}
-        <section className="py-24 px-6 bg-white">
+        {/* Contact Section */}
+        <section className="py-32 px-6 bg-white">
           <div className="max-w-7xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="text-center mb-16"
-            >
+            {/* Heading */}
+            <div className="contact-heading text-center mb-16">
               <h2 className="font-clash text-4xl md:text-6xl font-bold mb-6">
                 <span className="text-black">Contact</span>{" "}
                 <span className="text-outline">Us</span>
@@ -116,11 +98,17 @@ export default function Contact() {
                 Fill out the form or reach us directly via phone, email, or by
                 visiting our showroom.
               </p>
-            </motion.div>
+            </div>
 
             <div className="contact-grid grid grid-cols-1 lg:grid-cols-2 gap-16">
               {/* Contact Form */}
-              <div className="space-y-8">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                viewport={{ once: true }}
+                className="space-y-8"
+              >
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Name & Email */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -134,7 +122,7 @@ export default function Contact() {
                         value={formData.name}
                         onChange={handleInputChange}
                         required
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-300 text-black rounded-lg focus:border-black focus:outline-none transition-all duration-300"
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 text-black rounded-lg focus:border-black focus:outline-none"
                         placeholder="John Doe"
                       />
                     </div>
@@ -148,7 +136,7 @@ export default function Contact() {
                         value={formData.email}
                         onChange={handleInputChange}
                         required
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-300 text-black rounded-lg focus:border-black focus:outline-none transition-all duration-300"
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 text-black rounded-lg focus:border-black focus:outline-none"
                         placeholder="john@example.com"
                       />
                     </div>
@@ -165,8 +153,8 @@ export default function Contact() {
                         name="phone"
                         value={formData.phone}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-300 text-black rounded-lg focus:border-black focus:outline-none transition-all duration-300"
-                        placeholder="+1 (555) 123-4567"
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 text-black rounded-lg focus:border-black focus:outline-none"
+                        placeholder="+91 98765 43210"
                       />
                     </div>
                     <div>
@@ -177,7 +165,7 @@ export default function Contact() {
                         name="service"
                         value={formData.service}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-300 text-black rounded-lg focus:border-black focus:outline-none transition-all duration-300"
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 text-black rounded-lg focus:border-black focus:outline-none"
                       >
                         <option value="">Select a service</option>
                         {services.map((service) => (
@@ -200,7 +188,7 @@ export default function Contact() {
                       onChange={handleInputChange}
                       required
                       rows={6}
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-300 text-black rounded-lg focus:border-black focus:outline-none transition-all duration-300 resize-none"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 text-black rounded-lg focus:border-black focus:outline-none resize-none"
                       placeholder="Tell us about your project, budget, timeline..."
                     />
                   </div>
@@ -210,15 +198,21 @@ export default function Contact() {
                     type="submit"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full py-4 bg-black text-white font-machina font-semibold rounded-lg hover:bg-gray-900 transition-colors duration-300"
+                    className="w-full py-4 bg-black text-white font-machina font-semibold rounded-lg hover:bg-gray-900 transition-colors"
                   >
                     Send Message
                   </motion.button>
                 </form>
-              </div>
+              </motion.div>
 
               {/* Contact Info */}
-              <div className="space-y-8">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="space-y-8"
+              >
                 <h2 className="font-clash text-3xl md:text-4xl font-bold text-black mb-4">
                   Contact Information
                 </h2>
@@ -228,7 +222,8 @@ export default function Contact() {
                       key={info.title}
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: index * 0.1 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                      viewport={{ once: true }}
                       className="group"
                     >
                       <div className="flex items-start space-x-4 p-6 bg-gray-50 border border-gray-200 rounded-2xl hover:shadow-md transition-all duration-300">
@@ -246,7 +241,7 @@ export default function Contact() {
                                 {info.link && idx === 0 ? (
                                   <a
                                     href={info.link}
-                                    className="hover:text-black transition-colors duration-300"
+                                    className="hover:text-black transition-colors"
                                   >
                                     {detail}
                                   </a>
@@ -261,7 +256,7 @@ export default function Contact() {
                     </motion.div>
                   ))}
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </section>

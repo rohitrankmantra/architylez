@@ -79,7 +79,7 @@ export default function About() {
                 </div>
 
                 <div className="space-y-4 sm:space-y-6 font-inter text-gray-700 leading-relaxed">
-                  <p className="text-sm sm:text-base md:text-lg">
+                  <p className="text-sm sm:text-base">
                     Founded on the principles of innovation, sustainability, and timeless design,
                     Architylezz has been at the forefront of architectural excellence for over a decade.
                   </p>
@@ -161,7 +161,10 @@ export default function About() {
           </div>
         </section>
 
-        {/* Team Section */}
+
+        {/* Team section  is commented out for now but ready to be used later  */}
+{/* 
+        Team Section
         <section className="py-16 sm:py-24 px-4 sm:px-6 bg-white">
           <div className="max-w-7xl mx-auto">
             <motion.div
@@ -211,7 +214,7 @@ export default function About() {
               ))}
             </div>
           </div>
-        </section>
+        </section> */}
       </div>
       <Footer/>
     </Loader>

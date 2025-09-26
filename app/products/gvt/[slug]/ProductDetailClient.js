@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-/* ---------- Lucide-style inline icons ---------- */
+/* ---------- Icons ---------- */
 const IconWrapper = ({ children, className }) => (
   <svg
     width="24"
@@ -89,7 +89,7 @@ export default function ProductDetailClient({ product }) {
               <img
                 src={img}
                 alt={`${product.title} ${i}`}
-                className="w-full h-[220px] md:h-[260px] object-cover  hover:grayscale-0 transition-all"
+                className="w-full h-[220px] md:h-[260px] object-cover hover:grayscale-0 transition-all"
               />
               <div className="absolute left-3 bottom-3 px-3 py-1 rounded-full bg-black/70 text-xs text-white font-medium shadow">
                 {product.title}
@@ -100,87 +100,52 @@ export default function ProductDetailClient({ product }) {
 
         {/* RIGHT: Info */}
         <div>
-          <h2 className="text-lg text-gray-500 mb-3">Product Details</h2>
-          <h2 className="text-3xl font-bold mb-8">{product.title}</h2>
+          <h2 className="text-3xl font-bold mb-6">{product.title}</h2>
 
-          <div className="rounded-2xl overflow-hidden border border-black/20 bg-white shadow-md mb-10">
-            <div className="grid grid-cols-2 gap-6 p-8">
-              <div className="text-sm font-medium text-gray-600">Category</div>
-              <div className="text-sm">{product.category}</div>
+          {/* Specification */}
+          <section className="mb-12">
+            <h3 className="text-xl font-semibold mb-6">Specification</h3>
+            <div className="rounded-2xl overflow-hidden border border-black/20 bg-white shadow-md">
+              <div className="grid grid-cols-2 gap-6 p-6 text-sm text-gray-700">
+                <div className="font-medium">Category</div>
+                <div>{product.category}</div>
 
-              <div className="text-sm font-medium text-gray-600">Size</div>
-              <div className="text-sm">{product.size}</div>
+                <div className="font-medium">Size</div>
+                <div>{product.size}</div>
 
-              <div className="text-sm font-medium text-gray-600">Finish</div>
-              <div className="text-sm">{product.finish ?? "-"}</div>
+                <div className="font-medium">Finish</div>
+                <div>{product.finish ?? "-"}</div>
 
-              <div className="text-sm font-medium text-gray-600">Series</div>
-              <div className="text-sm">{product.series ?? "-"}</div>
-            </div>
-          </div>
-
-          {/* Applications */}
-          <section className="py-16">
-            <motion.h3
-              className="text-3xl md:text-4xl font-bold mb-14  text-black"
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              Applications :
-            </motion.h3>
-
-            <motion.div
-              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8"
-              initial="hidden"
-              whileInView="visible"
-              variants={{
-                hidden: {},
-                visible: { transition: { staggerChildren: 0.15 } },
-              }}
-            >
-              {usageOptions.map((u, idx) => (
-                <motion.div
-                  key={idx}
-                  className="flex flex-col items-center justify-center gap-3 p-6 border border-black/20 rounded-xl bg-white shadow hover:shadow-lg transition"
-                  variants={{
-                    hidden: { opacity: 0, y: 30 },
-                    visible: { opacity: 1, y: 0 },
-                  }}
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <u.Icon />
-                  <div className="text-sm font-medium text-center">{u.label}</div>
-                </motion.div>
-              ))}
-            </motion.div>
-
-           
-          </section>
-
-          {/* Similar Products */}
-          {product.similar?.length > 0 && (
-            <div className="mt-12">
-              <h4 className="font-semibold mb-4">Similar Products</h4>
-              <div className="flex gap-6 flex-wrap">
-                {product.similar.map((s, i) => (
-                  <div
-                    key={i}
-                    className="w-32 cursor-pointer hover:scale-105 transition-transform"
-                  >
-                    <img
-                      src={s.image}
-                      alt={s.title}
-                      className="w-full h-24 object-cover rounded-lg border border-black/20 shadow-sm"
-                    />
-                    <div className="text-xs text-gray-800 mt-2 text-center">
-                      {s.title}
-                    </div>
-                  </div>
-                ))}
+                <div className="font-medium">Series</div>
+                <div>{product.series ?? "-"}</div>
               </div>
             </div>
-          )}
+          </section>
+
+          {/* Applications */}
+          <section className="mb-12">
+            <h3 className="text-xl font-semibold mb-6">Applications</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {usageOptions.map((u, idx) => (
+                <div
+                  key={idx}
+                  className="flex flex-col items-center justify-center gap-2 p-4 border border-black/20 rounded-lg shadow hover:shadow-lg transition text-center text-sm"
+                >
+                  <u.Icon />
+                  <span>{u.label}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Description */}
+          <section>
+            <h3 className="text-xl font-semibold mb-4">Description</h3>
+            <p className="text-base leading-relaxed text-gray-800">
+              {product.description ??
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."}
+            </p>
+          </section>
         </div>
       </div>
 

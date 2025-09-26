@@ -3,6 +3,7 @@ import Link from "next/link";
 import ProductDetailClient from "./ProductDetailClient";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+
 const products = [
   {
     id: "elegant-marble-finish",
@@ -62,11 +63,14 @@ export default function ProductDetailPage({ params }) {
     );
   }
 
+  // Get similar products excluding current
+  const similar = products.filter((p) => p.id !== product.id);
+
   return (
     <>
-    <Navigation/>
-      <ProductDetailClient product={product} products={products} />
-      <Footer/>
+      <Navigation />
+      <ProductDetailClient product={{ ...product, similar }} />
+      <Footer />
     </>
   );
 }

@@ -21,17 +21,14 @@ export default function Loader({ children }) {
             transition={{ duration: 0.8, ease: "easeInOut" }}
             className="fixed inset-0 flex flex-col items-center justify-center bg-white text-black z-[9999]"
           >
-            {/* Pulsing Circle */}
-            <motion.div
-              className="w-24 h-24 rounded-full border-4 border-black mb-8"
+            {/* Logo Image */}
+            <motion.img
+              src="/loader.png" // Replace with your logo path
+              alt="Logo"
+              className="w-24 h-24 mb-8 object-contain"
               animate={{
-                scale: [1, 1.3, 1],
-                opacity: [1, 0.6, 1],
-                boxShadow: [
-                  "0 0 20px rgba(0,0,0,0.5)",
-                  "0 0 40px rgba(0,0,0,0.8)",
-                  "0 0 20px rgba(0,0,0,0.5)",
-                ],
+                scale: [1, 1.1, 1],
+                opacity: [1, 0.8, 1],
               }}
               transition={{
                 repeat: Infinity,

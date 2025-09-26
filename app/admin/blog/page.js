@@ -226,7 +226,7 @@ export default function BlogAdminPage() {
               </div>
 
               <div>
-                <label className="block font-medium">Excerpt</label>
+                <label className="block font-medium">Short Description</label>
                 <input
                   type="text"
                   name="excerpt"
