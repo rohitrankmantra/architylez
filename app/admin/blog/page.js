@@ -5,31 +5,67 @@ import { X, Pencil, Trash2, Plus } from "lucide-react";
 import { toast } from "react-hot-toast";
 import api from "@/utils/api.js";
 
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Image from "@tiptap/extension-image";
+import Placeholder from "@tiptap/extension-placeholder";
+
 export default function BlogAdminPage() {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedBlog, setSelectedBlog] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
   const [formData, setFormData] = useState({
     title: "",
     excerpt: "",
-    content: "",
+    content: "<p></p>", // HTML content
     category: "Updates",
     author: "",
     thumbnail: null,
     thumbnailPreview: "",
+    images: [],
+    imagesPreview: [],
   });
-  const [saving, setSaving] = useState(false);
-  const [deleting, setDeleting] = useState(false);
 
-  // Fetch blogs
+  useEffect(() => setMounted(true), []);
+
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Image,
+      Placeholder.configure({ placeholder: "Write your blog content..." }),
+    ],
+    content: formData.content,
+    onUpdate: ({ editor }) =>
+      setFormData((prev) => ({ ...prev, content: editor.getHTML() })), // Save HTML
+    editorProps: {
+      attributes: {
+        class: "prose prose-sm sm:prose lg:prose-lg max-w-full focus:outline-none",
+      },
+    },
+    autofocus: true,
+    immediatelyRender: false,
+  });
+
+  useEffect(() => {
+    if (editor) editor.setEditable(mounted);
+  }, [mounted, editor]);
+
+  useEffect(() => {
+    if (editor && formData.content) editor.commands.setContent(formData.content);
+  }, [formData.content, editor]);
+
   const fetchBlogs = async () => {
     try {
       const { data } = await api.get("/blogs");
       setBlogs(data);
     } catch (err) {
-      console.error("Error fetching blogs:", err);
+      console.error(err);
       toast.error("Failed to load blogs");
     } finally {
       setLoading(false);
@@ -40,7 +76,6 @@ export default function BlogAdminPage() {
     fetchBlogs();
   }, []);
 
-  // Delete blog
   const handleDelete = async () => {
     if (!deleteTarget) return;
     setDeleting(true);
@@ -57,51 +92,60 @@ export default function BlogAdminPage() {
     }
   };
 
-  // Open edit form
   const handleEdit = (blog) => {
+    const content = blog.content || "<p></p>"; // HTML content
     setSelectedBlog(blog);
     setFormData({
       title: blog.title,
       excerpt: blog.excerpt || "",
-      content: blog.content,
+      content,
       category: blog.category,
       author: blog.author,
       thumbnail: null,
       thumbnailPreview: blog.thumbnail?.url || "",
+      images: [],
+      imagesPreview: blog.images?.map((img) => img.url) || [],
     });
     setShowForm(true);
+    editor?.commands.setContent(content); // Load HTML
   };
 
-  // Open add form
   const handleAdd = () => {
     setSelectedBlog(null);
     setFormData({
       title: "",
       excerpt: "",
-      content: "",
+      content: "<p></p>",
       category: "Updates",
       author: "",
       thumbnail: null,
       thumbnailPreview: "",
+      images: [],
+      imagesPreview: [],
     });
     setShowForm(true);
   };
 
-  // Form change
   const handleFormChange = (e) => {
     const { name, value, files } = e.target;
     if (name === "thumbnail" && files?.[0]) {
-      setFormData({
-        ...formData,
+      setFormData((prev) => ({
+        ...prev,
         thumbnail: files[0],
         thumbnailPreview: URL.createObjectURL(files[0]),
-      });
+      }));
+    } else if (name === "images" && files?.length > 0) {
+      const filesArray = Array.from(files);
+      setFormData((prev) => ({
+        ...prev,
+        images: filesArray,
+        imagesPreview: filesArray.map((f) => URL.createObjectURL(f)),
+      }));
     } else {
-      setFormData({ ...formData, [name]: value });
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
-  // Submit form
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -109,10 +153,11 @@ export default function BlogAdminPage() {
       const fd = new FormData();
       fd.append("title", formData.title);
       fd.append("excerpt", formData.excerpt);
-      fd.append("content", formData.content);
+      fd.append("content", formData.content); // Send HTML directly
       fd.append("category", formData.category);
       fd.append("author", formData.author);
       if (formData.thumbnail) fd.append("thumbnail", formData.thumbnail);
+      formData.images.forEach((file) => fd.append("images", file));
 
       if (selectedBlog) {
         await api.put(`/blogs/${selectedBlog._id}`, fd);
@@ -121,10 +166,23 @@ export default function BlogAdminPage() {
         await api.post("/blogs/create", fd);
         toast.success("Blog added successfully");
       }
+
       fetchBlogs();
       setShowForm(false);
+      setFormData({
+        title: "",
+        excerpt: "",
+        content: "<p></p>",
+        category: "Updates",
+        author: "",
+        thumbnail: null,
+        thumbnailPreview: "",
+        images: [],
+        imagesPreview: [],
+      });
+      editor?.commands.clearContent();
     } catch (err) {
-      console.error("Error saving blog:", err);
+      console.error(err);
       toast.error("Failed to save blog");
     } finally {
       setSaving(false);
@@ -200,7 +258,7 @@ export default function BlogAdminPage() {
       {/* Add/Edit Overlay */}
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white w-3/4 max-w-2xl p-6 rounded-lg shadow-lg relative max-h-[100vh] overflow-y-auto">
+          <div className="bg-white w-11/12 sm:w-3/4 max-w-2xl p-6 rounded-lg shadow-lg relative max-h-[90vh] overflow-y-auto">
             <button
               className="absolute top-3 right-3 text-gray-600 hover:text-black"
               onClick={() => setShowForm(false)}
@@ -213,6 +271,7 @@ export default function BlogAdminPage() {
             </h2>
 
             <form className="space-y-4" onSubmit={handleFormSubmit}>
+              {/* Title */}
               <div>
                 <label className="block font-medium">Title</label>
                 <input
@@ -225,6 +284,7 @@ export default function BlogAdminPage() {
                 />
               </div>
 
+              {/* Short Description */}
               <div>
                 <label className="block font-medium">Short Description</label>
                 <input
@@ -237,17 +297,18 @@ export default function BlogAdminPage() {
                 />
               </div>
 
+              {/* Content */}
               <div>
-                <label className="block font-medium">Content</label>
-                <textarea
-                  name="content"
-                  value={formData.content}
-                  onChange={handleFormChange}
-                  className="w-full p-2 border rounded h-32"
-                  required
-                />
+                <label className="block font-medium mb-2">Content</label>
+                {mounted && editor && (
+                  <EditorContent
+                    editor={editor}
+                    className="border rounded p-2 min-h-[200px]"
+                  />
+                )}
               </div>
 
+              {/* Thumbnail */}
               <div>
                 <label className="block font-medium">Thumbnail</label>
                 <input
@@ -265,6 +326,29 @@ export default function BlogAdminPage() {
                 )}
               </div>
 
+              {/* Additional Images */}
+              <div>
+                <label className="block font-medium">Additional Images</label>
+                <input
+                  type="file"
+                  name="images"
+                  multiple
+                  onChange={handleFormChange}
+                  className="w-full p-2 border rounded"
+                />
+                <div className="flex flex-wrap mt-2 gap-2">
+                  {formData.imagesPreview?.map((img, idx) => (
+                    <img
+                      key={idx}
+                      src={img}
+                      alt={`Preview ${idx}`}
+                      className="w-24 h-24 object-cover rounded"
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Category */}
               <div>
                 <label className="block font-medium">Category</label>
                 <select
@@ -280,6 +364,7 @@ export default function BlogAdminPage() {
                 </select>
               </div>
 
+              {/* Author */}
               <div>
                 <label className="block font-medium">Author</label>
                 <input
@@ -292,6 +377,7 @@ export default function BlogAdminPage() {
                 />
               </div>
 
+              {/* Submit */}
               <button
                 type="submit"
                 disabled={saving}
@@ -314,7 +400,7 @@ export default function BlogAdminPage() {
         </div>
       )}
 
-      {/* Delete Confirmation Overlay */}
+      {/* Delete Confirmation */}
       {deleteTarget && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-80 text-center">
