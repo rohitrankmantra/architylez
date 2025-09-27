@@ -6,6 +6,8 @@ import { gsap } from "gsap";
 import Loader from "@/components/ui/Loader";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import api from "@/utils/api"; // ✅ axios instance
+import { toast } from "react-hot-toast";
 
 export default function Contact() {
   const containerRef = useRef(null);
@@ -16,6 +18,7 @@ export default function Contact() {
     service: "",
     message: "",
   });
+  const [submitting, setSubmitting] = useState(false);
 
   const services = [
     "Architectural Design",
@@ -48,7 +51,7 @@ export default function Contact() {
     },
   ];
 
-  // 🔥 GSAP for page entrance (faster + no delay)
+  // 🔥 GSAP for page entrance
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.from(".contact-heading", {
@@ -76,9 +79,26 @@ export default function Contact() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    setSubmitting(true);
+
+    try {
+      await api.post("/contact-forms", formData);
+      toast.success("✅ Message sent successfully!");
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        service: "",
+        message: "",
+      });
+    } catch (err) {
+      console.error("❌ Error submitting contact form:", err);
+      toast.error("Failed to send message. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -196,11 +216,16 @@ export default function Contact() {
                   {/* Submit */}
                   <motion.button
                     type="submit"
+                    disabled={submitting}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full py-4 bg-black text-white font-machina font-semibold rounded-lg hover:bg-gray-900 transition-colors"
+                    className={`w-full py-4 rounded-lg font-machina font-semibold transition-colors ${
+                      submitting
+                        ? "bg-gray-400 cursor-not-allowed text-white"
+                        : "bg-black text-white hover:bg-gray-900"
+                    }`}
                   >
-                    Send Message
+                    {submitting ? "Sending..." : "Send Message"}
                   </motion.button>
                 </form>
               </motion.div>

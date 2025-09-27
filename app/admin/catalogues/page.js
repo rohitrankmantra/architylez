@@ -13,7 +13,6 @@ export default function CataloguesPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(null);
 
-  // === Fetch catalogues
   useEffect(() => {
     const fetchCatalogues = async () => {
       try {
@@ -29,7 +28,6 @@ export default function CataloguesPage() {
     fetchCatalogues();
   }, []);
 
-  // === Delete catalogue
   const handleDelete = async (id) => {
     setSubmitting(true);
     try {
@@ -45,52 +43,43 @@ export default function CataloguesPage() {
     }
   };
 
-const handleAdd = async (e) => {
-  e.preventDefault();
-  setSubmitting(true);
+  const handleAdd = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
 
-  const file = e.target.pdf.files[0];
+    const file = e.target.pdf.files[0];
+    if (!file) {
+      toast.error("Please select a PDF file");
+      setSubmitting(false);
+      return;
+    }
+    if (file.type !== "application/pdf") {
+      toast.error("❌ Only PDF files are allowed");
+      setSubmitting(false);
+      return;
+    }
 
-  if (!file) {
-    toast.error("Please select a PDF file");
-    setSubmitting(false);
-    return;
-  }
+    const formData = new FormData();
+    formData.append("title", e.target.title.value);
+    formData.append("description", e.target.description.value);
+    formData.append("category", e.target.category.value);
+    formData.append("pdf", file);
 
-  if (file.type !== "application/pdf") {
-    toast.error("❌ Only PDF files are allowed");
-    setSubmitting(false);
-    return;
-  }
+    try {
+      const res = await api.post("/catalogues/create", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      toast.success("✅ Catalogue created");
+      setCatalogues((prev) => [res.data.catalogue, ...prev]);
+      setIsAddModalOpen(false);
+    } catch (err) {
+      console.error("❌ Error creating catalogue:", err);
+      toast.error("Failed to create catalogue");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
-  const formData = new FormData();
-  formData.append("title", e.target.title.value);
-  formData.append("description", e.target.description.value);
-  formData.append("category", e.target.category.value);
-  formData.append("pdf", file);
-
-  // // Proper log to see contents
-  // for (let [key, value] of formData.entries()) {
-  //   console.log(key, value); 
-  // }
-
-  try {
-    const res = await api.post("/catalogues/create", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-
-    toast.success("✅ Catalogue created");
-    setCatalogues((prev) => [res.data.catalogue, ...prev]); // note: use res.data.catalogue
-    setIsAddModalOpen(false);
-  } catch (err) {
-    console.error("❌ Error creating catalogue:", err);
-    toast.error("Failed to create catalogue");
-  } finally {
-    setSubmitting(false);
-  }
-};
-
-  // === Update catalogue
   const handleUpdate = async (e) => {
     e.preventDefault();
     setSubmitting(true);
@@ -105,7 +94,6 @@ const handleAdd = async (e) => {
       const res = await api.put(`/catalogues/${selectedCatalogue._id}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-
       setCatalogues((prev) =>
         prev.map((c) => (c._id === res.data.catalogue._id ? res.data.catalogue : c))
       );
@@ -138,6 +126,7 @@ const handleAdd = async (e) => {
           <table className="min-w-full border text-sm">
             <thead className="bg-gray-100">
               <tr>
+                <th className="p-2 border">Thumbnail</th>
                 <th className="p-2 border">Title</th>
                 <th className="p-2 border">Description</th>
                 <th className="p-2 border">Category</th>
@@ -149,14 +138,35 @@ const handleAdd = async (e) => {
             <tbody>
               {catalogues.map((c) => (
                 <tr key={c._id} className="hover:bg-gray-50">
+                  {/* Thumbnail */}
+                <td className="p-2 border">
+  {c.thumbnail?.url ? (
+    <img
+      src={c.thumbnail.url}
+      alt={c.title}
+      className="w-20 h-28 object-cover rounded hover:scale-105 transition"
+      onError={(e) => { e.currentTarget.src = "/placeholder.jpg"; }} // fallback image
+    />
+  ) : (
+    <span className="text-gray-400 italic">No thumbnail</span>
+  )}
+</td>
+
+                  {/* Title */}
                   <td
                     className="p-2 border text-blue-600 cursor-pointer hover:underline"
                     onClick={() => setSelectedCatalogue(c)}
                   >
                     {c.title}
                   </td>
+
+                  {/* Description */}
                   <td className="p-2 border">{c.description}</td>
+
+                  {/* Category */}
                   <td className="p-2 border">{c.category}</td>
+
+                  {/* PDF Link */}
                   <td className="p-2 border">
                     {c.pdf?.url ? (
                       <a
@@ -171,9 +181,11 @@ const handleAdd = async (e) => {
                       <span className="text-gray-400 italic">No file</span>
                     )}
                   </td>
-                  <td className="p-2 border">
-                    {new Date(c.createdAt).toLocaleDateString()}
-                  </td>
+
+                  {/* Created */}
+                  <td className="p-2 border">{new Date(c.createdAt).toLocaleDateString()}</td>
+
+                  {/* Actions */}
                   <td className="p-2 border text-center">
                     <div className="flex items-center justify-center gap-2">
                       <button
@@ -261,6 +273,7 @@ function CatalogueModal({ title, catalogue, onClose, onSubmit, submitting }) {
             <option>General</option>
           </select>
           <input type="file" name="pdf" accept=".pdf,application/pdf" />
+          {/* Show current PDF */}
           {catalogue?.pdf?.url && (
             <a
               href={catalogue.pdf.url}

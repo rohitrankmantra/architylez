@@ -7,40 +7,16 @@ import Loader from "@/components/ui/Loader";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import api from "@/utils/api";
-import { useInView } from "react-intersection-observer";
 
-// PDF thumbnail generator
-async function getPdfThumbnail(pdfUrl) {
-  if (!pdfUrl || typeof window === "undefined") return null;
 
-  try {
-    const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf");
-    pdfjsLib.GlobalWorkerOptions.workerSrc =
-      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.12.313/pdf.worker.min.js";
-
-    const loadingTask = pdfjsLib.getDocument({ url: pdfUrl });
-    const pdf = await loadingTask.promise;
-    const page = await pdf.getPage(1);
-    const viewport = page.getViewport({ scale: 1.5 });
-
-    const canvas = document.createElement("canvas");
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
-
-    const context = canvas.getContext("2d");
-    await page.render({ canvasContext: context, viewport }).promise;
-
-    return canvas.toDataURL();
-  } catch (err) {
-    console.error("Thumbnail generation failed:", err);
-    return null;
-  }
-}
-
+// === Catalogue Page ===
 export default function Catalogue() {
   const containerRef = useRef(null);
   const [catalogues, setCatalogues] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeCategory, setActiveCategory] = useState("All");
+
+  const categories = ["All", "GVT", "Subway", "Wall", "Wood"];
 
   // GSAP hero animation
   useEffect(() => {
@@ -62,7 +38,7 @@ export default function Catalogue() {
     return () => ctx.revert();
   }, []);
 
-  // Fetch catalogues
+  // Fetch catalogues from API
   useEffect(() => {
     const fetchCatalogues = async () => {
       try {
@@ -76,6 +52,12 @@ export default function Catalogue() {
     };
     fetchCatalogues();
   }, []);
+
+  // Filter catalogues by active category
+  const filteredCatalogues =
+    activeCategory === "All"
+      ? catalogues
+      : catalogues.filter((c) => c.category === activeCategory);
 
   return (
     <Loader>
@@ -102,7 +84,7 @@ export default function Catalogue() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="text-center mb-16"
+              className="text-center mb-8"
             >
               <h2 className="font-clash text-4xl md:text-6xl font-bold mb-6">
                 <span className="text-outline">Featured</span>{" "}
@@ -113,13 +95,34 @@ export default function Catalogue() {
                 includes detailed specifications, installation guides, and
                 design inspiration.
               </p>
+
+              {/* Categories Tabs below heading */}
+              <div className="mt-8 flex flex-wrap justify-center gap-4">
+                {["All", "GVT", "Subway", "Wall", "Wood"].map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    className={`px-5 py-2 rounded-full font-semibold transition-colors duration-300 ${
+                      activeCategory === cat
+                        ? "bg-black text-white"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
             </motion.div>
 
             {loading ? (
               <p className="text-center text-gray-500">Loading catalogues...</p>
+            ) : filteredCatalogues.length === 0 ? (
+              <p className="text-center text-gray-500">
+                No catalogues found in this category.
+              </p>
             ) : (
               <div className="catalogue-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                {catalogues.map((catalogue, index) => (
+                {filteredCatalogues.map((catalogue, index) => (
                   <CatalogueCard
                     key={catalogue._id}
                     catalogue={catalogue}
@@ -136,60 +139,37 @@ export default function Catalogue() {
   );
 }
 
-// === Compact CatalogueCard ===
+// === Catalogue Card ===
 function CatalogueCard({ catalogue, index }) {
-  const [thumbnail, setThumbnail] = useState(null);
-  const { ref, inView } = useInView({ triggerOnce: true, rootMargin: "200px" });
-
-  useEffect(() => {
-    const loadThumbnail = async () => {
-      if (!catalogue.pdf?.url) return;
-
-      const cacheKey = `thumb-${catalogue._id}`;
-      const cached = localStorage.getItem(cacheKey);
-      if (cached) {
-        setThumbnail(cached);
-        return;
-      }
-
-      try {
-        const thumb = await getPdfThumbnail(catalogue.pdf.url);
-        if (thumb) {
-          setThumbnail(thumb);
-          localStorage.setItem(cacheKey, thumb);
-        }
-      } catch (err) {
-        console.error("Thumbnail generation failed for", catalogue.pdf.url);
-      }
-    };
-
-    if (inView) loadThumbnail();
-  }, [inView, catalogue]);
-
   return (
     <motion.div
-      ref={ref}
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: index * 0.1 }}
       whileHover={{ y: -10 }}
       className="group bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-500"
     >
-      {/* Smaller Thumbnail */}
+      {/* Thumbnail */}
       <div className="relative h-64 overflow-hidden bg-gray-100 flex items-center justify-center">
-        {thumbnail ? (
+        {catalogue.thumbnail?.url ? (
           <img
-            src={thumbnail}
-            alt={catalogue.title}
+            src={catalogue.thumbnail.url}
+            alt={catalogue.title || "Catalogue thumbnail"}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             loading="lazy"
           />
         ) : (
-          <span className="text-gray-400">Loading thumbnail...</span>
+          <span className="text-gray-400">No thumbnail</span>
+        )}
+        {/* Category Tag */}
+        {catalogue.category && (
+          <span className="absolute top-3 left-3 bg-black text-white text-xs font-semibold px-2 py-1 rounded">
+            {catalogue.category}
+          </span>
         )}
       </div>
 
-      {/* Compact Body */}
+      {/* Body */}
       <div className="p-6 space-y-3">
         <h3 className="font-space text-xl font-semibold text-black">
           {catalogue.title}
@@ -203,7 +183,7 @@ function CatalogueCard({ catalogue, index }) {
 
         <div className="flex space-x-3 pt-3">
           <motion.a
-            href={catalogue.pdf.url}
+            href={catalogue.pdf?.url}
             target="_blank"
             rel="noopener noreferrer"
             whileHover={{ scale: 1.02 }}
@@ -213,7 +193,7 @@ function CatalogueCard({ catalogue, index }) {
             Download
           </motion.a>
           <motion.a
-            href={catalogue.pdf.url}
+            href={catalogue.pdf?.url}
             target="_blank"
             rel="noopener noreferrer"
             whileHover={{ scale: 1.02 }}

@@ -63,6 +63,8 @@ export default function ContactFormsPage() {
               <tr>
                 <th className="p-3 border text-left font-semibold">Name</th>
                 <th className="p-3 border text-left font-semibold">Email</th>
+                <th className="p-3 border text-left font-semibold">Phone</th>
+                <th className="p-3 border text-left font-semibold">Service</th>
                 <th className="p-3 border text-left font-semibold">Message</th>
                 <th className="p-3 border text-left font-semibold">Date</th>
                 <th className="p-3 border text-center font-semibold">Actions</th>
@@ -73,6 +75,8 @@ export default function ContactFormsPage() {
                 <tr key={c._id} className="hover:bg-gray-50 transition">
                   <td className="p-3 border">{c.name}</td>
                   <td className="p-3 border">{c.email}</td>
+                  <td className="p-3 border">{c.phone || "-"}</td>
+                  <td className="p-3 border">{c.service || "-"}</td>
                   <td className="p-3 border max-w-xs truncate">{c.message}</td>
                   <td className="p-3 border">
                     {new Date(c.createdAt).toLocaleDateString()}
