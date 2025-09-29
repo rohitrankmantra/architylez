@@ -6,6 +6,8 @@ import { gsap } from "gsap";
 import Loader from "@/components/ui/Loader";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import api from "@/utils/api";
+import toast from "react-hot-toast";
 
 // Lightbox
 import Lightbox from "yet-another-react-lightbox";
@@ -15,45 +17,32 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin();
 }
 
-// Dummy projects data
-const projects = [
-  {
-    title: "Modern Villa",
-    category: "Residential",
-    image:
-      "https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=800",
-  },
-  {
-    title: "Corporate Headquarters",
-    category: "Commercial",
-    image:
-      "https://images.pexels.com/photos/2102587/pexels-photo-2102587.jpeg?auto=compress&cs=tinysrgb&w=800",
-  },
-  {
-    title: "Luxury Hotel Suite",
-    category: "Hospitality",
-    image:
-      "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=800",
-  },
-  {
-    title: "Urban Apartment",
-    category: "Residential",
-    image:
-      "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=800",
-  },
-  {
-    title: "Retail Space Design",
-    category: "Commercial",
-    image:
-      "https://images.pexels.com/photos/374710/pexels-photo-374710.jpeg?auto=compress&cs=tinysrgb&w=800",
-  },
-];
-
 export default function ProjectsPage() {
   const containerRef = useRef(null);
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
 
+  // Fetch projects from API
+  const fetchProjects = async () => {
+    setLoading(true);
+    try {
+      const res = await api.get("/projects");
+      setProjects(res.data);
+    } catch (err) {
+      console.error("❌ Error fetching projects:", err);
+      toast.error("Failed to load projects");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  // GSAP animations
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.utils.toArray(".project-item").forEach((el) => {
@@ -71,12 +60,12 @@ export default function ProjectsPage() {
     }, containerRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [projects]);
 
   return (
     <Loader>
       <Navigation />
-      <div ref={containerRef} className=" text-black">
+      <div ref={containerRef} className="text-black">
         {/* Hero Section */}
         <section className="min-h-[60vh] flex items-center justify-center px-6 bg-gray-100">
           <div className="text-center max-w-4xl mx-auto space-y-6 hero-content">
@@ -101,38 +90,50 @@ export default function ProjectsPage() {
               Discover our latest masterpieces showcasing innovation and craftsmanship.
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {projects.map((project, index) => (
-                <motion.div
-                  key={index}
-                  className="project-item group relative overflow-hidden rounded-2xl shadow-lg cursor-pointer"
-                  whileHover={{ scale: 1.05 }}
-                  onClick={() => {
-                    setPhotoIndex(index);
-                    setLightboxOpen(true);
-                  }}
-                >
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="h-80 w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-transparent to-transparent">
-                    <p className="text-sm text-gray-200">{project.category}</p>
-                    <h3 className="text-xl font-bold text-white">
-                      {project.title}
-                    </h3>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+            {loading ? (
+              <p className="text-gray-500">Loading projects...</p>
+            ) : projects.length === 0 ? (
+              <p className="text-gray-500">No projects available.</p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {projects.map((project, index) => (
+                  <motion.div
+                    key={project._id || index}
+                    className="project-item group relative overflow-hidden rounded-2xl shadow-lg cursor-pointer"
+                    whileHover={{ scale: 1.05 }}
+                    onClick={() => {
+                      setPhotoIndex(index);
+                      setLightboxOpen(true);
+                    }}
+                  >
+                    {/* Project Image */}
+                    <img
+                      src={project.thumbnail?.url || project.image || "/placeholder.jpg"}
+                      alt={project.title}
+                      className="h-80 w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+
+                    {/* Hover Overlay */}
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-center px-4">
+                      <p className="text-sm text-gray-200">{project.category}</p>
+                      <h3 className="text-xl font-clash font-bold text-white mt-1">
+                        {project.title}
+                      </h3>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
 
             {/* Lightbox */}
-            {lightboxOpen && (
+            {lightboxOpen && projects.length > 0 && (
               <Lightbox
                 open={lightboxOpen}
                 close={() => setLightboxOpen(false)}
-                slides={projects.map((p) => ({ src: p.image, title: p.title }))}
+                slides={projects.map((p) => ({
+                  src: p.thumbnail?.url || p.image || "/placeholder.jpg",
+                  title: p.title,
+                }))}
                 index={photoIndex}
                 controller={{ closeOnBackdropClick: true }}
               />
