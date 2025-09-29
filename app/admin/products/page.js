@@ -31,6 +31,14 @@ const FINISH_OPTIONS = [
   "Satin",
 ];
 
+const APPLICATION_OPTIONS = [
+  "LivingRoom",
+  "Kitchen",
+  "Bathroom",
+  "Bedroom",
+  "Outdoor"
+];
+
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -46,6 +54,17 @@ export default function ProductsPage() {
   const [sizeInput, setSizeInput] = useState("");
   const [selectedFinishes, setSelectedFinishes] = useState([]);
   const [finishInput, setFinishInput] = useState("");
+
+  // new fields
+  const [actualSize, setActualSize] = useState("");
+  const [filterSize, setFilterSize] = useState("");
+  const [materialType, setMaterialType] = useState("");
+  const [applications, setApplications] = useState([]);
+  const [applicationInput, setApplicationInput] = useState("");
+  const [brand, setBrand] = useState("");
+  const [quality, setQuality] = useState("");
+  const [coverageArea, setCoverageArea] = useState("");
+  const [pcsPerBox, setPcsPerBox] = useState("");
 
   // === fetch products ===
   useEffect(() => {
@@ -72,6 +91,15 @@ export default function ProductsPage() {
     setSelectedFinishes([]);
     setSizeInput("");
     setFinishInput("");
+    setActualSize("");
+    setFilterSize("");
+    setMaterialType("");
+    setApplications([]);
+    setApplicationInput("");
+    setBrand("");
+    setQuality("");
+    setCoverageArea("");
+    setPcsPerBox("");
   };
 
   const openEdit = (p) => {
@@ -84,6 +112,15 @@ export default function ProductsPage() {
     setSelectedFinishes(
       p.finish ? (Array.isArray(p.finish) ? p.finish : p.finish.split(",").map((f) => f.trim())) : []
     );
+    setActualSize(p.actualSize || "");
+    setFilterSize(p.filterSize || "");
+    setMaterialType(p.materialType || "");
+    setApplications(p.application || []);
+    setApplicationInput("");
+    setBrand(p.brand || "");
+    setQuality(p.quality || "");
+    setCoverageArea(p.coverageArea || "");
+    setPcsPerBox(p.pcsPerBox || "");
     setSizeInput("");
     setFinishInput("");
   };
@@ -96,9 +133,18 @@ export default function ProductsPage() {
     setSelectedFinishes([]);
     setSizeInput("");
     setFinishInput("");
+    setActualSize("");
+    setFilterSize("");
+    setMaterialType("");
+    setApplications([]);
+    setApplicationInput("");
+    setBrand("");
+    setQuality("");
+    setCoverageArea("");
+    setPcsPerBox("");
   };
 
-  // === size/finish selection ===
+  // === size/finish/application selection ===
   const toggleSize = (size) =>
     setSelectedSizes((prev) =>
       prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
@@ -125,18 +171,31 @@ export default function ProductsPage() {
     setFinishInput("");
   };
 
+  const toggleApplication = (app) =>
+    setApplications(prev =>
+      prev.includes(app) ? prev.filter(a => a !== app) : [...prev, app]
+    );
+
+  const addCustomApplication = () => {
+    const value = applicationInput.trim();
+    if (!value) return;
+    if (!applications.includes(value)) setApplications(prev => [...prev, value]);
+    if (!APPLICATION_OPTIONS.includes(value)) APPLICATION_OPTIONS.push(value);
+    setApplicationInput("");
+  };
+
   // === file uploads ===
   const handleThumbnailUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setThumbnailPreview(URL.createObjectURL(file)); // preview only
+    setThumbnailPreview(URL.createObjectURL(file));
   };
 
   const handleImagesUpload = (e) => {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
     const previews = files.map((file) => URL.createObjectURL(file));
-    setImagePreviews((prev) => [...prev, ...previews]); // preview only
+    setImagePreviews((prev) => [...prev, ...previews]);
   };
 
   const handleDeleteImage = (index) =>
@@ -172,6 +231,14 @@ export default function ProductsPage() {
     formData.append("category", form.category.value);
     selectedSizes.forEach((s) => formData.append("size", s));
     selectedFinishes.forEach((f) => formData.append("finish", f));
+    applications.forEach((a) => formData.append("application", a));
+    formData.append("actualSize", actualSize);
+    formData.append("filterSize", filterSize);
+    formData.append("materialType", materialType);
+    formData.append("brand", brand);
+    formData.append("quality", quality);
+    formData.append("coverageArea", coverageArea);
+    formData.append("pcsPerBox", pcsPerBox);
 
     if (form.thumbnail?.files?.[0]) {
       formData.append("thumbnail", form.thumbnail.files[0]);
@@ -234,6 +301,7 @@ export default function ProductsPage() {
                 <th className="p-2 border">Category</th>
                 <th className="p-2 border">Size</th>
                 <th className="p-2 border">Finish</th>
+                <th className="p-2 border">Application</th>
                 <th className="p-2 border">Images</th>
                 <th className="p-2 border text-center">Actions</th>
               </tr>
@@ -263,6 +331,9 @@ export default function ProductsPage() {
                   </td>
                   <td className="p-2 border">
                     {Array.isArray(p.finish) ? p.finish.join(", ") : p.finish}
+                  </td>
+                  <td className="p-2 border">
+                    {Array.isArray(p.application) ? p.application.join(", ") : p.application}
                   </td>
                   <td className="p-2 border">
                     <div className="flex gap-1 items-center">
@@ -467,6 +538,96 @@ export default function ProductsPage() {
                     Add
                   </button>
                 </div>
+              </div>
+
+              {/* applications */}
+              <div>
+                <label className="block text-xs font-medium mb-1">Application</label>
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {APPLICATION_OPTIONS.map((app) => (
+                    <button
+                      key={app}
+                      type="button"
+                      onClick={() => toggleApplication(app)}
+                      className={`px-2 py-1 border rounded text-xs ${
+                        applications.includes(app)
+                          ? "bg-indigo-600 text-white"
+                          : "bg-gray-100"
+                      }`}
+                    >
+                      {app}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={applicationInput}
+                    onChange={(e) => setApplicationInput(e.target.value)}
+                    placeholder="Custom application"
+                    className="flex-1 p-2 border rounded text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={addCustomApplication}
+                    className="px-3 py-1 bg-indigo-600 text-white rounded text-xs"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+
+              {/* other fields */}
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="text"
+                  value={actualSize}
+                  onChange={(e) => setActualSize(e.target.value)}
+                  placeholder="Actual Size"
+                  className="p-2 border rounded text-sm"
+                />
+                <input
+                  type="text"
+                  value={filterSize}
+                  onChange={(e) => setFilterSize(e.target.value)}
+                  placeholder="Filter Size"
+                  className="p-2 border rounded text-sm"
+                />
+                <input
+                  type="text"
+                  value={materialType}
+                  onChange={(e) => setMaterialType(e.target.value)}
+                  placeholder="Material Type"
+                  className="p-2 border rounded text-sm"
+                />
+                <input
+                  type="text"
+                  value={brand}
+                  onChange={(e) => setBrand(e.target.value)}
+                  placeholder="Brand"
+                  className="p-2 border rounded text-sm"
+                />
+                <input
+                  type="text"
+                  value={quality}
+                  onChange={(e) => setQuality(e.target.value)}
+                  placeholder="Quality"
+                  className="p-2 border rounded text-sm"
+                />
+                <input
+                  type="number"
+                  value={coverageArea}
+                  onChange={(e) => setCoverageArea(e.target.value)}
+                  placeholder="Coverage Area"
+                  className="p-2 border rounded text-sm"
+                />
+                <input
+                  type="number"
+                  value={pcsPerBox}
+                  onChange={(e) => setPcsPerBox(e.target.value)}
+                  placeholder="PCS per Box"
+                  className="p-2 border rounded text-sm"
+                />
               </div>
 
               {/* product images */}

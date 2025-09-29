@@ -6,7 +6,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import axios from "@/utils/api"; // your axios instance
+import api from "@/utils/api"; // your axios instance
 import Loader from "@/components/ui/Loader"
 
 if (typeof window !== "undefined") {
@@ -66,7 +66,7 @@ export default function ProductDetailPage({ params }) {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await axios.get(`/products/${params.slug}`);
+        const res = await api.get(`/products/${params.slug}`);
         setProduct(res.data);
       } catch (err) {
         console.error("Failed to fetch product:", err);
@@ -133,7 +133,7 @@ export default function ProductDetailPage({ params }) {
                   className="w-full h-[220px] md:h-[260px] object-cover hover:grayscale-0 transition-all"
                 />
                 <div className="absolute left-3 bottom-3 px-3 py-1 rounded-full bg-black/70 text-xs text-white font-medium shadow">
-                  {product.title}
+                  {product.category}
                 </div>
               </motion.div>
             ))}
@@ -141,31 +141,56 @@ export default function ProductDetailPage({ params }) {
 
           {/* RIGHT: Info */}
           <div>
+            
             <h2 className="text-3xl font-bold mb-6">{product.title}</h2>
 
-            {/* Specification */}
-            <section className="mb-12">
-              <h3 className="text-xl font-semibold mb-6">Specification</h3>
-              <div className="rounded-2xl overflow-hidden border border-black/20 bg-white shadow-md">
-                <div className="grid grid-cols-2 gap-6 p-6 text-sm text-gray-700">
-                  <div className="font-medium">Category</div>
-                  <div>{product.category}</div>
+        {/* Specification */}
+{/* Specification */}
+<section className="mb-12">
+  <h3 className="text-xl font-semibold mb-6">Specification</h3>
+  <div className="rounded-2xl overflow-hidden border border-black/20 bg-white shadow-md">
+    <div className="grid grid-cols-2 gap-6 p-6 text-sm text-gray-700">
+      
+      {/* Size at the top */}
+      <div className="font-medium">Size (mm )</div>
+      <div>{Array.isArray(product.size) ? product.size.join(", ") : product.size ?? "-"}</div>
 
-                  <div className="font-medium">Size</div>
-                  <div>{product.size}</div>
+      <div className="font-medium">Filter Size</div>
+      <div>{Array.isArray(product.filterSize) ? product.filterSize.join(", ") : product.filterSize ?? "-"}</div>
 
-                  <div className="font-medium">Finish</div>
-                  <div>{product.finish ?? "-"}</div>
+      <div className="font-medium">Material Type</div>
+      <div>{product.materialType ?? "-"}</div>
 
-                  <div className="font-medium">Series</div>
-                  <div>{product.series ?? "-"}</div>
-                </div>
-              </div>
-            </section>
+      <div className="font-medium">Finish</div>
+      <div>{Array.isArray(product.finish) ? product.finish.join(", ") : product.finish ?? "-"}</div>
+
+      <div className="font-medium">Application</div>
+      <div>
+        {Array.isArray(product.application)
+          ? product.application.join(", ")
+          : product.application ?? "-"}
+      </div>
+
+      <div className="font-medium">Brand</div>
+      <div>{product.brand ?? "-"}</div>
+
+      <div className="font-medium">Quality</div>
+      <div>{product.quality ?? "-"}</div>
+
+      <div className="font-medium">Coverage Area (sq. ft)</div>
+      <div>{product.coverageArea ?? "-"}</div>
+
+      <div className="font-medium">No of pcs in box</div>
+      <div>{product.pcsPerBox ?? "-"}</div>
+    </div>
+  </div>
+</section>
+
+
 
             {/* Applications */}
             <section className="mb-12">
-              <h3 className="text-xl font-semibold mb-6">Applications</h3>
+              <h3 className="text-xl font-semibold mb-6">Application</h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 {usageOptions.map((u, idx) => (
                   <div

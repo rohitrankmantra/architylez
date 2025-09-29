@@ -168,7 +168,7 @@ export default function GvtTiles() {
                         <h3 className="font-space text-xl font-semibold">
                           {product.title}
                         </h3>
-                        <p className="text-gray-300 text-sm">{product.size}</p>
+                        <p className="text-gray-300 text-sm">{Array.isArray(product.size) ? product.size.join(", ") : product.size ?? "-"}</p>
                       </div>
                     </motion.div>
                   </Link>
