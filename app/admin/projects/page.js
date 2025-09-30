@@ -117,7 +117,6 @@ export default function ProjectsPage() {
                 <th className="p-2 border">Title</th>
                 <th className="p-2 border">Description</th>
                 <th className="p-2 border">Category</th>
-                <th className="p-2 border">Images</th>
                 <th className="p-2 border">Created</th>
                 <th className="p-2 border">Actions</th>
               </tr>
@@ -147,22 +146,7 @@ export default function ProjectsPage() {
                   </td>
                   <td className="p-2 border">{p.description}</td>
                   <td className="p-2 border">{p.category}</td>
-                  <td className="p-2 border">
-                    {p.images?.length > 0 ? (
-                      <div className="flex flex-wrap gap-1">
-                        {p.images.map((img, idx) => (
-                          <img
-                            key={idx}
-                            src={img.url}
-                            alt={`Image ${idx + 1}`}
-                            className="w-12 h-12 object-cover rounded"
-                          />
-                        ))}
-                      </div>
-                    ) : (
-                      "No images"
-                    )}
-                  </td>
+                 
                   <td className="p-2 border">
                     {new Date(p.createdAt).toLocaleDateString()}
                   </td>
@@ -266,22 +250,7 @@ function ProjectModal({ title, project, onClose, onSubmit, submitting }) {
               />
             )}
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Images</label>
-            <input type="file" name="images" accept="image/*" multiple />
-            {project?.images?.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-2">
-                {project.images.map((img, idx) => (
-                  <img
-                    key={idx}
-                    src={img.url}
-                    alt={`Image ${idx + 1}`}
-                    className="w-16 h-16 object-cover rounded"
-                  />
-                ))}
-              </div>
-            )}
-          </div>
+         
           <button
             type="submit"
             disabled={submitting}
