@@ -8,6 +8,8 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import api from "@/utils/api"; // your axios instance
 import Loader from "@/components/ui/Loader"
+import { useRouter, useParams } from "next/navigation";
+
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -58,7 +60,8 @@ const usageOptions = [
   { label: "Religious Place", Icon: ReligiousIcon },
 ];
 
-export default function ProductDetailPage({ params }) {
+export default function ProductDetailPage() {
+   const { slug } = useParams();
   const containerRef = useRef(null);
   const [product, setProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -66,7 +69,7 @@ export default function ProductDetailPage({ params }) {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await api.get(`/products/${params.slug}`);
+        const res = await api.get(`/products/${slug}`);
         setProduct(res.data);
       } catch (err) {
         console.error("Failed to fetch product:", err);
@@ -74,7 +77,7 @@ export default function ProductDetailPage({ params }) {
       }
     };
     fetchProduct();
-  }, [params.slug]);
+  }, [slug]);
 
   // GSAP animation
   useEffect(() => {
@@ -152,10 +155,10 @@ export default function ProductDetailPage({ params }) {
     <div className="grid grid-cols-2 gap-6 p-6 text-sm text-gray-700">
       
       {/* Size at the top */}
-      <div className="font-medium">Size (mm )</div>
+      <div className="font-medium">Size (mm)</div>
       <div>{Array.isArray(product.size) ? product.size.join(", ") : product.size ?? "-"}</div>
 
-      <div className="font-medium">Filter Size</div>
+      <div className="font-medium">Filter Size (feet)</div>
       <div>{Array.isArray(product.filterSize) ? product.filterSize.join(", ") : product.filterSize ?? "-"}</div>
 
       <div className="font-medium">Material Type</div>

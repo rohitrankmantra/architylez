@@ -8,7 +8,9 @@ import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { FiFilter } from "react-icons/fi"; 
-import axios from "@/utils/api"; // Use your axios instance
+import api from "@/utils/api"; // Use your axios instance
+import { useRouter } from "next/navigation";
+
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -20,6 +22,8 @@ export default function GvtTiles() {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -44,7 +48,7 @@ export default function GvtTiles() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get("/products");
+        const res = await api.get("/products");
         const gvtProducts = res.data.filter((p) => p.category.toLowerCase() === "gvt");
         setProducts(gvtProducts);
         setFilteredProducts(gvtProducts);
@@ -148,31 +152,39 @@ export default function GvtTiles() {
               <p className="text-center text-gray-500">Loading products...</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredProducts.map((product, i) => (
-                  <Link key={product._id} href={`/products/gvt/${product._id}`}>
-                    <motion.div
-                      whileHover={{ scale: 1.03 }}
-                      transition={{ type: "spring", stiffness: 200 }}
-                      className="group relative rounded-2xl overflow-hidden shadow-lg bg-black cursor-pointer"
-                    >
-                      <img
-                        src={product.thumbnail?.url || product.image}
-                        alt={product.title}
-                        className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-80 group-hover:opacity-90 transition-all duration-300" />
-                      <div className="absolute top-4 left-4 bg-white text-black px-4 py-1 rounded-full text-sm font-medium shadow-lg">
-                        {product.category}
-                      </div>
-                      <div className="absolute bottom-0 p-6 text-white">
-                        <h3 className="font-space text-xl font-semibold">
-                          {product.title}
-                        </h3>
-                        <p className="text-gray-300 text-sm">{Array.isArray(product.size) ? product.size.join(", ") : product.size ?? "-"}</p>
-                      </div>
-                    </motion.div>
-                  </Link>
-                ))}
+        {filteredProducts.map((product) => (
+  <motion.div
+    key={product._id}
+    whileHover={{ scale: 1.03 }}
+    transition={{ type: "spring", stiffness: 200 }}
+    className="group relative rounded-2xl overflow-hidden shadow-lg bg-black cursor-pointer"
+    onClick={() => router.push(`/products/gvt/${product._id}`)}
+  >
+    <img
+      src={product.thumbnail?.url || product.image}
+      alt={product.title}
+      className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-500"
+    />
+    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-80 group-hover:opacity-90 transition-all duration-300" />
+    <div className="absolute top-4 left-4 bg-white text-black px-4 py-1 rounded-full text-sm font-medium shadow-lg">
+      {product.category}
+    </div>
+    <div className="absolute bottom-0 p-6 text-white">
+      <h3 className="font-space text-xl font-semibold">
+        {product.title}
+      </h3>
+      <p className="text-gray-300 text-sm">
+  {Array.isArray(product.size)
+    ? product.size.map(s => `${s} mm`).join(", ")
+    : product.size
+    ? `${product.size} mm`
+    : "-"}
+</p>
+
+    </div>
+  </motion.div>
+))}
+
               </div>
             )}
           </div>

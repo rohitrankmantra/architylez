@@ -22,6 +22,16 @@ const SIZE_OPTIONS = [
   "1200×600",
 ];
 
+const FILTER_SIZE_OPTIONS = [
+  "1x1 Feet",
+  "1x2 Feet",
+  "2x2 Feet",
+  "2x4 Feet",
+  "3x3 Feet",
+  "4x4 Feet",
+];
+
+
 const FINISH_OPTIONS = [
   "Matte",
   "Glossy",
@@ -56,8 +66,8 @@ export default function ProductsPage() {
   const [finishInput, setFinishInput] = useState("");
 
   // new fields
-  const [actualSize, setActualSize] = useState("");
-  const [filterSize, setFilterSize] = useState("");
+const [selectedFilterSizes, setSelectedFilterSizes] = useState([]);
+const [filterSizeInput, setFilterSizeInput] = useState("");
   const [materialType, setMaterialType] = useState("");
   const [applications, setApplications] = useState([]);
   const [applicationInput, setApplicationInput] = useState("");
@@ -91,8 +101,8 @@ export default function ProductsPage() {
     setSelectedFinishes([]);
     setSizeInput("");
     setFinishInput("");
-    setActualSize("");
-    setFilterSize("");
+    setFilterSizeInput("");
+    setSelectedFilterSizes([]);
     setMaterialType("");
     setApplications([]);
     setApplicationInput("");
@@ -112,8 +122,10 @@ export default function ProductsPage() {
     setSelectedFinishes(
       p.finish ? (Array.isArray(p.finish) ? p.finish : p.finish.split(",").map((f) => f.trim())) : []
     );
-    setActualSize(p.actualSize || "");
-    setFilterSize(p.filterSize || "");
+   setSelectedFilterSizes(
+  p.filterSize ? (Array.isArray(p.filterSize) ? p.filterSize : p.filterSize.split(",").map((s) => s.trim())) : []
+);
+
     setMaterialType(p.materialType || "");
     setApplications(p.application || []);
     setApplicationInput("");
@@ -133,8 +145,8 @@ export default function ProductsPage() {
     setSelectedFinishes([]);
     setSizeInput("");
     setFinishInput("");
-    setActualSize("");
-    setFilterSize("");
+    setSelectedFilterSizes([]);
+setFilterSizeInput("");
     setMaterialType("");
     setApplications([]);
     setApplicationInput("");
@@ -184,6 +196,22 @@ export default function ProductsPage() {
     setApplicationInput("");
   };
 
+  const toggleFilterSize = (fs) =>
+  setSelectedFilterSizes((prev) =>
+    prev.includes(fs) ? prev.filter((s) => s !== fs) : [...prev, fs]
+  );
+
+const addCustomFilterSize = () => {
+  const value = filterSizeInput.trim();
+  if (!value) return;
+  if (!selectedFilterSizes.includes(value)) {
+    setSelectedFilterSizes((prev) => [...prev, value]);
+  }
+  if (!FILTER_SIZE_OPTIONS.includes(value)) FILTER_SIZE_OPTIONS.push(value);
+  setFilterSizeInput("");
+};
+
+
   // === file uploads ===
   const handleThumbnailUpload = (e) => {
     const file = e.target.files?.[0];
@@ -232,8 +260,7 @@ export default function ProductsPage() {
     selectedSizes.forEach((s) => formData.append("size", s));
     selectedFinishes.forEach((f) => formData.append("finish", f));
     applications.forEach((a) => formData.append("application", a));
-    formData.append("actualSize", actualSize);
-    formData.append("filterSize", filterSize);
+    selectedFilterSizes.forEach((fs) => formData.append("filterSize", fs));
     formData.append("materialType", materialType);
     formData.append("brand", brand);
     formData.append("quality", quality);
@@ -577,22 +604,47 @@ export default function ProductsPage() {
                 </div>
               </div>
 
+              {/* filter sizes */}
+<div>
+  <label className="block text-xs font-medium mb-1">Filter Sizes</label>
+  <div className="flex flex-wrap gap-2 mb-2">
+    {FILTER_SIZE_OPTIONS.map((fs) => (
+      <button
+        key={fs}
+        type="button"
+        onClick={() => toggleFilterSize(fs)}
+        className={`px-2 py-1 border rounded text-xs ${
+          selectedFilterSizes.includes(fs)
+            ? "bg-indigo-600 text-white"
+            : "bg-gray-100"
+        }`}
+      >
+        {fs}
+      </button>
+    ))}
+  </div>
+  <div className="flex gap-2">
+    <input
+      type="text"
+      value={filterSizeInput}
+      onChange={(e) => setFilterSizeInput(e.target.value)}
+      placeholder="Custom filter size"
+      className="flex-1 p-2 border rounded text-sm"
+    />
+    <button
+      type="button"
+      onClick={addCustomFilterSize}
+      className="px-3 py-1 bg-indigo-600 text-white rounded text-xs"
+    >
+      Add
+    </button>
+  </div>
+</div>
+
+
               {/* other fields */}
               <div className="grid grid-cols-2 gap-2">
-                <input
-                  type="text"
-                  value={actualSize}
-                  onChange={(e) => setActualSize(e.target.value)}
-                  placeholder="Actual Size"
-                  className="p-2 border rounded text-sm"
-                />
-                <input
-                  type="text"
-                  value={filterSize}
-                  onChange={(e) => setFilterSize(e.target.value)}
-                  placeholder="Filter Size"
-                  className="p-2 border rounded text-sm"
-                />
+           
                 <input
                   type="text"
                   value={materialType}

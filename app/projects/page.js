@@ -119,6 +119,7 @@ export default function ProjectsPage() {
                       <h3 className="text-xl font-clash font-bold text-white mt-1">
                         {project.title}
                       </h3>
+                      <p className="text-gray-200 mt-2 text-sm">{project.description}</p>
                     </div>
                   </motion.div>
                 ))}
@@ -126,18 +127,21 @@ export default function ProjectsPage() {
             )}
 
             {/* Lightbox */}
-            {lightboxOpen && projects.length > 0 && (
-              <Lightbox
-                open={lightboxOpen}
-                close={() => setLightboxOpen(false)}
-                slides={projects.map((p) => ({
-                  src: p.thumbnail?.url || p.image || "/placeholder.jpg",
-                  title: p.title,
-                }))}
-                index={photoIndex}
-                controller={{ closeOnBackdropClick: true }}
-              />
-            )}
+         {/* Lightbox */}
+{lightboxOpen && projects.length > 0 && (
+  <Lightbox
+    open={lightboxOpen}
+    close={() => setLightboxOpen(false)}
+    slides={projects.map((p) => ({
+      src: p.thumbnail?.url || p.image || "/placeholder.jpg",
+      title: p.title,
+      description: p.description, 
+    }))}
+    index={photoIndex}
+    controller={{ closeOnBackdropClick: true }}
+  />
+)}
+
           </div>
         </section>
       </div>

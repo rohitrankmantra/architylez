@@ -8,8 +8,11 @@ import Footer from "@/components/Footer";
 import api from "@/utils/api";
 import Loader from "@/components/ui/Loader";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 
 export default function Blog() {
+  const router = useRouter();
   const containerRef = useRef(null);
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -107,13 +110,13 @@ export default function Blog() {
                     </div>
                     <span className="font-machina">{featuredPost.readTime || "5 min read"}</span>
                   </div>
-                  <Link
-                    href={`/blog/${featuredPost._id}`}
-                    className="inline-flex items-center space-x-2 px-8 py-4 bg-black text-white font-machina font-semibold rounded-full hover:bg-gray-900 transition-colors duration-300"
-                  >
-                    <span>Read Article</span>
-                    <span>→</span>
-                  </Link>
+               <button
+  onClick={() => router.push(`/blog/${featuredPost._id}`)}
+  className="inline-flex items-center space-x-2 px-8 py-4 bg-black text-white font-machina font-semibold rounded-full hover:bg-gray-900 transition-colors duration-300"
+>
+  <span>Read Article</span>
+  <span>→</span>
+</button>
                 </div>
               </motion.article>
             </div>
@@ -172,13 +175,14 @@ export default function Blog() {
                       </div>
                       <span className="font-machina">{post.readTime || "5 min read"}</span>
                     </div>
-                    <Link
-                      href={`/blog/${post._id}`}
-                      className="inline-flex items-center space-x-2 text-black hover:text-gray-600 transition-colors duration-300 font-machina font-medium text-sm"
-                    >
-                      <span>Read More</span>
-                      <span>→</span>
-                    </Link>
+                    <button
+  onClick={() => router.push(`/blog/${post._id}`)}
+  className="inline-flex items-center space-x-2 text-black hover:text-gray-600 transition-colors duration-300 font-machina font-medium text-sm"
+>
+  <span>Read More</span>
+  <span>→</span>
+</button>
+
                   </div>
                 </motion.article>
               ))}
