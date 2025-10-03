@@ -6,8 +6,7 @@ import api from "@/utils/api";
 
 export async function generateMetadata({ params }) {
   try {
-    // ✅ Await params before using
-    const { slug } = await params;
+    const { slug } = await params; // ✅ must await
 
     const res = await api.get(`/products/${slug}`);
     const product = res.data;
@@ -16,18 +15,23 @@ export async function generateMetadata({ params }) {
       return { title: "Product Not Found", description: "" };
     }
 
+    const metaTitle = product.metaTitle?.trim() || product.title || "Product";
+    const metaDescription =
+      product.metaDescription?.trim() ||
+      product.description?.slice(0, 160) ||
+      "";
+
     return {
-      title: product.title,
-      description: product.description?.slice(0, 160) || "",
+      title: metaTitle,
+      description: metaDescription,
       openGraph: {
-        title: product.title,
-        description: product.description?.slice(0, 160) || "",
-        images: product.thumbnail?.url
-          ? [{ url: product.thumbnail.url }]
-          : [],
+        title: metaTitle,
+        description: metaDescription,
+        images: product.thumbnail?.url ? [{ url: product.thumbnail.url }] : [],
       },
     };
-  } catch {
+  } catch (error) {
+    console.error("Metadata error:", error);
     return { title: "Product Not Found", description: "" };
   }
 }
@@ -36,9 +40,7 @@ export default async function ProductDetailPage({ params }) {
   let product = null;
 
   try {
-    // ✅ Await params here too
-    const { slug } = await params;
-
+    const { slug } = await params; // ✅ must await here too
     const res = await api.get(`/products/${slug}`);
     product = res.data;
   } catch (err) {

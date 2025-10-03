@@ -66,8 +66,8 @@ export default function ProductsPage() {
   const [finishInput, setFinishInput] = useState("");
 
   // new fields
-const [selectedFilterSizes, setSelectedFilterSizes] = useState([]);
-const [filterSizeInput, setFilterSizeInput] = useState("");
+  const [selectedFilterSizes, setSelectedFilterSizes] = useState([]);
+  const [filterSizeInput, setFilterSizeInput] = useState("");
   const [materialType, setMaterialType] = useState("");
   const [applications, setApplications] = useState([]);
   const [applicationInput, setApplicationInput] = useState("");
@@ -75,6 +75,10 @@ const [filterSizeInput, setFilterSizeInput] = useState("");
   const [quality, setQuality] = useState("");
   const [coverageArea, setCoverageArea] = useState("");
   const [pcsPerBox, setPcsPerBox] = useState("");
+  //  meta data 
+  const [metaTitle, setMetaTitle] = useState("");
+  const [metaDescription, setMetaDescription] = useState("");
+
 
   // === fetch products ===
   useEffect(() => {
@@ -110,6 +114,33 @@ const [filterSizeInput, setFilterSizeInput] = useState("");
     setQuality("");
     setCoverageArea("");
     setPcsPerBox("");
+
+    // ✅ Meta fields
+    setMetaTitle("");
+    setMetaDescription("");
+  };
+
+  const closeModal = () => {
+    setSelectedProduct(null);
+    setThumbnailPreview(null);
+    setImagePreviews([]);
+    setSelectedSizes([]);
+    setSelectedFinishes([]);
+    setSizeInput("");
+    setFinishInput("");
+    setSelectedFilterSizes([]);
+    setFilterSizeInput("");
+    setMaterialType("");
+    setApplications([]);
+    setApplicationInput("");
+    setBrand("");
+    setQuality("");
+    setCoverageArea("");
+    setPcsPerBox("");
+
+    // ✅ Meta fields
+    setMetaTitle("");
+    setMetaDescription("");
   };
 
   const openEdit = (p) => {
@@ -122,10 +153,9 @@ const [filterSizeInput, setFilterSizeInput] = useState("");
     setSelectedFinishes(
       p.finish ? (Array.isArray(p.finish) ? p.finish : p.finish.split(",").map((f) => f.trim())) : []
     );
-   setSelectedFilterSizes(
-  p.filterSize ? (Array.isArray(p.filterSize) ? p.filterSize : p.filterSize.split(",").map((s) => s.trim())) : []
-);
-
+    setSelectedFilterSizes(
+      p.filterSize ? (Array.isArray(p.filterSize) ? p.filterSize : p.filterSize.split(",").map((s) => s.trim())) : []
+    );
     setMaterialType(p.materialType || "");
     setApplications(p.application || []);
     setApplicationInput("");
@@ -133,28 +163,18 @@ const [filterSizeInput, setFilterSizeInput] = useState("");
     setQuality(p.quality || "");
     setCoverageArea(p.coverageArea || "");
     setPcsPerBox(p.pcsPerBox || "");
+
+    // ✅ Meta fields
+    setMetaTitle(p.metaTitle || "");
+    setMetaDescription(p.metaDescription || "");
+
     setSizeInput("");
     setFinishInput("");
+    setFilterSizeInput("");
   };
 
-  const closeModal = () => {
-    setSelectedProduct(null);
-    setThumbnailPreview(null);
-    setImagePreviews([]);
-    setSelectedSizes([]);
-    setSelectedFinishes([]);
-    setSizeInput("");
-    setFinishInput("");
-    setSelectedFilterSizes([]);
-setFilterSizeInput("");
-    setMaterialType("");
-    setApplications([]);
-    setApplicationInput("");
-    setBrand("");
-    setQuality("");
-    setCoverageArea("");
-    setPcsPerBox("");
-  };
+
+
 
   // === size/finish/application selection ===
   const toggleSize = (size) =>
@@ -197,19 +217,19 @@ setFilterSizeInput("");
   };
 
   const toggleFilterSize = (fs) =>
-  setSelectedFilterSizes((prev) =>
-    prev.includes(fs) ? prev.filter((s) => s !== fs) : [...prev, fs]
-  );
+    setSelectedFilterSizes((prev) =>
+      prev.includes(fs) ? prev.filter((s) => s !== fs) : [...prev, fs]
+    );
 
-const addCustomFilterSize = () => {
-  const value = filterSizeInput.trim();
-  if (!value) return;
-  if (!selectedFilterSizes.includes(value)) {
-    setSelectedFilterSizes((prev) => [...prev, value]);
-  }
-  if (!FILTER_SIZE_OPTIONS.includes(value)) FILTER_SIZE_OPTIONS.push(value);
-  setFilterSizeInput("");
-};
+  const addCustomFilterSize = () => {
+    const value = filterSizeInput.trim();
+    if (!value) return;
+    if (!selectedFilterSizes.includes(value)) {
+      setSelectedFilterSizes((prev) => [...prev, value]);
+    }
+    if (!FILTER_SIZE_OPTIONS.includes(value)) FILTER_SIZE_OPTIONS.push(value);
+    setFilterSizeInput("");
+  };
 
 
   // === file uploads ===
@@ -266,6 +286,9 @@ const addCustomFilterSize = () => {
     formData.append("quality", quality);
     formData.append("coverageArea", coverageArea);
     formData.append("pcsPerBox", pcsPerBox);
+    formData.append("metaTitle", metaTitle.trim());
+    formData.append("metaDescription", metaDescription.trim());
+
 
     if (form.thumbnail?.files?.[0]) {
       formData.append("thumbnail", form.thumbnail.files[0]);
@@ -502,11 +525,10 @@ const addCustomFilterSize = () => {
                       key={s}
                       type="button"
                       onClick={() => toggleSize(s)}
-                      className={`px-2 py-1 border rounded text-xs ${
-                        selectedSizes.includes(s)
+                      className={`px-2 py-1 border rounded text-xs ${selectedSizes.includes(s)
                           ? "bg-indigo-600 text-white"
                           : "bg-gray-100"
-                      }`}
+                        }`}
                     >
                       {s}
                     </button>
@@ -539,11 +561,10 @@ const addCustomFilterSize = () => {
                       key={f}
                       type="button"
                       onClick={() => toggleFinish(f)}
-                      className={`px-2 py-1 border rounded text-xs ${
-                        selectedFinishes.includes(f)
+                      className={`px-2 py-1 border rounded text-xs ${selectedFinishes.includes(f)
                           ? "bg-indigo-600 text-white"
                           : "bg-gray-100"
-                      }`}
+                        }`}
                     >
                       {f}
                     </button>
@@ -576,11 +597,10 @@ const addCustomFilterSize = () => {
                       key={app}
                       type="button"
                       onClick={() => toggleApplication(app)}
-                      className={`px-2 py-1 border rounded text-xs ${
-                        applications.includes(app)
+                      className={`px-2 py-1 border rounded text-xs ${applications.includes(app)
                           ? "bg-indigo-600 text-white"
                           : "bg-gray-100"
-                      }`}
+                        }`}
                     >
                       {app}
                     </button>
@@ -605,46 +625,45 @@ const addCustomFilterSize = () => {
               </div>
 
               {/* filter sizes */}
-<div>
-  <label className="block text-xs font-medium mb-1">Filter Sizes</label>
-  <div className="flex flex-wrap gap-2 mb-2">
-    {FILTER_SIZE_OPTIONS.map((fs) => (
-      <button
-        key={fs}
-        type="button"
-        onClick={() => toggleFilterSize(fs)}
-        className={`px-2 py-1 border rounded text-xs ${
-          selectedFilterSizes.includes(fs)
-            ? "bg-indigo-600 text-white"
-            : "bg-gray-100"
-        }`}
-      >
-        {fs}
-      </button>
-    ))}
-  </div>
-  <div className="flex gap-2">
-    <input
-      type="text"
-      value={filterSizeInput}
-      onChange={(e) => setFilterSizeInput(e.target.value)}
-      placeholder="Custom filter size"
-      className="flex-1 p-2 border rounded text-sm"
-    />
-    <button
-      type="button"
-      onClick={addCustomFilterSize}
-      className="px-3 py-1 bg-indigo-600 text-white rounded text-xs"
-    >
-      Add
-    </button>
-  </div>
-</div>
+              <div>
+                <label className="block text-xs font-medium mb-1">Filter Sizes</label>
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {FILTER_SIZE_OPTIONS.map((fs) => (
+                    <button
+                      key={fs}
+                      type="button"
+                      onClick={() => toggleFilterSize(fs)}
+                      className={`px-2 py-1 border rounded text-xs ${selectedFilterSizes.includes(fs)
+                          ? "bg-indigo-600 text-white"
+                          : "bg-gray-100"
+                        }`}
+                    >
+                      {fs}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={filterSizeInput}
+                    onChange={(e) => setFilterSizeInput(e.target.value)}
+                    placeholder="Custom filter size"
+                    className="flex-1 p-2 border rounded text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={addCustomFilterSize}
+                    className="px-3 py-1 bg-indigo-600 text-white rounded text-xs"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
 
 
               {/* other fields */}
               <div className="grid grid-cols-2 gap-2">
-           
+
                 <input
                   type="text"
                   value={materialType}
@@ -680,7 +699,31 @@ const addCustomFilterSize = () => {
                   placeholder="PCS per Box"
                   className="p-2 border rounded text-sm"
                 />
+
+                {/* meta informations  */}
+
+
               </div>
+
+              {/* Meta Title */}
+
+              <label className="block text-md font-medium ">Meta Title*</label>
+              <input
+                type="text"
+                value={metaTitle}
+                onChange={(e) => setMetaTitle(e.target.value)}
+                placeholder="Meta Title"
+                className="w-full p-2 border rounded text-sm"
+              />
+              <label className="block text-md font-medium ">Meta Description*</label>
+              {/* Meta Description */}
+              <textarea
+                value={metaDescription}
+                onChange={(e) => setMetaDescription(e.target.value)}
+                placeholder="Meta Description"
+                className="w-full p-2 border rounded text-sm h-16"
+              />
+
 
               {/* product images */}
               <div>
