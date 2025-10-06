@@ -34,12 +34,12 @@ export default function CustomCursor() {
         style={{
           background: hover
             ? "radial-gradient(circle at center, rgba(100,149,237,0.9), rgba(30,30,60,0.8))"
-            : "black", // fallback solid black like before
+            : " radial-gradient(circle at center, rgba(100,149,237,0.9), rgba(30,30,60,0.8))", // fallback solid black like before
         }}
         animate={{
           x: pos.x - 12,
           y: pos.y - 12,
-          scale: hover ? 1.6 : 1,
+          scale: hover ? 1.6 : 1.6,
           boxShadow: hover
             ? "0 0 25px rgba(100,149,237,0.8)"
             : "0 0 12px rgba(100,149,237,0.5)",
@@ -49,8 +49,8 @@ export default function CustomCursor() {
 
       {/* Outer ring with blend effect */}
       <motion.div
-        className="fixed top-0 left-0 w-14 h-14 rounded-full z-[9998] pointer-events-none mix-blend-difference"
-        style={{ border: "2px solid rgba(100,149,237,0.6)" }}
+        className="fixed top-0 left-0 w-[68px] h-[68px] rounded-full z-[9998] pointer-events-none mix-blend-difference"
+        style={{ border: "3px solid rgba(100,149,237,0.6)" }}
         animate={{
           x: pos.x - 28,
           y: pos.y - 28,

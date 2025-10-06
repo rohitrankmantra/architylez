@@ -42,10 +42,10 @@ const Navigation = () => {
       <motion.nav
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        className={`fixed top-0 left-0  right-0 z-50 transition-all duration-500 ${
           isScrolled
             ? 'bg-white/95 backdrop-blur-md border-b border-black/10 shadow-sm'
-            : 'bg-transparent bg-overlay  '
+            : 'bg-white/95 bg-overlay  '
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 py-1">
@@ -56,7 +56,7 @@ const Navigation = () => {
                 <img
                   src="/main-logo.png"
                   alt="Architylezz Logo"
-                  className="h-32 w-auto"
+                  className="h-28 w-auto"
                 />
               </Link>
             </motion.div>
