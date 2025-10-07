@@ -2,16 +2,30 @@ import './globals.css';
 import { Inter } from 'next/font/google';
 import CustomCursor from './../components/ui/CustomCursor';
 import { Toaster } from 'react-hot-toast';
+import api from "@/utils/api";
 
 const inter = Inter({ 
   subsets: ['latin'],
   variable: '--font-inter',
 });
 
-export const metadata = {
-  title: 'Architylezz - Luxury Architecture & Interior Design',
-  description: 'Premium architectural solutions and interior design excellence',
-};
+export async function generateMetadata() {
+  try {
+    const res = await api.get("/home-meta");
+    const data = await res.json();
+
+    return {
+      title: data?.title || "Architylezz -  & Interior Design",
+      description: data?.description || "Premium architectural solutions and interior design excellence",
+    };
+  } catch (err) {
+    console.error("Failed to fetch home meta:", err);
+    return {
+      title: "Architylezz - Luxury Architecture & Interior Design",
+      description: "Premium architectural solutions and interior design excellence",
+    };
+  }
+}
 
 export default function RootLayout({ children }) {
   return (

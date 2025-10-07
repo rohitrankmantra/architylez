@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { Home, Package, Folder, FileText, Inbox, Menu, Layers } from "lucide-react";
+import { Home, Package,Settings, Folder, FileText, Inbox, Menu, Layers } from "lucide-react";
 import { motion } from "framer-motion";
 import { gsap } from "gsap";
 
@@ -29,6 +29,7 @@ export default function Sidebar() {
     { icon: <FileText size={20} />, label: "Blog", path: "/admin/blog" },
     { icon: <Inbox size={20} />, label: "Contact Forms", path: "/admin/contact-forms" },
     { icon: <Layers size={20} />, label: "Projects", path: "/admin/projects" },
+    { icon: <Settings size={20} />, label: "Home Meta", path: "/admin/home-meta" }
   ];
 
   return (
