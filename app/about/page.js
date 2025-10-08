@@ -16,6 +16,8 @@ export default function About() {
   const containerRef = useRef(null);
 
   useEffect(() => {
+    if (typeof window === 'undefined' || window.innerWidth < 768) return;
+
     const ctx = gsap.context(() => {
       gsap.from('.split-content', {
         x: -100,
@@ -24,8 +26,8 @@ export default function About() {
         ease: 'power3.out',
         scrollTrigger: {
           trigger: '.split-content',
-          start: 'top 80%'
-        }
+          start: 'top 80%',
+        },
       });
 
       gsap.from('.split-image', {
@@ -35,8 +37,8 @@ export default function About() {
         ease: 'power3.out',
         scrollTrigger: {
           trigger: '.split-image',
-          start: 'top 80%'
-        }
+          start: 'top 80%',
+        },
       });
     }, containerRef);
 
@@ -50,35 +52,29 @@ export default function About() {
     { title: 'Collaboration', description: 'Working closely with clients to bring their unique vision to life.', icon: Users },
   ];
 
-  const team = [
-    { name: 'Alexandra Chen', role: 'Principal Architect', image: 'https://images.pexels.com/photos/3785077/pexels-photo-3785077.jpeg?auto=compress&cs=tinysrgb&w=400', expertise: 'Sustainable Architecture' },
-    { name: 'Marcus Rodriguez', role: 'Interior Design Director', image: 'https://images.pexels.com/photos/3777931/pexels-photo-3777931.jpeg?auto=compress&cs=tinysrgb&w=400', expertise: 'Luxury Hospitality' },
-    { name: 'Sophie Williams', role: 'Creative Director', image: 'https://images.pexels.com/photos/3785079/pexels-photo-3785079.jpeg?auto=compress&cs=tinysrgb&w=400', expertise: 'Contemporary Residential' }
-  ];
-
   return (
     <Loader>
-      <Navigation/>
+      <Navigation />
       <div ref={containerRef} className="pt-20 bg-white text-gray-900">
         
         {/* Hero Section */}
-        <section className="min-h-screen flex items-center py-16 sm:py-20 px-4 sm:px-6">
+        <section className="min-h-screen flex items-center py-12 sm:py-16 lg:py-24 px-4 sm:px-6">
           <div className="max-w-7xl mx-auto w-full">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
               
               {/* Text Side */}
-              <motion.div className="split-content space-y-6 sm:space-y-8 text-center lg:text-left">
+              <motion.div className="split-content space-y-6 sm:space-y-8 text-center md:text-left px-2 sm:px-0">
                 <div className="space-y-3 sm:space-y-4">
-                  <h1 className="font-clash text-3xl sm:text-5xl md:text-7xl font-bold leading-tight">
+                  <h1 className="font-clash text-3xl sm:text-5xl lg:text-6xl font-bold leading-tight">
                     <span className="text-black">About</span>{' '}
                     <span className="text-outline">Architylezz</span>
                   </h1>
-                  <div className="font-clash text-lg sm:text-2xl md:text-3xl font-light text-gray-600">
+                  <div className="font-clash text-lg sm:text-2xl font-light text-gray-600">
                     Design Philosophy
                   </div>
                 </div>
 
-                <div className="space-y-4 sm:space-y-6 font-inter text-gray-700 leading-relaxed">
+                <div className="space-y-4 sm:space-y-6 font-inter text-gray-700 leading-relaxed text-justify tracking-normal sm:tracking-wide">
                   <p className="text-sm sm:text-base">
                     Founded on the principles of innovation, sustainability, and timeless design,
                     Architylezz has been at the forefront of architectural excellence for over a decade.
@@ -106,8 +102,8 @@ export default function About() {
               </motion.div>
 
               {/* Image Side */}
-              <motion.div className="split-image relative">
-                <div className="relative w-full h-64 sm:h-80 md:h-[500px] lg:h-[600px] rounded-2xl sm:rounded-3xl overflow-hidden">
+              <motion.div className="split-image relative mt-10 md:mt-0">
+                <div className="relative w-full h-60 sm:h-72 md:h-[400px] lg:h-[550px] rounded-2xl md:rounded-3xl overflow-hidden shadow-md">
                   <img
                     src="https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=800"
                     alt="Modern Architecture"
@@ -120,7 +116,7 @@ export default function About() {
         </section>
 
         {/* Values Section */}
-        <section className="py-16 sm:py-24 px-4 sm:px-6 bg-gray-50">
+        <section className="py-12 sm:py-16 lg:py-24 px-4 sm:px-6 bg-gray-50">
           <div className="max-w-7xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -128,7 +124,7 @@ export default function About() {
               transition={{ duration: 0.8 }}
               className="text-center mb-10 sm:mb-16"
             >
-              <h2 className="font-clash text-2xl sm:text-4xl md:text-6xl font-bold mb-3 sm:mb-6 text-black">
+              <h2 className="font-clash text-2xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-6 text-black">
                 Our <span className="text-outline">Values</span>
               </h2>
               <p className="font-inter text-gray-600 text-sm sm:text-lg max-w-2xl mx-auto">
@@ -136,7 +132,7 @@ export default function About() {
               </p>
             </motion.div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 sm:gap-8">
               {values.map((value, index) => (
                 <motion.div
                   key={value.title}
@@ -144,7 +140,7 @@ export default function About() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   whileHover={{ y: -10 }}
-                  className="text-center group"
+                  className="text-center group px-2"
                 >
                   <div className="w-14 h-14 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 bg-[#001053]/10 rounded-full flex items-center justify-center group-hover:bg-[#001053]/20 transition-all duration-300">
                     <value.icon className="w-6 h-6 sm:w-8 sm:h-8 text-[#001053] group-hover:scale-110 transition-transform duration-300" />
@@ -160,63 +156,8 @@ export default function About() {
             </div>
           </div>
         </section>
-
-
-        {/* Team section  is commented out for now but ready to be used later  */}
-{/* 
-        Team Section
-        <section className="py-16 sm:py-24 px-4 sm:px-6 bg-white">
-          <div className="max-w-7xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="text-center mb-10 sm:mb-16"
-            >
-              <h2 className="font-clash text-2xl sm:text-4xl md:text-6xl font-bold mb-3 sm:mb-6 text-black">
-                Meet Our <span className="text-outline">Team</span>
-              </h2>
-              <p className="font-inter text-gray-600 text-sm sm:text-lg max-w-2xl mx-auto">
-                Talented professionals passionate about creating exceptional spaces and experiences.
-              </p>
-            </motion.div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-12">
-              {team.map((member, index) => (
-                <motion.div
-                  key={member.name}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.2 }}
-                  whileHover={{ y: -10 }}
-                  className="text-center group"
-                >
-                  <div className="relative mb-4 sm:mb-6">
-                    <div className="w-full max-w-[280px] sm:max-w-xs mx-auto aspect-square rounded-2xl overflow-hidden">
-                      <img
-                        src={member.image}
-                        alt={member.name}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                    </div>
-                  </div>
-                  
-                  <h3 className="font-space text-base sm:text-xl font-semibold text-black mb-1 sm:mb-2">
-                    {member.name}
-                  </h3>
-                  <div className="font-machina text-[#001053] text-xs sm:text-sm font-medium mb-1 sm:mb-2">
-                    {member.role}
-                  </div>
-                  <p className="font-inter text-gray-600 text-xs sm:text-sm">
-                    {member.expertise}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section> */}
       </div>
-      <Footer/>
+      <Footer />
     </Loader>
   );
 }

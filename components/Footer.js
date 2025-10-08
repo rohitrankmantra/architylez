@@ -44,13 +44,13 @@ const Footer = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="space-y-6"
+              className="space-y-4"
             >
               <Link href="/">
                 <img
-                  src="/main-logo.png"
+                  src="/site-logo.png"
                   alt="Architylezz Logo"
-                  className="h-18 md:h-32 w-auto "
+                  className="h-[68px]  bg-white  md:h-24 w-auto "
                 />
               </Link>
 

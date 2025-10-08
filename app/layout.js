@@ -9,6 +9,8 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
+
+
 export async function generateMetadata() {
   try {
     const res = await api.get("/home-meta");
@@ -18,6 +20,10 @@ export async function generateMetadata() {
     return {
       title: data.title || "Architylezz - Luxury Architecture & Interior Design",
       description: data.description || "Premium architectural solutions and interior design excellence",
+     icons: {
+        icon: "/loader.png",  // ✅ Using logo.png instead
+        apple: "/loader.png",
+      },
 
     };
   } catch (err) {
@@ -25,9 +31,14 @@ export async function generateMetadata() {
     return {
       title: "Architylezz - Luxury Architecture & Interior Design",
       description: "Premium architectural solutions and interior design excellence",
+        icons: {
+        icon: "/loader.png", // ✅ fallback
+      },
     };
   }
 }
+
+
 
 export default function RootLayout({ children }) {
   return (
@@ -36,6 +47,9 @@ export default function RootLayout({ children }) {
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet" />
         <link href="https://api.fontshare.com/v2/css?f[]=clash-display@200,400,700&f[]=neue-machina@100,200,400,500,700,900&display=swap" rel="stylesheet" />
       </head>
+      <link rel="icon" href="/logo.png" type="image/png" />
+<link rel="apple-touch-icon" href="/logo.png" />
+
       <body className={`${inter.variable} bg-primary-dark text-white overflow-x-hidden`}>
         <Toaster
           position="top-center"

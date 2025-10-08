@@ -22,8 +22,6 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-
-
 export default function Home() {
   const containerRef = useRef(null);
   const heroRef = useRef(null);
@@ -38,20 +36,17 @@ export default function Home() {
   const heroSlides = [
     {
       title: "Architectural Excellence",
-      subtitle:
-        "Where visionary design meets uncompromising craftsmanship.",
+      subtitle: "Where visionary design meets uncompromising craftsmanship.",
       image: "bg-4.jpg",
     },
     {
       title: "Luxury Interiors",
-      subtitle:
-        "Spaces redefined with elegance, detail, and sophistication.",
+      subtitle: "Spaces redefined with elegance, detail, and sophistication.",
       image: "bg-5.jpg",
     },
     {
       title: "Modern Innovation",
-      subtitle:
-        "Blending technology and creativity for future-ready designs.",
+      subtitle: "Blending technology and creativity for future-ready designs.",
       image: "bg-3.jpg",
     },
   ];
@@ -142,7 +137,7 @@ export default function Home() {
     <Loader>
       <Navigation />
       <div ref={containerRef} className="relative bg-white text-black">
-        {/* Hero Section */}
+        {/* HERO SECTION */}
         <section
           ref={heroRef}
           className="relative min-h-screen flex items-center justify-center overflow-hidden"
@@ -206,11 +201,8 @@ export default function Home() {
           </motion.div>
         </section>
 
-        {/* Features Section */}
-        <section
-          ref={featuresRef}
-          className="reveal-section py-24 px-6 bg-white"
-        >
+        {/* FEATURES SECTION */}
+        <section ref={featuresRef} className="reveal-section py-24 px-6 bg-white">
           <div className="max-w-7xl mx-auto text-center">
             <h2 className="font-clash text-4xl md:text-6xl font-bold mb-6">
               <span className="text-black">Why Choose</span>{" "}
@@ -244,8 +236,9 @@ export default function Home() {
           </div>
         </section>
 
-     {/* Projects Section with Slider */}
-<section className="reveal-section py-24 px-6 bg-gray-50">
+        {/* PROJECTS SECTION */}
+   {/* PROJECTS SECTION */}
+<section className="reveal-section py-24 px-4 sm:px-6 bg-gray-50">
   <div className="max-w-7xl mx-auto text-center">
     <h2 className="font-clash text-4xl md:text-6xl font-bold mb-6">
       <span className="text-outline">Featured</span>{" "}
@@ -255,80 +248,42 @@ export default function Home() {
       Discover our latest masterpieces showcasing innovation and craftsmanship.
     </p>
 
-    <div className="relative mt-16">
-      {/* Slider Wrapper */}
-      <div className="overflow-hidden">
-        <motion.div
-          className="flex transition-transform duration-500"
-          animate={{
-            x: `-${projectSlide * (100 / projectsPerView)}%`,
-          }}
-          style={{
-            width: `${projects.length * (100 / projectsPerView)}%`,
-          }}
-        >
-          {loadingProjects ? (
-            <p className="text-gray-500 w-full text-center">
-              Loading projects...
-            </p>
-          ) : projects.length === 0 ? (
-            <p className="text-gray-500 w-full text-center">
-              No projects available.
-            </p>
-          ) : (
-            projects.map((project, index) => (
-              <div
-                key={project._id || index}
-                className="w-full sm:w-1/2 lg:w-1/3 p-3 flex-shrink-0"
-              >
-                <div className="relative overflow-hidden rounded-2xl shadow-lg group cursor-pointer">
-                  <img
-                    src={
-                      project.thumbnail?.url ||
-                      project.image ||
-                      "/placeholder.jpg"
-                    }
-                    alt={project.title}
-                    className="h-80 w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-center px-4">
-                    <p className="text-sm text-gray-200">{project.category}</p>
-                    <h3 className="text-xl font-clash font-bold text-white mt-1">
-                      {project.title}
-                    </h3>
-                     <p className="text-gray-200 mt-2 text-sm">{project.description}</p>
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
-        </motion.div>
-      </div>
-
-      {/* Navigation Arrows */}
-      {!loadingProjects && projects.length > projectsPerView && (
-        <>
-          <button
-            onClick={() =>
-              setProjectSlide((prev) =>
-                prev > 0 ? prev - 1 : projects.length - projectsPerView
-              )
-            }
-            className="absolute top-1/2 -translate-y-1/2 left-0 bg-black/70 text-white p-3 rounded-full shadow-md hover:bg-black transition"
+    <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      {loadingProjects ? (
+        <p className="text-gray-500 w-full text-center py-12 col-span-full">
+          Loading projects...
+        </p>
+      ) : projects.length === 0 ? (
+        <p className="text-gray-500 w-full text-center py-12 col-span-full">
+          No projects available.
+        </p>
+      ) : (
+        projects.slice(0, 3).map((project, index) => (
+          <motion.div
+            key={project._id || index}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="relative overflow-hidden rounded-2xl shadow-lg group cursor-pointer aspect-[4/3]"
           >
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-          <button
-            onClick={() =>
-              setProjectSlide((prev) =>
-                prev < projects.length - projectsPerView ? prev + 1 : 0
-              )
-            }
-            className="absolute top-1/2 -translate-y-1/2 right-0 bg-black/70 text-white p-3 rounded-full shadow-md hover:bg-black transition"
-          >
-            <ChevronRight className="w-6 h-6" />
-          </button>
-        </>
+            <img
+              src={project.thumbnail?.url || project.image || "/placeholder.jpg"}
+              alt={project.title}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-center px-4">
+              <p className="text-xs sm:text-sm text-gray-200">
+                {project.category}
+              </p>
+              <h3 className="text-lg sm:text-xl font-clash font-bold text-white mt-1">
+                {project.title}
+              </h3>
+              <p className="text-gray-200 mt-2 text-xs sm:text-sm line-clamp-3">
+                {project.description}
+              </p>
+            </div>
+          </motion.div>
+        ))
       )}
     </div>
 

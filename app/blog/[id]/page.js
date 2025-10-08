@@ -19,7 +19,6 @@ export default function BlogDetail() {
       try {
         const res = await api.get(`/blogs/${id}`);
         setBlog(res.data);
-        console.log(res.data);
       } catch (err) {
         console.error("Failed to fetch blog:", err);
       } finally {

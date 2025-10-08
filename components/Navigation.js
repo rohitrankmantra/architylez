@@ -44,8 +44,8 @@ const Navigation = () => {
         animate={{ opacity: 1, y: 0 }}
         className={`fixed top-0 left-0  right-0 z-50 transition-all duration-500 ${
           isScrolled
-            ? 'bg-white/95 backdrop-blur-md border-b border-black/10 shadow-sm'
-            : 'bg-white/95 bg-overlay  '
+            ? 'bg-white backdrop-blur-md border-b border-black/10 shadow-sm'
+            : 'bg-white bg-overlay  '
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 py-1">
@@ -54,13 +54,12 @@ const Navigation = () => {
             <motion.div whileHover={{ scale: 1.05 }} className="z-50">
               <Link href="/">
                 <img
-                  src="/main-logo.png"
+                  src="/site-logo.png"
                   alt="Architylezz Logo"
-                  className="h-28 w-auto"
+                  className="h-[72px] w-[90vw] md:w-auto md:h-24"
                 />
               </Link>
             </motion.div>
-
             {/* Hamburger Button */}
             <motion.button
               onClick={() => setIsMenuOpen(true)}
