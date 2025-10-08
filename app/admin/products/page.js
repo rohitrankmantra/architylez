@@ -20,6 +20,8 @@ const SIZE_OPTIONS = [
   "800×800",
   "300×300",
   "1200×600",
+  "70×350",
+  "700×350"
 ];
 
 const FILTER_SIZE_OPTIONS = [
@@ -33,7 +35,7 @@ const FILTER_SIZE_OPTIONS = [
 
 
 const FINISH_OPTIONS = [
-  "Matte",
+  "Matt",
   "Glossy",
   "Honed",
   "Polished",
