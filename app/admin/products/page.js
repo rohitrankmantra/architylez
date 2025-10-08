@@ -42,13 +42,21 @@ const FINISH_OPTIONS = [
 ];
 
 const APPLICATION_OPTIONS = [
-  "LivingRoom",
-  "Kitchen",
-  "Bathroom",
-  "Bedroom",
-  "Outdoor"
+    "Residential",
+    "Commercial Building",
+    "Hotel, Restaurant & Cafe",
+    "Gymnasium",
+    "Hospital",
+    "Airport",
+    "School & College",
+    "Industry",
+    "Hall & Corridor",
+    "Mall & Super Market",
+    "Spa and Wellness Centres",
+    "Religious Place"
 ];
 
+  
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
