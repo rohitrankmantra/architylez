@@ -12,11 +12,13 @@ const inter = Inter({
 export async function generateMetadata() {
   try {
     const res = await api.get("/home-meta");
-    const data = await res.json();
+    const data = res.data;
+    
 
     return {
-      title: data?.title || "Architylezz -  & Interior Design",
-      description: data?.description || "Premium architectural solutions and interior design excellence",
+      title: data.title || "Architylezz - Luxury Architecture & Interior Design",
+      description: data.description || "Premium architectural solutions and interior design excellence",
+
     };
   } catch (err) {
     console.error("Failed to fetch home meta:", err);
