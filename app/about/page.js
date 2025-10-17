@@ -65,9 +65,9 @@ export default function About() {
               {/* Text Side */}
               <motion.div className="split-content space-y-6 sm:space-y-8 text-center md:text-left px-2 sm:px-0">
                 <div className="space-y-3 sm:space-y-4">
-                  <h1 className="font-clash text-3xl sm:text-5xl lg:text-6xl font-bold leading-tight">
+                  <h1 className="font-clash text-3xl sm:text-5xl lg:text-5xl font-bold leading-tight">
                     <span className="text-black">About</span>{' '}
-                    <span className="text-outline">Architylezz</span>
+                    <span className="text-outline uppercase">Architylezz</span>
                   </h1>
                   <div className="font-clash text-lg sm:text-2xl font-light text-gray-600">
                     Design Philosophy
@@ -91,12 +91,12 @@ export default function About() {
 
                 <div className="grid grid-cols-2 gap-4 sm:gap-8 pt-6 sm:pt-8">
                   <div>
-                    <div className="font-clash text-2xl sm:text-4xl font-bold text-[#001053] mb-1 sm:mb-2">150+</div>
+                    <div className="font-clash text-2xl sm:text-4xl font-bold text-[#001053] mb-1 sm:mb-2">20</div>
                     <div className="font-space text-xs sm:text-sm text-gray-600">Projects Completed</div>
                   </div>
                   <div>
-                    <div className="font-clash text-2xl sm:text-4xl font-bold text-[#001053] mb-1 sm:mb-2">25+</div>
-                    <div className="font-space text-xs sm:text-sm text-gray-600">Awards Won</div>
+                    <div className="font-clash text-2xl sm:text-4xl font-bold text-[#001053] mb-1 sm:mb-2">3</div>
+                    <div className="font-space text-xs sm:text-sm text-gray-600">Countries Served</div>
                   </div>
                 </div>
               </motion.div>

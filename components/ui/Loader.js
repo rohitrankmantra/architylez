@@ -42,7 +42,7 @@ export default function Loader({ children }) {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1 }}
-              className="font-clash text-5xl md:text-7xl font-bold bg-gradient-to-r from-black via-gray-600 to-black bg-clip-text text-transparent"
+              className="font-clash text-5xl md:text-7xl font-normal bg-gradient-to-r from-black via-gray-600 to-black bg-clip-text text-transparent uppercase"
             >
               Architylezz
             </motion.h1>

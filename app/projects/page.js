@@ -8,10 +8,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import api from "@/utils/api";
 import toast from "react-hot-toast";
-
-// Lightbox
-import Lightbox from "yet-another-react-lightbox";
-import "yet-another-react-lightbox/styles.css";
+import Link from "next/link";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin();
@@ -21,10 +18,7 @@ export default function ProjectsPage() {
   const containerRef = useRef(null);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [photoIndex, setPhotoIndex] = useState(0);
 
-  // Fetch projects from API
   const fetchProjects = async () => {
     setLoading(true);
     try {
@@ -42,106 +36,104 @@ export default function ProjectsPage() {
     fetchProjects();
   }, []);
 
-  // GSAP animations
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.utils.toArray(".project-item").forEach((el) => {
+      gsap.utils.toArray(".project-card").forEach((el) => {
         gsap.from(el, {
           opacity: 0,
-          y: 50,
+          y: 60,
           duration: 0.8,
           ease: "power2.out",
           scrollTrigger: {
             trigger: el,
-            start: "top 80%",
+            start: "top 85%",
           },
         });
       });
     }, containerRef);
-
     return () => ctx.revert();
   }, [projects]);
 
   return (
     <Loader>
       <Navigation />
-      <div ref={containerRef} className="text-black">
+      <div ref={containerRef} className="text-black bg-white">
         {/* Hero Section */}
         <section className="min-h-[60vh] flex items-center justify-center px-6 bg-gray-100">
-          <div className="text-center max-w-4xl mx-auto space-y-6 hero-content">
+          <div className="text-center max-w-4xl mx-auto space-y-6">
             <h1 className="font-clash text-5xl md:text-7xl font-bold">
               <span className="text-black">Our</span>{" "}
               <span className="text-outline">Projects</span>
             </h1>
             <p className="font-inter text-gray-600 text-lg max-w-2xl mx-auto">
-              Browse our portfolio of architectural and interior projects.
+              Browse our portfolio of architectural and interior design excellence.
             </p>
           </div>
         </section>
 
-        {/* Projects Grid */}
-        <section className="py-24 px-6 bg-gray-50">
+        {/* Projects Section */}
+        <section className="py-24 px-4 sm:px-6 bg-gray-50">
           <div className="max-w-7xl mx-auto text-center">
             <h2 className="font-clash text-4xl md:text-6xl font-bold mb-6">
               <span className="text-outline">Featured</span>{" "}
               <span className="text-black">Projects</span>
             </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto mb-16">
+            <p className="text-gray-600 max-w-2xl mx-auto">
               Discover our latest masterpieces showcasing innovation and craftsmanship.
             </p>
 
+            {/* Projects Grid */}
             {loading ? (
-              <p className="text-gray-500">Loading projects...</p>
+              <p className="text-gray-500 mt-12">Loading projects...</p>
             ) : projects.length === 0 ? (
-              <p className="text-gray-500">No projects available.</p>
+              <p className="text-gray-500 mt-12">No projects available.</p>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                 {projects.map((project, index) => (
                   <motion.div
                     key={project._id || index}
-                    className="project-item group relative overflow-hidden rounded-2xl shadow-lg cursor-pointer"
-                    whileHover={{ scale: 1.05 }}
-                    onClick={() => {
-                      setPhotoIndex(index);
-                      setLightboxOpen(true);
-                    }}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    className="project-card bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-500"
                   >
-                    {/* Project Image */}
-                    <img
-                      src={project.thumbnail?.url || project.image || "/placeholder.jpg"}
-                      alt={project.title}
-                      className="h-80 w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
+                    {/* Image */}
+                    <div className="relative h-72 overflow-hidden bg-gray-100">
+                      <img
+                        src={project.thumbnail?.url || project.image || "/placeholder.jpg"}
+                        alt={project.title}
+                        className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                      />
+                      {project.category && (
+                        <span className="absolute top-3 left-3 bg-black text-white text-xs font-semibold px-2 py-1 rounded">
+                          {project.category}
+                        </span>
+                      )}
+                    </div>
 
-                    {/* Hover Overlay */}
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-center px-4">
-                      <p className="text-sm text-gray-200">{project.category}</p>
-                      <h3 className="text-xl font-clash font-bold text-white mt-1">
+                    {/* Info */}
+                    <div className="p-6 space-y-4 text-left">
+                      <h3 className="font-space text-xl font-semibold text-black">
                         {project.title}
                       </h3>
-                      <p className="text-gray-200 mt-2 text-sm">{project.description}</p>
+                      <p className="text-gray-600 text-sm leading-relaxed line-clamp-2">
+                        {project.description}
+                      </p>
+
+                      {/* Single Button */}
+                      <motion.a
+                        href={`/projects/${project._id}`}
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
+                        className="inline-block w-full py-3 border-2 hover:border-black text-white bg-black font-machina font-semibold rounded-lg hover:bg-white hover:text-black transition-all duration-300 text-center text-sm"
+                      >
+                        Read More →
+                      </motion.a>
                     </div>
                   </motion.div>
                 ))}
               </div>
             )}
-
-            {/* Lightbox */}
-         {/* Lightbox */}
-{lightboxOpen && projects.length > 0 && (
-  <Lightbox
-    open={lightboxOpen}
-    close={() => setLightboxOpen(false)}
-    slides={projects.map((p) => ({
-      src: p.thumbnail?.url || p.image || "/placeholder.jpg",
-      title: p.title,
-      description: p.description, 
-    }))}
-    index={photoIndex}
-    controller={{ closeOnBackdropClick: true }}
-  />
-)}
-
           </div>
         </section>
       </div>
