@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
@@ -22,42 +22,46 @@ if (typeof window !== "undefined") {
 
 export default function Home() {
   const containerRef = useRef(null);
-  const heroRef = useRef(null);
   const featuresRef = useRef(null);
 
-  const [currentSlide, setCurrentSlide] = useState(0);
   const [projects, setProjects] = useState([]);
   const [loadingProjects, setLoadingProjects] = useState(true);
   const [windowWidth, setWindowWidth] = useState(1200);
 
+  // === HERO SLIDES ===
   const heroSlides = [
     {
       title: "Architectural Excellence",
       subtitle: "Where visionary design meets uncompromising craftsmanship.",
-      image: "bg-4.jpg",
+      image: "home-bg1.jpg",
+      cta1: { label: "Explore Portfolio", href: "/projects" },
+      cta2: { label: "Start Your Project", href: "/contact" },
     },
     {
       title: "Luxury Interiors",
       subtitle: "Spaces redefined with elegance, detail, and sophistication.",
-      image: "bg-5.jpg",
+      image: "home-bg2.jpg",
+      cta1: { label: "View Interiors", href: "/catalogue" },
+      cta2: { label: "Get a Quote", href: "/contact" },
     },
     {
       title: "Modern Innovation",
       subtitle: "Blending technology and creativity for future-ready designs.",
-      image: "bg-3.jpg",
+      image: "home-bg3.jpg",
+      cta1: { label: "See Innovation", href: "/projects" },
+      cta2: { label: "Work With Us", href: "/contact" },
     },
   ];
 
   const clientLogos = [
-    "/logos/nike.png",
-    "/logos/adidas.png",
-    "/logos/google.png",
-    "/logos/apple.png",
-    "/logos/tesla.png",
-    "/logos/amazon.png",
+    "/logos/client1.jpg",
+    "/logos/client2.jpg",
+    "/logos/client3.jpg",
+    "/logos/client4.jpg",
+    "/logos/client5.jpg",
+    "/logos/client6.jpg",
   ];
 
-  // Sample client reviews
   const clientReviews = [
     {
       name: "John Doe",
@@ -86,13 +90,6 @@ export default function Home() {
     window.addEventListener("resize", handleResize);
     handleResize();
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 6000);
-    return () => clearInterval(interval);
   }, []);
 
   const fetchProjects = async () => {
@@ -161,13 +158,26 @@ export default function Home() {
     },
   ];
 
-  // Slick Slider settings for clients
+  // === SLIDER SETTINGS ===
+  const heroSliderSettings = {
+    autoplay: true,
+    autoplaySpeed: 5000,
+    infinite: true,
+    speed: 1000,
+    arrows: false,
+    fade: false,
+    dots: false,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    pauseOnHover: false,
+  };
+
   const clientSliderSettings = {
     slidesToShow: 3,
     slidesToScroll: 1,
     infinite: true,
     autoplay: true,
-    autoplaySpeed: 3000,
+    autoplaySpeed: 800,
     arrows: false,
     dots: false,
     responsive: [
@@ -176,7 +186,6 @@ export default function Home() {
     ],
   };
 
-  // Slick Slider settings for reviews
   const reviewSliderSettings = {
     slidesToShow: 1,
     slidesToScroll: 1,
@@ -192,53 +201,48 @@ export default function Home() {
       <Navigation />
       <div ref={containerRef} className="relative bg-white text-black">
         {/* HERO SECTION */}
-        <section
-          ref={heroRef}
-          className="relative min-h-screen flex items-center justify-center overflow-hidden"
-        >
+        <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 z-0">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={heroSlides[currentSlide].image}
-                initial={{ opacity: 0, scale: 1.1 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 1 }}
-                className="absolute inset-0 bg-cover bg-center"
-                style={{
-                  backgroundImage: `url(${heroSlides[currentSlide].image})`,
-                }}
-              />
-            </AnimatePresence>
-            <div className="absolute inset-0 bg-gray-600/30" />
+            <Slider {...heroSliderSettings} className="absolute inset-0">
+              {heroSlides.map((slide, index) => (
+                <div key={index}>
+                  <div
+                    className="h-screen bg-cover   bg-center"
+                    style={{ backgroundImage: `url('/${slide.image}')` }}
+                  />
+                  <div className="absolute inset-0 z-0 bg-black/10"></div>
+                </div>
+              ))}
+            </Slider>
           </div>
 
           <div className="relative z-10 text-center max-w-5xl mx-auto px-6">
-            <h1 className="hero-title font-clash text-5xl md:text-7xl lg:text-8xl font-bold leading-tight mb-6">
-              <span className="block text-white">
-                {heroSlides[currentSlide].title.split(" ")[0]}
-              </span>
-              <span className="block text-outline text-white">
-                {heroSlides[currentSlide].title.split(" ")[1] || ""}
-              </span>
-            </h1>
-            <p className="hero-subtitle font-inter text-lg text-gray-200 max-w-2xl mx-auto leading-relaxed">
-              {heroSlides[currentSlide].subtitle}
-            </p>
-            <div className="hero-cta mt-10 flex flex-col sm:flex-row gap-6 justify-center">
-              <Link
-                href="/products"
-                className="px-8 py-4 bg-black text-white rounded-full font-semibold hover:bg-gray-900 transition-all"
-              >
-                Explore Portfolio
-              </Link>
-              <Link
-                href="/contact"
-                className="px-8 py-4 border-2 border-black text-black rounded-full font-semibold hover:bg-black hover:text-white transition-all"
-              >
-                Start Your Project
-              </Link>
-            </div>
+            <Slider {...heroSliderSettings} arrows={false} dots={false} infinite>
+              {heroSlides.map((slide, index) => (
+                <div key={index}>
+                  <h1 className="font-clash text-5xl md:text-7xl lg:text-8xl font-bold leading-tight mb-6 text-white text-outline drop-shadow-lg">
+                    {slide.title}
+                  </h1>
+                  <p className="font-inter text-lg text-gray-100 max-w-2xl mx-auto leading-relaxed">
+                    {slide.subtitle}
+                  </p>
+                  <div className="mt-10 flex flex-col sm:flex-row gap-6 justify-center">
+                    <Link
+                      href={slide.cta1.href}
+                      className="px-8 py-4 bg-white text-black rounded-full font-semibold hover:text-white hover:border hover:bg-transparent transition-all"
+                    >
+                      {slide.cta1.label}
+                    </Link>
+                    <Link
+                      href={slide.cta2.href}
+                      className="px-8 py-4 border-2 border-white text-white rounded-full font-semibold hover:bg-white hover:text-black transition-all"
+                    >
+                      {slide.cta2.label}
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </Slider>
           </div>
 
           <motion.div
@@ -275,22 +279,18 @@ export default function Home() {
                   whileHover={{ y: -10 }}
                   className="bg-white shadow-md p-8 rounded-2xl border border-gray-200 hover:shadow-xl transition-all"
                 >
-                  <div className="mb-4 flex justify-center items-center">
-                    {feature.icon}
-                  </div>
+                  <div className="mb-4 flex justify-center items-center">{feature.icon}</div>
                   <h3 className="font-space text-xl font-semibold text-black mb-2 text-center">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-600 text-center">
-                    {feature.description}
-                  </p>
+                  <p className="text-gray-600 text-center">{feature.description}</p>
                 </motion.div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* PROJECTS SECTION */}
+               {/* PROJECTS SECTION */}
         <section className="reveal-section py-24 px-4 sm:px-6 bg-gray-50">
           <div className="max-w-7xl mx-auto text-center">
             <h2 className="font-clash text-4xl md:text-6xl font-bold mb-6">
@@ -381,7 +381,7 @@ export default function Home() {
                   <img
                     src={logo}
                     alt={`Client ${index + 1}`}
-                    className="max-h-16 object-contain mx-auto"
+                    className="max-h-60 object-contain mx-auto"
                   />
                 </div>
               ))}
@@ -419,7 +419,6 @@ export default function Home() {
             </Slider>
           </div>
         </section>
-
       </div>
       <Footer />
     </Loader>

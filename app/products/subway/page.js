@@ -74,7 +74,7 @@ export default function SubwayTiles() {
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: `url('https://images.pexels.com/photos/1435752/pexels-photo-1435752.jpeg?auto=compress&cs=tinysrgb&w=1600')`,
+            backgroundImage: `url('/bg/subway.jpg')`,
             }}
           />
           <div className="absolute inset-0 bg-black/30" />

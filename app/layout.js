@@ -12,8 +12,6 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
-
-
 export async function generateMetadata() {
   try {
     const res = await api.get("/home-meta");
@@ -27,7 +25,6 @@ export async function generateMetadata() {
         icon: "/loader.png",  // ✅ Using logo.png instead
         apple: "/loader.png",
       },
-
     };
   } catch (err) {
     console.error("Failed to fetch home meta:", err);
