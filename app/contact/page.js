@@ -21,11 +21,10 @@ export default function Contact() {
   const [submitting, setSubmitting] = useState(false);
 
   const services = [
-    "Architectural Design",
-    "Interior Design",
-    "Consultation",
-    "Project Management",
-    "Custom Solutions",
+   "GVT Tiles",
+   "Wall Tiles",
+   "Subway Tiles",
+    "Wooden Tiles",
   ];
 
   const contactInfo = [
@@ -179,7 +178,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <label className="block font-space text-sm font-medium text-black mb-2">
-                        Service Needed
+                        Tile Needed
                       </label>
                       <select
                         name="service"
@@ -187,7 +186,7 @@ export default function Contact() {
                         onChange={handleInputChange}
                         className="w-full px-4 py-3 bg-gray-50 border border-gray-200 text-black rounded-lg focus:border-black focus:outline-none"
                       >
-                        <option value="">Select a service</option>
+                        <option value="">Select a tile</option>
                         {services.map((service) => (
                           <option key={service} value={service}>
                             {service}

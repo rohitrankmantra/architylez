@@ -89,6 +89,11 @@ export default function ProductsPage() {
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
 
+  // lightbox image 
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+const [lightboxImage, setLightboxImage] = useState(null);
+
+
 
   // === fetch products ===
   useEffect(() => {
@@ -153,35 +158,62 @@ export default function ProductsPage() {
     setMetaDescription("");
   };
 
-  const openEdit = (p) => {
-    setSelectedProduct(p);
-    setThumbnailPreview(p.thumbnail || null);
-    setImagePreviews(Array.isArray(p.images) ? [...p.images] : []);
-    setSelectedSizes(
-      p.size ? (Array.isArray(p.size) ? p.size : p.size.split(",").map((s) => s.trim())) : []
-    );
-    setSelectedFinishes(
-      p.finish ? (Array.isArray(p.finish) ? p.finish : p.finish.split(",").map((f) => f.trim())) : []
-    );
-    setSelectedFilterSizes(
-      p.filterSize ? (Array.isArray(p.filterSize) ? p.filterSize : p.filterSize.split(",").map((s) => s.trim())) : []
-    );
-    setMaterialType(p.materialType || "");
-    setApplications(p.application || []);
-    setApplicationInput("");
-    setBrand(p.brand || "");
-    setQuality(p.quality || "");
-    setCoverageArea(p.coverageArea || "");
-    setPcsPerBox(p.pcsPerBox || "");
+ const openEdit = (p) => {
+  setSelectedProduct(p);
 
-    // ✅ Meta fields
-    setMetaTitle(p.metaTitle || "");
-    setMetaDescription(p.metaDescription || "");
+  // ✅ Handle Cloudinary thumbnail or direct URL
+  setThumbnailPreview(
+    typeof p.thumbnail === "string" ? p.thumbnail : p.thumbnail?.url || null
+  );
 
-    setSizeInput("");
-    setFinishInput("");
-    setFilterSizeInput("");
-  };
+  // ✅ Handle Cloudinary images array or plain URLs
+  const imgs = Array.isArray(p.images)
+    ? p.images.map((img) =>
+        typeof img === "string" ? img : img?.url
+      )
+    : [];
+  setImagePreviews(imgs);
+
+  setSelectedSizes(
+    p.size
+      ? Array.isArray(p.size)
+        ? p.size
+        : p.size.split(",").map((s) => s.trim())
+      : []
+  );
+
+  setSelectedFinishes(
+    p.finish
+      ? Array.isArray(p.finish)
+        ? p.finish
+        : p.finish.split(",").map((f) => f.trim())
+      : []
+  );
+
+  setSelectedFilterSizes(
+    p.filterSize
+      ? Array.isArray(p.filterSize)
+        ? p.filterSize
+        : p.filterSize.split(",").map((s) => s.trim())
+      : []
+  );
+
+  setMaterialType(p.materialType || "");
+  setApplications(p.application || []);
+  setApplicationInput("");
+  setBrand(p.brand || "");
+  setQuality(p.quality || "");
+  setCoverageArea(p.coverageArea || "");
+  setPcsPerBox(p.pcsPerBox || "");
+
+  // ✅ Meta fields
+  setMetaTitle(p.metaTitle || "");
+  setMetaDescription(p.metaDescription || "");
+
+  setSizeInput("");
+  setFinishInput("");
+  setFilterSizeInput("");
+};
 
 
 
@@ -339,12 +371,13 @@ export default function ProductsPage() {
   return (
     <div className="p-4">
       <div className="flex items-center justify-between mb-3">
-        <h1 className="text-sm font-semibold">Products</h1>
+        <h1 className="text-2xl font-semibold">Products</h1>
         <button
           onClick={openAdd}
-          className="inline-flex items-center gap-2 px-2 py-1 bg-green-600 text-white rounded text-xs"
+          className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+
         >
-          <Plus size={14} /> Add Product
+          <Plus size={18} /> Add Product
         </button>
       </div>
 
@@ -354,21 +387,20 @@ export default function ProductsPage() {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-sm">
             <thead>
-              <tr className="bg-gray-100 text-left text-xs">
+              <tr className="bg-gray-100 text-left text-sm">
                 <th className="p-2 border">Thumb</th>
                 <th className="p-2 border">Title</th>
                 <th className="p-2 border">Description</th>
                 <th className="p-2 border">Category</th>
                 <th className="p-2 border">Size</th>
                 <th className="p-2 border">Finish</th>
-                <th className="p-2 border">Application</th>
-                <th className="p-2 border">Images</th>
+                {/* <th className="p-2 border">Application</th> */}
                 <th className="p-2 border text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
               {products.map((p) => (
-                <tr key={p._id} className="hover:bg-gray-50 align-top text-xs">
+                <tr key={p._id} className="hover:bg-gray-50 align-top">
                   <td className="p-2 border w-14">
                     <img
                       src={p.thumbnail?.url}
@@ -392,32 +424,10 @@ export default function ProductsPage() {
                   <td className="p-2 border">
                     {Array.isArray(p.finish) ? p.finish.join(", ") : p.finish}
                   </td>
-                  <td className="p-2 border">
+                  {/* <td className="p-2 border">
                     {Array.isArray(p.application) ? p.application.join(", ") : p.application}
-                  </td>
-                  <td className="p-2 border">
-                    <div className="flex gap-1 items-center">
-                      {Array.isArray(p.images) && p.images.length > 0 ? (
-                        p.images.slice(0, 4).map((img, i) => (
-                          <img
-                            key={i}
-                            src={img.url}
-                            alt={`${p.title}-img-${i}`}
-                            className="w-8 h-8 object-cover rounded"
-                          />
-                        ))
-                      ) : (
-                        <div className="text-xs text-gray-500 flex items-center gap-1">
-                          <ImageIcon size={12} /> no images
-                        </div>
-                      )}
-                      {Array.isArray(p.images) && p.images.length > 4 && (
-                        <div className="text-xs text-gray-500">
-                          +{p.images.length - 4}
-                        </div>
-                      )}
-                    </div>
-                  </td>
+                  </td> */}
+                
                   <td className="p-2 border text-center">
                     <div className="inline-flex items-center gap-1">
                       <button
@@ -482,26 +492,31 @@ export default function ProductsPage() {
               {/* thumbnail */}
               <div>
                 <label className="block text-xs font-medium mb-1">Thumbnail</label>
-                {thumbnailPreview ? (
-                  <div className="relative w-24 h-24">
-                    <img
-                      src={thumbnailPreview}
-                      alt="thumb"
-                      className="w-24 h-24 object-cover rounded border"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleRemoveThumbnail}
-                      className="absolute -top-2 -right-2 bg-white border rounded-full p-1 text-red-600"
-                    >
-                      <Trash size={12} />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="w-24 h-24 border rounded flex items-center justify-center text-xs text-gray-400">
-                    No thumbnail
-                  </div>
-                )}
+               {thumbnailPreview ? (
+  <div className="relative w-24 h-24 group">
+    <img
+      src={thumbnailPreview}
+      alt="thumb"
+      onClick={() => {
+        setLightboxImage(thumbnailPreview);
+        setLightboxOpen(true);
+      }}
+      className="w-24 h-24 object-cover rounded border cursor-pointer hover:opacity-80 transition"
+    />
+    <button
+      type="button"
+      onClick={handleRemoveThumbnail}
+      className="absolute -top-2 -right-2 bg-white/80 border rounded-full p-1 text-red-600 opacity-0 group-hover:opacity-100 transition"
+    >
+      <Trash size={12} />
+    </button>
+  </div>
+) : (
+  <div className="w-24 h-24 border rounded flex items-center justify-center text-xs text-gray-400">
+    No thumbnail
+  </div>
+)}
+
                 <input
                   type="file"
                   name="thumbnail"
@@ -739,22 +754,49 @@ export default function ProductsPage() {
               <div>
                 <label className="block text-xs font-medium mb-1">Product Images</label>
                 <div className="flex flex-wrap gap-2 mb-2">
-                  {imagePreviews.map((img, i) => (
-                    <div key={i} className="relative w-20 h-20">
-                      <img
-                        src={img}
-                        alt={`img-${i}`}
-                        className="w-20 h-20 object-cover rounded border"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteImage(i)}
-                        className="absolute -top-2 -right-2 bg-white border rounded-full p-1 text-red-600"
-                      >
-                        <Trash size={12} />
-                      </button>
-                    </div>
-                  ))}
+                {imagePreviews.map((img, i) => (
+  <div key={i} className="relative group w-20 h-20">
+    <img
+      src={img}
+      alt={`img-${i}`}
+      onClick={() => {
+        setLightboxImage(img);
+        setLightboxOpen(true);
+      }}
+      className="w-20 h-20 object-cover rounded border cursor-pointer hover:opacity-80 transition"
+    />
+    <button
+      type="button"
+      onClick={() => handleDeleteImage(i)}
+      className="absolute -top-2 -right-2 bg-white/80 border rounded-full p-1 text-red-600 opacity-0 group-hover:opacity-100 transition"
+    >
+      <Trash size={12} />
+    </button>
+  </div>
+))}
+
+{/* lightbox  */}
+{lightboxOpen && (
+  <div
+    className="fixed inset-0 bg-black/80 flex items-center justify-center z-[9999]"
+    onClick={() => setLightboxOpen(false)}
+  >
+    <img
+      src={lightboxImage}
+      alt="Large preview"
+      className="max-w-[90vw] max-h-[85vh] rounded-lg shadow-2xl"
+      onClick={(e) => e.stopPropagation()}
+    />
+    <button
+      onClick={() => setLightboxOpen(false)}
+      className="absolute top-5 right-5 text-white text-3xl font-bold hover:scale-110 transition"
+    >
+      ×
+    </button>
+  </div>
+)}
+
+
                 </div>
                 <input
                   type="file"

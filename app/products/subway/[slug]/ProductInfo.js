@@ -25,10 +25,10 @@ export default function ProductInfo({ product }) {
           <div className="grid grid-cols-2 gap-6 p-6 text-sm text-gray-700">
             <div className="font-medium">Size (mm)</div>
             <div>{Array.isArray(product.size) ? product.size.join(", ") : product.size ?? "-"}</div>
-            <div className="font-medium">Filter Size (feet)</div>
+            {/* <div className="font-medium">Filter Size (feet)</div>
             <div>{Array.isArray(product.filterSize) ? product.filterSize.join(", ") : product.filterSize ?? "-"}</div>
             <div className="font-medium">Material Type</div>
-            <div>{product.materialType ?? "-"}</div>
+            <div>{product.materialType ?? "-"}</div> */}
             <div className="font-medium">Finish</div>
             <div>{Array.isArray(product.finish) ? product.finish.join(", ") : product.finish ?? "-"}</div>
             <div className="font-medium">Application</div>
@@ -45,17 +45,24 @@ export default function ProductInfo({ product }) {
         </div>
       </section>
 
-      {/* Applications */}
-      <section className="mb-12">
-        <h3 className="text-xl font-semibold mb-6">Application</h3>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {usageOptions.map((u, idx) => (
-            <div key={idx} className="flex flex-col items-center justify-center gap-2 p-4 border border-black/20 rounded-lg shadow text-center text-sm">
-              <span>{u.label}</span>
-            </div>
-          ))}
-        </div>
-      </section>
+{/* Applications */}
+<section className="mb-12">
+  <h3 className="text-xl font-semibold mb-6">Application</h3>
+  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+    {(Array.isArray(product.application) && product.application.length > 0
+      ? product.application
+      : usageOptions
+    ).map((app, idx) => (
+      <div
+        key={idx}
+        className="flex flex-col items-center justify-center gap-2 p-4 border border-black/20 rounded-lg shadow text-center text-sm bg-white"
+      >
+        <span>{app.label || app}</span>
+      </div>
+    ))}
+  </div>
+</section>
+
 
       {/* Description */}
       <section>
