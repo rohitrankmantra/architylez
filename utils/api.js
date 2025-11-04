@@ -6,7 +6,7 @@ const api = axios.create({
   withCredentials: true, 
 });
 
-export const BASE_URL = "https://architylezz-backend.onrender.com/api" || "http://localhost:5000";
+export const BASE_URL = "https://architylezz-backend.onrender.com/api";
 
 
 export default api;
