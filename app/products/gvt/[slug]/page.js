@@ -21,12 +21,13 @@ export async function generateMetadata({ params }) {
       product.description?.slice(0, 160) ||
       "";
 
-    const getFullImageUrl = (path) => {
-      if (!path) return null;
-      return path.startsWith("http")
-        ? path
-        : `${BASE_URL}${path.startsWith("/") ? path : `/uploads/${path}`}`;
-    };
+const getFullImageUrl = (path) => {
+  if (!path) return "/placeholder.png";
+  if (path.startsWith("http")) return path;
+  // Force https in production
+  return `${BASE_URL.replace(/^http:/, "https:")}${path.startsWith("/") ? path : `/uploads/${path}`}`;
+};
+
 
     return {
       title: metaTitle,
@@ -60,12 +61,14 @@ export default async function ProductDetailPage({ params }) {
     return <div className="p-10 text-center">Product not found</div>;
   }
 
-  const getImageUrl = (path) => {
-    if (!path) return "/placeholder.png";
-    return path.startsWith("http")
-      ? path
-      : `${BASE_URL}${path.startsWith("/") ? path : `/uploads/${path}`}`;
-  };
+const getImageUrl = (product) => {
+  const imagePath = product.thumbnail?.url || product.image;
+  if (!imagePath) return "/placeholder.png";
+  return imagePath.startsWith("http")
+    ? imagePath
+    : `${BASE_URL.replace(/^http:/, 'https:')}${imagePath.startsWith("/") ? imagePath : `/uploads/${imagePath}`}`;
+};
+
 
   const thumbnailUrl = getImageUrl(product.thumbnail?.url);
 

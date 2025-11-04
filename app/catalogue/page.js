@@ -6,8 +6,7 @@ import { gsap } from "gsap";
 import Loader from "@/components/ui/Loader";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import api from "@/utils/api";
-
+import api, { BASE_URL } from "@/utils/api";
 
 // === Catalogue Page ===
 export default function Catalogue() {
@@ -59,6 +58,14 @@ export default function Catalogue() {
       ? catalogues
       : catalogues.filter((c) => c.category === activeCategory);
 
+  // ✅ Helper to build full URL for images or PDFs
+  const getFullUrl = (path) => {
+    if (!path) return "/placeholder.png";
+    return path.startsWith("http")
+      ? path
+      : `${BASE_URL}${path.startsWith("/") ? path : `/uploads/${path}`}`;
+  };
+
   return (
     <Loader>
       <Navigation />
@@ -96,9 +103,9 @@ export default function Catalogue() {
                 design inspiration.
               </p>
 
-              {/* Categories Tabs below heading */}
+              {/* Categories Tabs */}
               <div className="mt-8 flex flex-wrap justify-center gap-4">
-                {["All", "GVT", "Subway", "Wall", "Wood"].map((cat) => (
+                {categories.map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setActiveCategory(cat)}
@@ -127,6 +134,7 @@ export default function Catalogue() {
                     key={catalogue._id}
                     catalogue={catalogue}
                     index={index}
+                    getFullUrl={getFullUrl} // pass helper to card
                   />
                 ))}
               </div>
@@ -140,7 +148,7 @@ export default function Catalogue() {
 }
 
 // === Catalogue Card ===
-function CatalogueCard({ catalogue, index }) {
+function CatalogueCard({ catalogue, index, getFullUrl }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -153,7 +161,7 @@ function CatalogueCard({ catalogue, index }) {
       <div className="relative h-64 overflow-hidden bg-gray-100 flex items-center justify-center">
         {catalogue.thumbnail?.url ? (
           <img
-            src={catalogue.thumbnail.url}
+            src={getFullUrl(catalogue.thumbnail.url)}
             alt={catalogue.title || "Catalogue thumbnail"}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             loading="lazy"
@@ -183,7 +191,7 @@ function CatalogueCard({ catalogue, index }) {
 
         <div className="flex space-x-3 pt-3">
           <motion.a
-            href={catalogue.pdf?.url}
+            href={getFullUrl(catalogue.pdf?.url)}
             target="_blank"
             rel="noopener noreferrer"
             whileHover={{ scale: 1.02 }}
@@ -193,7 +201,7 @@ function CatalogueCard({ catalogue, index }) {
             Download
           </motion.a>
           <motion.a
-            href={catalogue.pdf?.url}
+            href={getFullUrl(catalogue.pdf?.url)}
             target="_blank"
             rel="noopener noreferrer"
             whileHover={{ scale: 1.02 }}

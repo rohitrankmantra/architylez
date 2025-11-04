@@ -32,12 +32,14 @@ export default function ProductGallery({ images, title, category }) {
     return () => ctx.revert();
   }, []);
 
-  const getImageUrl = (path) => {
-    if (!path) return "/placeholder.png";
-    return path.startsWith("http")
-      ? path
-      : `${BASE_URL}${path.startsWith("/") ? path : `/uploads/${path}`}`;
-  };
+ const getImageUrl = (product) => {
+  const imagePath = product.thumbnail?.url || product.image;
+  if (!imagePath) return "/placeholder.png";
+  return imagePath.startsWith("http")
+    ? imagePath
+    : `${BASE_URL.replace(/^http:/, 'https:')}${imagePath.startsWith("/") ? imagePath : `/uploads/${imagePath}`}`;
+};
+
 
   const handleWheel = (e) => {
     e.preventDefault();

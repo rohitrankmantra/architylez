@@ -71,13 +71,14 @@ export default function GvtTiles() {
   };
 
  // Helper to build image URL
-  const getImageUrl = (product) => {
-    const imagePath = product.thumbnail?.url || product.image;
-    if (!imagePath) return "/placeholder.png";
-    return imagePath.startsWith("http")
-      ? imagePath
-      : `${BASE_URL}${imagePath.startsWith("/") ? imagePath : `/uploads/${imagePath}`}`;
-  };
+const getImageUrl = (product) => {
+  const imagePath = product.thumbnail?.url || product.image;
+  if (!imagePath) return "/placeholder.png";
+  return imagePath.startsWith("http")
+    ? imagePath
+    : `${BASE_URL.replace(/^http:/, 'https:')}${imagePath.startsWith("/") ? imagePath : `/uploads/${imagePath}`}`;
+};
+
   return (
     <Loader>
       <Navigation />
