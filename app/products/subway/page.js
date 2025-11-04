@@ -5,11 +5,10 @@ import { motion } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Loader from "@/components/ui/Loader";
-import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { FiFilter } from "react-icons/fi"; 
-import api from "@/utils/api"; // your axios instance
+import { FiFilter } from "react-icons/fi";
+import api,{BASE_URL} from "@/utils/api";
 import { useRouter } from "next/navigation";
 
 if (typeof window !== "undefined") {
@@ -24,6 +23,7 @@ export default function SubwayTiles() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  // 🔹 GSAP Scroll Animations
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.utils.toArray(".reveal-section").forEach((section) => {
@@ -39,17 +39,18 @@ export default function SubwayTiles() {
     return () => ctx.revert();
   }, []);
 
+  // 🔹 Fetch Subway Products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const res = await api.get("/products");
         const subwayProducts = res.data.filter(
-          (p) => p.category.toLowerCase() === "subway"
+          (p) => p.category?.toLowerCase() === "subway"
         );
         setProducts(subwayProducts);
         setFilteredProducts(subwayProducts);
       } catch (err) {
-        console.error("Failed to fetch products:", err);
+        console.error("❌ Failed to fetch products:", err);
       } finally {
         setLoading(false);
       }
@@ -57,6 +58,16 @@ export default function SubwayTiles() {
     fetchProducts();
   }, []);
 
+ // Helper to build image URL
+  const getImageUrl = (product) => {
+    const imagePath = product.thumbnail?.url || product.image;
+    if (!imagePath) return "/placeholder.png";
+    return imagePath.startsWith("http")
+      ? imagePath
+      : `${BASE_URL}${imagePath.startsWith("/") ? imagePath : `/uploads/${imagePath}`}`;
+  };
+
+  // 🔹 Filter Logic
   const handleFilterClick = () => {
     const filtered = products.filter((p) => {
       const allFields = [p.title, p.size, p.category].join(" ").toLowerCase();
@@ -69,15 +80,15 @@ export default function SubwayTiles() {
     <Loader>
       <Navigation />
       <div ref={containerRef} className="relative bg-white text-black">
-        {/* Hero Section */}
+        {/* 🌆 Hero Section */}
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{
-            backgroundImage: `url('/bg/subway.jpg')`,
+              backgroundImage: `url('/bg/subway.jpg')`,
             }}
           />
-          <div className="absolute inset-0 bg-black/30" />
+          <div className="absolute inset-0 bg-black/40" />
           <div className="relative z-10 text-center text-white px-6 max-w-4xl">
             <motion.h1
               initial={{ y: 50, opacity: 0 }}
@@ -94,15 +105,15 @@ export default function SubwayTiles() {
               transition={{ delay: 0.3, duration: 1 }}
               className="text-lg md:text-xl text-gray-200"
             >
-              Explore our finest collection of subway tiles, blending style
-              and durability for modern interiors.
+              Explore our finest collection of subway tiles — where elegance meets durability.
             </motion.p>
           </div>
         </section>
 
-        {/* Product Showcase */}
+        {/* 🛍️ Product Showcase */}
         <section className="reveal-section py-24 px-6 bg-white text-black">
           <div className="max-w-7xl mx-auto">
+            {/* Section Title */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -114,12 +125,11 @@ export default function SubwayTiles() {
                 <span className="text-outline">Collections</span>
               </h2>
               <p className="font-inter text-gray-600 text-lg max-w-2xl mx-auto">
-                Discover premium subway tile collections designed for
-                durability, elegance, and timeless appeal.
+                Discover premium subway tile collections crafted for modern design and timeless style.
               </p>
             </motion.div>
 
-            {/* Search + Filter */}
+            {/* 🔍 Search & Filter */}
             <div className="flex justify-center mb-12">
               <div className="relative w-full max-w-7xl">
                 <input
@@ -127,9 +137,7 @@ export default function SubwayTiles() {
                   placeholder="Search by name, size, category..."
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleFilterClick();
-                  }}
+                  onKeyDown={(e) => e.key === "Enter" && handleFilterClick()}
                   className="w-full p-5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black pr-32 text-lg"
                   style={{ height: "60px" }}
                 />
@@ -143,8 +151,11 @@ export default function SubwayTiles() {
               </div>
             </div>
 
+            {/* 🧱 Product Grid */}
             {loading ? (
               <p className="text-center text-gray-500">Loading products...</p>
+            ) : filteredProducts.length === 0 ? (
+              <p className="text-center text-gray-500">No subway tiles found.</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filteredProducts.map((product) => (
@@ -156,8 +167,9 @@ export default function SubwayTiles() {
                     onClick={() => router.push(`/products/subway/${product._id}`)}
                   >
                     <img
-                      src={product.thumbnail?.url || product.image}
+                      src={getImageUrl(product)}
                       alt={product.title}
+                      onError={(e) => (e.target.src = "/placeholder.png")}
                       className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-80 group-hover:opacity-90 transition-all duration-300" />

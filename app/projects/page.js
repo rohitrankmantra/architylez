@@ -3,15 +3,15 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Loader from "@/components/ui/Loader";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import api from "@/utils/api";
+import api, { BASE_URL } from "@/utils/api";
 import toast from "react-hot-toast";
-import Link from "next/link";
 
 if (typeof window !== "undefined") {
-  gsap.registerPlugin();
+  gsap.registerPlugin(ScrollTrigger);
 }
 
 export default function ProjectsPage() {
@@ -19,11 +19,11 @@ export default function ProjectsPage() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // ✅ Fetch Projects Once
   const fetchProjects = async () => {
-    setLoading(true);
     try {
       const res = await api.get("/projects");
-      setProjects(res.data);
+      setProjects(res.data || []);
     } catch (err) {
       console.error("❌ Error fetching projects:", err);
       toast.error("Failed to load projects");
@@ -36,26 +36,34 @@ export default function ProjectsPage() {
     fetchProjects();
   }, []);
 
+  // ✅ Run GSAP Animations after projects are loaded
   useEffect(() => {
+    if (!projects.length) return;
+
     const ctx = gsap.context(() => {
       gsap.utils.toArray(".project-card").forEach((el) => {
         gsap.from(el, {
           opacity: 0,
-          y: 60,
+          y: 50,
           duration: 0.8,
           ease: "power2.out",
           scrollTrigger: {
             trigger: el,
             start: "top 85%",
+            toggleActions: "play none none none",
           },
         });
       });
     }, containerRef);
+
     return () => ctx.revert();
-  }, [projects]);
+  }, [projects.length]);
+
+  // ✅ Loader shown only while fetching
+  if (loading) return <Loader />;
 
   return (
-    <Loader>
+    <>
       <Navigation />
       <div ref={containerRef} className="text-black bg-white">
         {/* Hero Section */}
@@ -83,9 +91,7 @@ export default function ProjectsPage() {
             </p>
 
             {/* Projects Grid */}
-            {loading ? (
-              <p className="text-gray-500 mt-12">Loading projects...</p>
-            ) : projects.length === 0 ? (
+            {projects.length === 0 ? (
               <p className="text-gray-500 mt-12">No projects available.</p>
             ) : (
               <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -100,8 +106,9 @@ export default function ProjectsPage() {
                     {/* Image */}
                     <div className="relative h-72 overflow-hidden bg-gray-100">
                       <img
-                        src={project.thumbnail?.url || project.image || "/placeholder.jpg"}
+                        src={`${BASE_URL}${project.thumbnail?.url}`}
                         alt={project.title}
+                        loading="lazy"
                         className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                       />
                       {project.category && (
@@ -120,7 +127,7 @@ export default function ProjectsPage() {
                         {project.description}
                       </p>
 
-                      {/* Single Button */}
+                      {/* Button */}
                       <motion.a
                         href={`/projects/${project._id}`}
                         whileHover={{ scale: 1.03 }}
@@ -138,6 +145,6 @@ export default function ProjectsPage() {
         </section>
       </div>
       <Footer />
-    </Loader>
+    </>
   );
 }

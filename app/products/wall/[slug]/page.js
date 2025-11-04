@@ -2,11 +2,11 @@ import ProductGallery from "./ProductGallery";
 import ProductInfo from "./ProductInfo";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import api from "@/utils/api";
+import api, { BASE_URL } from "@/utils/api";
 
 export async function generateMetadata({ params }) {
   try {
-    const { slug } = await params; // ✅ must await
+    const { slug } = await params;
 
     const res = await api.get(`/products/${slug}`);
     const product = res.data;
@@ -21,13 +21,22 @@ export async function generateMetadata({ params }) {
       product.description?.slice(0, 160) ||
       "";
 
+    const getFullImageUrl = (path) => {
+      if (!path) return null;
+      return path.startsWith("http")
+        ? path
+        : `${BASE_URL}${path.startsWith("/") ? path : `/uploads/${path}`}`;
+    };
+
     return {
       title: metaTitle,
       description: metaDescription,
       openGraph: {
         title: metaTitle,
         description: metaDescription,
-        images: product.thumbnail?.url ? [{ url: product.thumbnail.url }] : [],
+        images: product.thumbnail?.url
+          ? [{ url: getFullImageUrl(product.thumbnail.url) }]
+          : [],
       },
     };
   } catch (error) {
@@ -40,7 +49,7 @@ export default async function ProductDetailPage({ params }) {
   let product = null;
 
   try {
-    const { slug } = await params; // ✅ must await here too
+    const { slug } = await params;
     const res = await api.get(`/products/${slug}`);
     product = res.data;
   } catch (err) {
@@ -51,13 +60,23 @@ export default async function ProductDetailPage({ params }) {
     return <div className="p-10 text-center">Product not found</div>;
   }
 
+  const getImageUrl = (path) => {
+    if (!path) return "/placeholder.png";
+    return path.startsWith("http")
+      ? path
+      : `${BASE_URL}${path.startsWith("/") ? path : `/uploads/${path}`}`;
+  };
+
+  const thumbnailUrl = getImageUrl(product.thumbnail?.url);
+
   return (
     <>
       <Navigation />
       <div className="min-h-screen bg-white text-black">
         <div className="relative w-full h-[60vh] md:h-[85vh]">
+          {/* ✅ removed onError */}
           <img
-            src={product.thumbnail?.url}
+            src={thumbnailUrl}
             alt={product.title}
             className="w-full h-full object-cover"
           />

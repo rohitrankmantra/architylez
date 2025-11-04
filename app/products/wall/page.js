@@ -8,7 +8,7 @@ import Loader from "@/components/ui/Loader";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { FiFilter } from "react-icons/fi";
-import api from "@/utils/api";
+import api,{BASE_URL} from "@/utils/api";
 import { useRouter } from "next/navigation";
 
 if (typeof window !== "undefined") {
@@ -23,6 +23,16 @@ export default function WallTiles() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+ // Helper to build image URL
+  const getImageUrl = (product) => {
+    const imagePath = product.thumbnail?.url || product.image;
+    if (!imagePath) return "/placeholder.png";
+    return imagePath.startsWith("http")
+      ? imagePath
+      : `${BASE_URL}${imagePath.startsWith("/") ? imagePath : `/uploads/${imagePath}`}`;
+  };
+
+  // 🔹 Scroll animation setup
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.utils.toArray(".reveal-section").forEach((section) => {
@@ -38,17 +48,18 @@ export default function WallTiles() {
     return () => ctx.revert();
   }, []);
 
+  // 🔹 Fetch wall tiles products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const res = await api.get("/products");
         const wallProducts = res.data.filter(
-          (p) => p.category.toLowerCase() === "wall"
+          (p) => p.category?.toLowerCase() === "wall"
         );
         setProducts(wallProducts);
         setFilteredProducts(wallProducts);
       } catch (err) {
-        console.error("Failed to fetch products:", err);
+        console.error("❌ Failed to fetch products:", err);
       } finally {
         setLoading(false);
       }
@@ -56,6 +67,7 @@ export default function WallTiles() {
     fetchProducts();
   }, []);
 
+  // 🔹 Search filter
   const handleFilterClick = () => {
     const filtered = products.filter((p) => {
       const allFields = [p.title, p.size, p.category].join(" ").toLowerCase();
@@ -68,15 +80,13 @@ export default function WallTiles() {
     <Loader>
       <Navigation />
       <div ref={containerRef} className="relative bg-white text-black">
-        {/* Hero Section */}
+        {/* 🏠 Hero Section */}
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
           <div
             className="absolute inset-0 bg-cover bg-center"
-            style={{
-      backgroundImage: `url('/bg/wall.jpg')`,
-            }}
+            style={{ backgroundImage: `url('/bg/wall.jpg')` }}
           />
-          <div className="absolute inset-0 bg-black/30" />
+          <div className="absolute inset-0 bg-black/40" />
           <div className="relative z-10 text-center text-white px-6 max-w-4xl">
             <motion.h1
               initial={{ y: 50, opacity: 0 }}
@@ -93,15 +103,16 @@ export default function WallTiles() {
               transition={{ delay: 0.3, duration: 1 }}
               className="text-lg md:text-xl text-gray-200"
             >
-              Explore our top-quality wall tile collections for modern and
-              elegant interiors.
+              Explore our elegant wall tile collections — crafted for modern
+              aesthetics and lasting impressions.
             </motion.p>
           </div>
         </section>
 
-        {/* Product Showcase */}
+        {/* 🧱 Product Section */}
         <section className="reveal-section py-24 px-6 bg-white text-black">
           <div className="max-w-7xl mx-auto">
+            {/* Title */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -113,12 +124,11 @@ export default function WallTiles() {
                 <span className="text-outline">Collections</span>
               </h2>
               <p className="font-inter text-gray-600 text-lg max-w-2xl mx-auto">
-                Discover premium wall tile collections designed for beauty,
-                durability, and style.
+                Discover premium wall tiles designed for beauty, durability, and timeless style.
               </p>
             </motion.div>
 
-            {/* Search + Filter */}
+            {/* 🔍 Search + Filter */}
             <div className="flex justify-center mb-12">
               <div className="relative w-full max-w-7xl">
                 <input
@@ -126,9 +136,7 @@ export default function WallTiles() {
                   placeholder="Search by name, size, category..."
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleFilterClick();
-                  }}
+                  onKeyDown={(e) => e.key === "Enter" && handleFilterClick()}
                   className="w-full p-5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black pr-32 text-lg"
                   style={{ height: "60px" }}
                 />
@@ -142,8 +150,11 @@ export default function WallTiles() {
               </div>
             </div>
 
+            {/* 🪞 Product Grid */}
             {loading ? (
               <p className="text-center text-gray-500">Loading products...</p>
+            ) : filteredProducts.length === 0 ? (
+              <p className="text-center text-gray-500">No wall tiles found.</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filteredProducts.map((product) => (
@@ -155,7 +166,7 @@ export default function WallTiles() {
                     onClick={() => router.push(`/products/wall/${product._id}`)}
                   >
                     <img
-                      src={product.thumbnail?.url || product.image}
+                      src={getImageUrl(product)}
                       alt={product.title}
                       className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-500"
                     />

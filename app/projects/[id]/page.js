@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import api from "@/utils/api";
+import api,{ BASE_URL } from "@/utils/api";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import Loader from "@/components/ui/Loader";
@@ -68,7 +68,7 @@ export default function ProjectDetail() {
           {/* Main Image */}
           {project.thumbnail?.url && (
             <img
-              src={project.thumbnail.url}
+              src={`${BASE_URL}${project.thumbnail?.url}`}
               alt={project.title}
               className="w-full rounded-2xl object-cover shadow-md"
             />
@@ -84,17 +84,18 @@ export default function ProjectDetail() {
 
           {/* Gallery */}
           {project.images && project.images.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-6">
-              {project.images.map((img, idx) => (
-                <img
-                  key={idx}
-                  src={img.url || img}
-                  alt={`${project.title} image ${idx + 1}`}
-                  className="w-full h-48 sm:h-56 md:h-64 object-cover rounded-2xl shadow-sm"
-                />
-              ))}
-            </div>
-          )}
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-6">
+    {project.images.map((img, idx) => (
+      <img
+        key={idx}
+        src={`${BASE_URL}${img.url}`}
+        alt={`${project.title} image ${idx + 1}`}
+        className="w-full h-48 sm:h-56 md:h-64 object-cover rounded-2xl shadow-sm"
+      />
+    ))}
+  </div>
+)}
+
 
           {/* Optional Info */}
           <div className="border-t pt-6 space-y-2">

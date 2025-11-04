@@ -8,7 +8,7 @@ import Link from "next/link";
 import Loader from "@/components/ui/Loader";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import api from "@/utils/api";
+import api , { BASE_URL } from "@/utils/api";
 import { Building2, Paintbrush, Gem, Zap } from "lucide-react";
 
 // Slick Slider
@@ -100,6 +100,7 @@ export default function Home() {
     setLoadingProjects(true);
     try {
       const res = await api.get("/projects");
+      // console.log("✅ Projects fetched:", res.data);
       setProjects(res.data);
     } catch (err) {
       console.error("❌ Error fetching projects:", err);
@@ -355,7 +356,7 @@ export default function Home() {
                     >
                       <div className="relative h-72 overflow-hidden bg-gray-100">
                         <img
-                          src={project.thumbnail?.url || project.image || "/placeholder.jpg"}
+                         src={`${BASE_URL}${project.thumbnail?.url}`}
                           alt={project.title}
                           className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                         />

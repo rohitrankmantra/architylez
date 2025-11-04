@@ -8,7 +8,7 @@ import Loader from "@/components/ui/Loader";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { FiFilter } from "react-icons/fi";
-import api from "@/utils/api";
+import api,{BASE_URL} from "@/utils/api";
 import { useRouter } from "next/navigation";
 
 if (typeof window !== "undefined") {
@@ -23,6 +23,16 @@ export default function WoodTiles() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+   // Helper to build image URL
+  const getImageUrl = (product) => {
+    const imagePath = product.thumbnail?.url || product.image;
+    if (!imagePath) return "/placeholder.png";
+    return imagePath.startsWith("http")
+      ? imagePath
+      : `${BASE_URL}${imagePath.startsWith("/") ? imagePath : `/uploads/${imagePath}`}`;
+  };
+
+  // 🔹 Scroll Animations
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.utils.toArray(".reveal-section").forEach((section) => {
@@ -35,20 +45,22 @@ export default function WoodTiles() {
         });
       });
     }, containerRef);
+
     return () => ctx.revert();
   }, []);
 
+  // 🔹 Fetch only "Wood" category products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const res = await api.get("/products");
         const woodProducts = res.data.filter(
-          (p) => p.category.toLowerCase() === "wood"
+          (p) => p.category?.toLowerCase() === "wood"
         );
         setProducts(woodProducts);
         setFilteredProducts(woodProducts);
       } catch (err) {
-        console.error("Failed to fetch products:", err);
+        console.error("❌ Failed to fetch products:", err);
       } finally {
         setLoading(false);
       }
@@ -56,10 +68,12 @@ export default function WoodTiles() {
     fetchProducts();
   }, []);
 
+  // 🔹 Handle Search/Filter
   const handleFilterClick = () => {
+    const query = searchText.toLowerCase();
     const filtered = products.filter((p) => {
       const allFields = [p.title, p.size, p.category].join(" ").toLowerCase();
-      return allFields.includes(searchText.toLowerCase());
+      return allFields.includes(query);
     });
     setFilteredProducts(filtered);
   };
@@ -68,16 +82,13 @@ export default function WoodTiles() {
     <Loader>
       <Navigation />
       <div ref={containerRef} className="relative bg-white text-black">
-        {/* Hero Section */}
+        {/* 🌲 Hero Section */}
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
           <div
             className="absolute inset-0 bg-cover bg-center"
-            style={{
-             backgroundImage: `url('/bg/wood.jpg')`,
-
-            }}
+            style={{ backgroundImage: `url('/bg/wood.jpg')` }}
           />
-          <div className="absolute inset-0 bg-black/30" />
+          <div className="absolute inset-0 bg-black/35" />
           <div className="relative z-10 text-center text-white px-6 max-w-4xl">
             <motion.h1
               initial={{ y: 50, opacity: 0 }}
@@ -85,7 +96,7 @@ export default function WoodTiles() {
               transition={{ duration: 1 }}
               className="font-clash text-5xl md:text-7xl font-bold mb-6 leading-tight"
             >
-              <span className="text-white">Premium</span>{" "}
+              <span className="text-white">Natural</span>{" "}
               <span className="text-outline text-white">Wood Tiles</span>
             </motion.h1>
             <motion.p
@@ -94,32 +105,33 @@ export default function WoodTiles() {
               transition={{ delay: 0.3, duration: 1 }}
               className="text-lg md:text-xl text-gray-200"
             >
-              Explore our finest collection of wood-inspired tiles, perfect for
-              warm and elegant interiors.
+              Experience the warmth of wood aesthetics with durable porcelain
+              tiles that bring nature indoors.
             </motion.p>
           </div>
         </section>
 
-        {/* Product Showcase */}
+        {/* 🌲 Product Section */}
         <section className="reveal-section py-24 px-6 bg-white text-black">
           <div className="max-w-7xl mx-auto">
+            {/* Title */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="text-center mb-6"
+              className="text-center mb-10"
             >
               <h2 className="font-clash text-4xl md:text-6xl font-bold mb-3">
                 <span className="text-black">Our</span>{" "}
                 <span className="text-outline">Collections</span>
               </h2>
               <p className="font-inter text-gray-600 text-lg max-w-2xl mx-auto">
-                Discover premium wood tile collections designed for durability
-                and elegance.
+                Discover premium wood-look tiles that combine timeless style
+                with modern durability.
               </p>
             </motion.div>
 
-            {/* Search + Filter */}
+            {/* 🔍 Search Bar */}
             <div className="flex justify-center mb-12">
               <div className="relative w-full max-w-7xl">
                 <input
@@ -127,9 +139,7 @@ export default function WoodTiles() {
                   placeholder="Search by name, size, category..."
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleFilterClick();
-                  }}
+                  onKeyDown={(e) => e.key === "Enter" && handleFilterClick()}
                   className="w-full p-5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black pr-32 text-lg"
                   style={{ height: "60px" }}
                 />
@@ -143,8 +153,13 @@ export default function WoodTiles() {
               </div>
             </div>
 
+            {/* 🧱 Product Grid */}
             {loading ? (
               <p className="text-center text-gray-500">Loading products...</p>
+            ) : filteredProducts.length === 0 ? (
+              <p className="text-center text-gray-400 text-lg">
+                No wood tiles found.
+              </p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filteredProducts.map((product) => (
@@ -156,8 +171,9 @@ export default function WoodTiles() {
                     onClick={() => router.push(`/products/wood/${product._id}`)}
                   >
                     <img
-                      src={product.thumbnail?.url || product.image}
+                      src={getImageUrl(product)}
                       alt={product.title}
+                      onError={(e) => (e.target.src = "/placeholder.png")}
                       className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-80 group-hover:opacity-90 transition-all duration-300" />

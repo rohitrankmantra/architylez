@@ -47,13 +47,13 @@ export default function CataloguesPage() {
     e.preventDefault();
     setSubmitting(true);
 
-    const file = e.target.pdf.files[0];
-    if (!file) {
+    const pdfFile = e.target.pdf.files[0];
+    if (!pdfFile) {
       toast.error("Please select a PDF file");
       setSubmitting(false);
       return;
     }
-    if (file.type !== "application/pdf") {
+    if (pdfFile.type !== "application/pdf") {
       toast.error("❌ Only PDF files are allowed");
       setSubmitting(false);
       return;
@@ -63,7 +63,10 @@ export default function CataloguesPage() {
     formData.append("title", e.target.title.value);
     formData.append("description", e.target.description.value);
     formData.append("category", e.target.category.value);
-    formData.append("pdf", file);
+    formData.append("pdf", pdfFile);
+
+    const thumbnailFile = e.target.thumbnail?.files[0];
+    if (thumbnailFile) formData.append("thumbnail", thumbnailFile);
 
     try {
       const res = await api.post("/catalogues/create", formData, {
@@ -88,7 +91,9 @@ export default function CataloguesPage() {
     formData.append("title", e.target.title.value);
     formData.append("description", e.target.description.value);
     formData.append("category", e.target.category.value);
+
     if (e.target.pdf.files[0]) formData.append("pdf", e.target.pdf.files[0]);
+    if (e.target.thumbnail?.files[0]) formData.append("thumbnail", e.target.thumbnail.files[0]);
 
     try {
       const res = await api.put(`/catalogues/${selectedCatalogue._id}`, formData, {
@@ -139,18 +144,17 @@ export default function CataloguesPage() {
               {catalogues.map((c) => (
                 <tr key={c._id} className="hover:bg-gray-50">
                   {/* Thumbnail */}
-                <td className="p-2 border">
-  {c.thumbnail?.url ? (
-    <img
-      src={c.thumbnail.url}
-      alt={c.title}
-      className="w-20 h-28 object-cover rounded hover:scale-105 transition"
-      onError={(e) => { e.currentTarget.src = "/placeholder.jpg"; }} // fallback image
-    />
-  ) : (
-    <span className="text-gray-400 italic">No thumbnail</span>
-  )}
-</td>
+                  <td className="p-2 border">
+                    {c.thumbnail?.url ? (
+                      <img
+                        src={c.thumbnail.url}
+                        alt="Thumbnail"
+                        className="w-20 h-28 object-cover border rounded"
+                      />
+                    ) : (
+                      <span className="text-gray-400 italic">No Thumbnail</span>
+                    )}
+                  </td>
 
                   {/* Title */}
                   <td
@@ -272,18 +276,38 @@ function CatalogueModal({ title, catalogue, onClose, onSubmit, submitting }) {
             <option>Wood</option>
             <option>General</option>
           </select>
-          <input type="file" name="pdf" accept=".pdf,application/pdf" />
-          {/* Show current PDF */}
-          {catalogue?.pdf?.url && (
-            <a
-              href={catalogue.pdf.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:underline block"
-            >
-              Current File
-            </a>
-          )}
+
+          {/* PDF Upload */}
+       {/* PDF Upload */}
+<div className="flex flex-col">
+  <label className="font-medium">Upload PDF</label>
+  <input type="file" name="pdf" accept=".pdf,application/pdf" className="mt-1" />
+  {catalogue?.pdf?.url && (
+    <a
+      href={catalogue.pdf.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-blue-600 hover:underline mt-1"
+    >
+      Current PDF
+    </a>
+  )}
+</div>
+
+
+       {/* Thumbnail Upload */}
+<div className="flex flex-col mt-4">
+  <label className="font-medium">Upload Thumbnail</label>
+  <input type="file" name="thumbnail" accept="image/*" className="mt-1" />
+  {catalogue?.thumbnail?.url && (
+    <img
+      src={catalogue.thumbnail.url}
+      alt="Current Thumbnail"
+      className="w-32 h-40 object-cover mt-2 border rounded"
+    />
+  )}
+</div>
+
           <button
             type="submit"
             disabled={submitting}
