@@ -58,7 +58,7 @@ export default function Home() {
   ];
 
   const clientLogos = [
-    "/logos/client1.jpg",
+    "/logos/client1.png",
     "/logos/client2.jpg",
     "/logos/client3.jpg",
     "/logos/client4.jpg",
@@ -173,31 +173,33 @@ export default function Home() {
     featuresRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const features = [
-    {
-      icon: <Building2 className="w-10 h-10 text-black" />,
-      title: "Architectural Excellence",
-      description:
-        "Award-winning designs blending innovation with timeless elegance.",
-    },
-    {
-      icon: <Paintbrush className="w-10 h-10 text-black" />,
-      title: "Interior Mastery",
-      description:
-        "Luxury interior solutions that elevate spaces into extraordinary experiences.",
-    },
-    {
-      icon: <Gem className="w-10 h-10 text-black" />,
-      title: "Premium Materials",
-      description: "Only the finest curated materials sourced globally.",
-    },
-    {
-      icon: <Zap className="w-10 h-10 text-black" />,
-      title: "Smart Integration",
-      description:
-        "Cutting-edge technology seamlessly woven into design.",
-    },
-  ];
+const features = [
+  {
+    icon: <Building2 className="w-10 h-10 text-black" />,
+    title: "Design Meets Quality",
+    description:
+      "At Architylezz, every tile is more than a surface — it’s a statement. We combine timeless aesthetics with high-performance durability to create tiles that look beautiful and last for years.",
+  },
+  {
+    icon: <Paintbrush className="w-10 h-10 text-black" />,
+    title: "Curated for Every Space",
+    description:
+      "From minimal modern homes to grand commercial spaces, our collections are carefully curated to suit every design vision — from subtle neutrals to bold statement patterns.",
+  },
+  {
+    icon: <Gem className="w-10 h-10 text-black" />,
+    title: "Trusted by Professionals",
+    description:
+      "Architects, designers, and builders across India trust Architylezz for our consistency, finish quality, and personalized project support — from selection to delivery.",
+  },
+  {
+    icon: <Zap className="w-10 h-10 text-black" />,
+    title: "Pan-India Support & Service",
+    description:
+      "With quick logistics, easy sample requests, and expert guidance, we make it simple to find and receive the right tiles for your project, anywhere in India.",
+  },
+];
+
 
   const heroSliderSettings = {
     autoplay: true,

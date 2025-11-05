@@ -46,10 +46,10 @@ export default function About() {
   }, []);
 
   const values = [
-    { title: 'Innovation', description: 'Pushing boundaries with cutting-edge design solutions and emerging technologies.', icon: Lightbulb },
-    { title: 'Excellence', description: 'Uncompromising quality in every detail, from concept to completion.', icon: Award },
-    { title: 'Sustainability', description: 'Creating eco-conscious designs that respect our environment and future generations.', icon: Leaf },
-    { title: 'Collaboration', description: 'Working closely with clients to bring their unique vision to life.', icon: Users },
+    { title: ' Innovation with Purpose', description: 'We constantly evolve our collections to reflect modern design trends while staying rooted in craftsmanship and sustainability. Every product is a step toward smarter, more beautiful living spaces.', icon: Lightbulb },
+    { title: 'Design Excellence', description: 'We believe great design starts with detail. Every Architylezz tile is created to inspire creativity, elevate spaces, and bring a touch of artistry to everyday life.', icon: Award },
+    { title: 'Quality Without Compromise', description: 'From sourcing to finishing, we maintain the highest standards of quality. Our tiles are made to last — durable, easy to maintain, and timeless in appeal.', icon: Leaf },
+    { title: 'Integrity in Every Interaction', description: 'We value honesty, transparency, and long-term relationships. Whether it’s with our clients, partners, or teams, we stand by our word and our work.', icon: Users },
   ];
 
   return (
