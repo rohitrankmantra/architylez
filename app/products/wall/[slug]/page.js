@@ -2,11 +2,13 @@ import ProductGallery from "./ProductGallery";
 import ProductInfo from "./ProductInfo";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import api, { BASE_URL } from "@/utils/api";
+import api from "@/utils/api";
 
 export async function generateMetadata({ params }) {
   try {
-    const { slug } = await params;
+      const awaitedParams = await params; // <-- new
+  const { slug } = awaitedParams;
+
 
     const res = await api.get(`/products/${slug}`);
     const product = res.data;
@@ -17,17 +19,13 @@ export async function generateMetadata({ params }) {
 
     const metaTitle = product.metaTitle?.trim() || product.title || "Product";
     const metaDescription =
-      product.metaDescription?.trim() ||
-      product.description?.slice(0, 160) ||
-      "";
+      product.metaDescription?.trim() || product.description?.slice(0, 160) || "";
 
-const getFullImageUrl = (path) => {
-  if (!path) return "/placeholder.png";
-  if (path.startsWith("http")) return path;
-  // Force https in production
-  return `${BASE_URL.replace(/^http:/, "https:")}${path.startsWith("/") ? path : `/uploads/${path}`}`;
-};
-
+    const getFullImageUrl = (path) => {
+      if (!path) return "/placeholder.png";
+      if (path.startsWith("http")) return path;
+      return path; // backend should return full URL
+    };
 
     return {
       title: metaTitle,
@@ -50,7 +48,7 @@ export default async function ProductDetailPage({ params }) {
   let product = null;
 
   try {
-    const { slug } = await params;
+    const { slug } = params;
     const res = await api.get(`/products/${slug}`);
     product = res.data;
   } catch (err) {
@@ -61,23 +59,18 @@ export default async function ProductDetailPage({ params }) {
     return <div className="p-10 text-center">Product not found</div>;
   }
 
-const getImageUrl = (product) => {
-  const imagePath = product.thumbnail?.url || product.image;
-  if (!imagePath) return "/placeholder.png";
-  return imagePath.startsWith("http")
-    ? imagePath
-    : `${BASE_URL.replace(/^http:/, 'https:')}${imagePath.startsWith("/") ? imagePath : `/uploads/${imagePath}`}`;
-};
+  const getImageUrl = (img) => {
+    if (!img) return "/placeholder.png";
+    return img.url || img || "/placeholder.png"; // backend provides full URL
+  };
 
-
-  const thumbnailUrl = getImageUrl(product.thumbnail?.url);
+  const thumbnailUrl = getImageUrl(product.thumbnail);
 
   return (
     <>
       <Navigation />
       <div className="min-h-screen bg-white text-black">
         <div className="relative w-full h-[60vh] md:h-[85vh]">
-          {/* ✅ removed onError */}
           <img
             src={thumbnailUrl}
             alt={product.title}

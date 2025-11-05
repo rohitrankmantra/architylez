@@ -6,7 +6,7 @@ import { gsap } from "gsap";
 import Loader from "@/components/ui/Loader";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import api, { BASE_URL } from "@/utils/api";
+import api from "@/utils/api";
 
 // === Catalogue Page ===
 export default function Catalogue() {
@@ -58,13 +58,8 @@ export default function Catalogue() {
       ? catalogues
       : catalogues.filter((c) => c.category === activeCategory);
 
-  // ✅ Helper to build full URL for images or PDFs
-  const getFullUrl = (path) => {
-    if (!path) return "/placeholder.png";
-    return path.startsWith("http")
-      ? path
-      : `${BASE_URL}${path.startsWith("/") ? path : `/uploads/${path}`}`;
-  };
+  // ✅ Helper to safely handle URLs
+  const getFullUrl = (path) => path || "/placeholder.png";
 
   return (
     <Loader>
@@ -192,6 +187,7 @@ function CatalogueCard({ catalogue, index, getFullUrl }) {
         <div className="flex space-x-3 pt-3">
           <motion.a
             href={getFullUrl(catalogue.pdf?.url)}
+            download
             target="_blank"
             rel="noopener noreferrer"
             whileHover={{ scale: 1.02 }}

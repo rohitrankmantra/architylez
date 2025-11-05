@@ -5,9 +5,6 @@ import { Pencil, Trash2, Plus, X, Loader2 } from "lucide-react";
 import api from "@/utils/api";
 import toast from "react-hot-toast";
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
-
 export default function ProjectsPage() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -129,7 +126,7 @@ export default function ProjectsPage() {
                   <td className="p-2 border text-center">
                     {p.thumbnail?.url ? (
                       <img
-                        src={`${BASE_URL}${p.thumbnail.url}`}
+                        src={p.thumbnail.url}
                         alt={p.title}
                         className="w-20 h-28 object-cover rounded hover:scale-105 transition"
                         onError={(e) => {
@@ -209,8 +206,6 @@ export default function ProjectsPage() {
 
 // === Project Modal ===
 function ProjectModal({ title, project, onClose, onSubmit, submitting }) {
-  const BASE_URL =
-    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
   const [previewThumb, setPreviewThumb] = useState(null);
   const [previewImages, setPreviewImages] = useState([]);
 
@@ -268,7 +263,7 @@ function ProjectModal({ title, project, onClose, onSubmit, submitting }) {
 
           {/* Thumbnail Upload */}
           <div>
-            <label className="block text-sm font-medium mb-1">Thumbnail</label>
+            <label className="block text-sm font-medium mb-1">Thumbnail (Image should be 1600 × 1200 px )</label>
             <input
               type="file"
               name="thumbnail"
@@ -278,7 +273,7 @@ function ProjectModal({ title, project, onClose, onSubmit, submitting }) {
 
             {(previewThumb || project?.thumbnail?.url) && (
               <img
-                src={previewThumb || `${BASE_URL}${project.thumbnail.url}`}
+                src={previewThumb || project.thumbnail.url}
                 alt="Thumbnail"
                 className="w-24 h-24 mt-2 object-cover rounded"
                 onError={(e) => (e.currentTarget.src = "/placeholder.jpg")}
@@ -289,7 +284,7 @@ function ProjectModal({ title, project, onClose, onSubmit, submitting }) {
           {/* Multiple Images Upload */}
           <div>
             <label className="block text-sm font-medium mb-1">
-              Project Images
+              Project Images (Image should be 1600 × 1200 px )
             </label>
             <input
               type="file"
@@ -313,7 +308,7 @@ function ProjectModal({ title, project, onClose, onSubmit, submitting }) {
                   project?.images?.map((img, i) => (
                     <img
                       key={`old-${i}`}
-                      src={`${BASE_URL}${img.url}`}
+                      src={img.url}
                       alt={`Existing ${i + 1}`}
                       className="w-20 h-20 object-cover rounded border"
                       onError={(e) =>

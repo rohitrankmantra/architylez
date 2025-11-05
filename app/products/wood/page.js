@@ -8,7 +8,7 @@ import Loader from "@/components/ui/Loader";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { FiFilter } from "react-icons/fi";
-import api,{BASE_URL} from "@/utils/api";
+import api from "@/utils/api";
 import { useRouter } from "next/navigation";
 
 if (typeof window !== "undefined") {
@@ -23,17 +23,7 @@ export default function WoodTiles() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-   // Helper to build image URL
- const getImageUrl = (product) => {
-  const imagePath = product.thumbnail?.url || product.image;
-  if (!imagePath) return "/placeholder.png";
-  return imagePath.startsWith("http")
-    ? imagePath
-    : `${BASE_URL.replace(/^http:/, 'https:')}${imagePath.startsWith("/") ? imagePath : `/uploads/${imagePath}`}`;
-};
-
-
-  // 🔹 Scroll Animations
+  // 🔹 GSAP Scroll Animations
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.utils.toArray(".reveal-section").forEach((section) => {
@@ -172,7 +162,7 @@ export default function WoodTiles() {
                     onClick={() => router.push(`/products/wood/${product._id}`)}
                   >
                     <img
-                      src={getImageUrl(product)}
+                      src={product.thumbnail?.url || product.image || "/placeholder.png"}
                       alt={product.title}
                       onError={(e) => (e.target.src = "/placeholder.png")}
                       className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-500"

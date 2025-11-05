@@ -8,7 +8,7 @@ import Loader from "@/components/ui/Loader";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { FiFilter } from "react-icons/fi";
-import api,{BASE_URL} from "@/utils/api"; 
+import api from "@/utils/api";
 import { useRouter } from "next/navigation";
 
 if (typeof window !== "undefined") {
@@ -42,7 +42,7 @@ export default function GvtTiles() {
     return () => ctx.revert();
   }, []);
 
-  // Fetch all products and filter for GVT category
+  // Fetch and filter GVT category
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -61,7 +61,6 @@ export default function GvtTiles() {
     fetchProducts();
   }, []);
 
-  // Run filtering only when clicking the button
   const handleFilterClick = () => {
     const filtered = products.filter((p) => {
       const allFields = [p.title, p.size, p.category].join(" ").toLowerCase();
@@ -70,20 +69,12 @@ export default function GvtTiles() {
     setFilteredProducts(filtered);
   };
 
- // Helper to build image URL
-const getImageUrl = (product) => {
-  const imagePath = product.thumbnail?.url || product.image;
-  if (!imagePath) return "/placeholder.png";
-  return imagePath.startsWith("http")
-    ? imagePath
-    : `${BASE_URL.replace(/^http:/, 'https:')}${imagePath.startsWith("/") ? imagePath : `/uploads/${imagePath}`}`;
-};
-
+  // ✅ Removed BASE_URL logic — images already have full URLs
   return (
     <Loader>
       <Navigation />
       <div ref={containerRef} className="relative bg-white text-black">
-        {/* Hero Section */}
+        {/* Hero */}
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
           <div
             className="absolute inset-0 bg-cover bg-center"
@@ -112,26 +103,10 @@ const getImageUrl = (product) => {
           </div>
         </section>
 
-        {/* Product Showcase */}
+        {/* Products */}
         <section className="reveal-section py-24 px-6 bg-white text-black">
           <div className="max-w-7xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="text-center mb-6"
-            >
-              <h2 className="font-clash text-4xl md:text-6xl font-bold mb-3">
-                <span className="text-black">Our</span>{" "}
-                <span className="text-outline">Collections</span>
-              </h2>
-              <p className="font-inter text-gray-600 text-lg max-w-2xl mx-auto">
-                Discover premium GVT tile collections designed for durability,
-                elegance, and timeless appeal.
-              </p>
-            </motion.div>
-
-            {/* Search + Filter */}
+            {/* Filter */}
             <div className="flex justify-center mb-12">
               <div className="relative w-full max-w-7xl">
                 <input
@@ -139,9 +114,7 @@ const getImageUrl = (product) => {
                   placeholder="Search by name, size, category..."
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleFilterClick();
-                  }}
+                  onKeyDown={(e) => e.key === "Enter" && handleFilterClick()}
                   className="w-full p-5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black pr-32 text-lg"
                   style={{ height: "60px" }}
                 />
@@ -155,7 +128,7 @@ const getImageUrl = (product) => {
               </div>
             </div>
 
-            {/* Products Grid */}
+            {/* Grid */}
             {loading ? (
               <p className="text-center text-gray-500">Loading products...</p>
             ) : filteredProducts.length === 0 ? (
@@ -173,7 +146,7 @@ const getImageUrl = (product) => {
                     onClick={() => router.push(`/products/gvt/${product._id}`)}
                   >
                     <img
-                      src={getImageUrl(product)}
+                      src={product.thumbnail?.url || "/placeholder.png"}
                       alt={product.title}
                       onError={(e) => (e.target.src = "/placeholder.png")}
                       className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-500"

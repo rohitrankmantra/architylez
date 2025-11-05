@@ -277,7 +277,6 @@ function CatalogueModal({ title, catalogue, onClose, onSubmit, submitting }) {
             <option>General</option>
           </select>
 
-          {/* PDF Upload */}
        {/* PDF Upload */}
 <div className="flex flex-col">
   <label className="font-medium">Upload PDF</label>

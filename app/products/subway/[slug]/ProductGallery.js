@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { X } from "lucide-react";
-import { BASE_URL } from "@/utils/api";
 
 if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
@@ -32,14 +31,10 @@ export default function ProductGallery({ images, title, category }) {
     return () => ctx.revert();
   }, []);
 
- const getImageUrl = (product) => {
-  const imagePath = product.thumbnail?.url || product.image;
-  if (!imagePath) return "/placeholder.png";
-  return imagePath.startsWith("http")
-    ? imagePath
-    : `${BASE_URL.replace(/^http:/, 'https:')}${imagePath.startsWith("/") ? imagePath : `/uploads/${imagePath}`}`;
-};
-
+  const getImageUrl = (img) => {
+    if (!img) return "/placeholder.png";
+    return img.url || img || "/placeholder.png"; // backend returns full URL
+  };
 
   const handleWheel = (e) => {
     e.preventDefault();
@@ -66,7 +61,7 @@ export default function ProductGallery({ images, title, category }) {
   return (
     <div ref={containerRef} className="grid grid-cols-2 gap-6 reveal-section">
       {images?.map((img, i) => {
-        const fullUrl = getImageUrl(img.url);
+        const fullUrl = getImageUrl(img);
         return (
           <motion.div
             key={i}

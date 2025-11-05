@@ -7,7 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Loader from "@/components/ui/Loader";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import api, { BASE_URL } from "@/utils/api";
+import api from "@/utils/api";
 import toast from "react-hot-toast";
 
 if (typeof window !== "undefined") {
@@ -36,30 +36,31 @@ export default function ProjectsPage() {
     fetchProjects();
   }, []);
 
-  // ✅ Run GSAP Animations after projects are loaded
+  // ✅ Simple load animation (no grid disappearing effect)
   useEffect(() => {
     if (!projects.length) return;
-
     const ctx = gsap.context(() => {
       gsap.utils.toArray(".project-card").forEach((el) => {
-        gsap.from(el, {
-          opacity: 0,
-          y: 50,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: el,
-            start: "top 85%",
-            toggleActions: "play none none none",
-          },
-        });
+        gsap.fromTo(
+          el,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: el,
+              start: "top 90%",
+              toggleActions: "play none none none",
+            },
+          }
+        );
       });
     }, containerRef);
-
     return () => ctx.revert();
   }, [projects.length]);
 
-  // ✅ Loader shown only while fetching
   if (loading) return <Loader />;
 
   return (
@@ -98,15 +99,12 @@ export default function ProjectsPage() {
                 {projects.map((project, index) => (
                   <motion.div
                     key={project._id || index}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
                     className="project-card bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-500"
                   >
                     {/* Image */}
                     <div className="relative h-72 overflow-hidden bg-gray-100">
                       <img
-                        src={`${BASE_URL}${project.thumbnail?.url}`}
+                        src={project.thumbnail?.url}
                         alt={project.title}
                         loading="lazy"
                         className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
@@ -127,15 +125,12 @@ export default function ProjectsPage() {
                         {project.description}
                       </p>
 
-                      {/* Button */}
-                      <motion.a
+                      <a
                         href={`/projects/${project._id}`}
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.97 }}
                         className="inline-block w-full py-3 border-2 hover:border-black text-white bg-black font-machina font-semibold rounded-lg hover:bg-white hover:text-black transition-all duration-300 text-center text-sm"
                       >
                         Read More →
-                      </motion.a>
+                      </a>
                     </div>
                   </motion.div>
                 ))}

@@ -8,7 +8,7 @@ import Loader from "@/components/ui/Loader";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { FiFilter } from "react-icons/fi";
-import api,{BASE_URL} from "@/utils/api";
+import api from "@/utils/api";
 import { useRouter } from "next/navigation";
 
 if (typeof window !== "undefined") {
@@ -23,16 +23,7 @@ export default function WallTiles() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
- // Helper to build image URL
- const getImageUrl = (product) => {
-  const imagePath = product.thumbnail?.url || product.image;
-  if (!imagePath) return "/placeholder.png";
-  return imagePath.startsWith("http")
-    ? imagePath
-    : `${BASE_URL.replace(/^http:/, 'https:')}${imagePath.startsWith("/") ? imagePath : `/uploads/${imagePath}`}`;
-};
-
-  // 🔹 Scroll animation setup
+  // 🔹 GSAP Scroll Animations
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.utils.toArray(".reveal-section").forEach((section) => {
@@ -48,7 +39,7 @@ export default function WallTiles() {
     return () => ctx.revert();
   }, []);
 
-  // 🔹 Fetch wall tiles products
+  // 🔹 Fetch Wall Tiles
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -67,7 +58,7 @@ export default function WallTiles() {
     fetchProducts();
   }, []);
 
-  // 🔹 Search filter
+  // 🔹 Filter Logic
   const handleFilterClick = () => {
     const filtered = products.filter((p) => {
       const allFields = [p.title, p.size, p.category].join(" ").toLowerCase();
@@ -166,8 +157,9 @@ export default function WallTiles() {
                     onClick={() => router.push(`/products/wall/${product._id}`)}
                   >
                     <img
-                      src={getImageUrl(product)}
+                      src={product.thumbnail?.url || product.image || "/placeholder.png"}
                       alt={product.title}
+                      onError={(e) => (e.target.src = "/placeholder.png")}
                       className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-80 group-hover:opacity-90 transition-all duration-300" />

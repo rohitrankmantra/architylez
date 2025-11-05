@@ -10,7 +10,7 @@ import {
     Trash,
     Loader
 } from "lucide-react";
-import api, { BASE_URL } from "@/utils/api";
+import api from "@/utils/api";
 import toast from "react-hot-toast";
 
 const SIZE_OPTIONS = [
@@ -410,7 +410,7 @@ export default function ProductsPage() {
                                 <tr key={p._id} className="hover:bg-gray-50 align-top">
                                     <td className="p-2 border w-14">
                                         <img
-                                            src={`${BASE_URL}${p.thumbnail?.url}`}
+                                           src={p.thumbnail?.url}
                                             alt={p.title}
                                             className="w-10 h-10 object-cover rounded"
                                         />
@@ -498,28 +498,19 @@ export default function ProductsPage() {
 
                             {/* thumbnail */}
                             <div>
-                                <label className="block text-xs font-medium mb-1">Thumbnail</label>
+                                <label className="block text-xs font-medium mb-1">Thumbnail (Image should be 1600 × 1200 px )</label>
                                 {thumbnailPreview ? (
                                     <div className="relative w-24 h-24 group">
-                                        <img
-                                            src={
-                                                thumbnailPreview.startsWith("blob:")
-                                                    ? thumbnailPreview
-                                                    : thumbnailPreview.startsWith("http")
-                                                        ? thumbnailPreview
-                                                        : `${BASE_URL}${thumbnailPreview.startsWith("/uploads") ? "" : "/uploads/"}${thumbnailPreview}`
-                                            }
-                                            alt="thumb"
-                                            onClick={() => {
-                                                const fullUrl =
-                                                    thumbnailPreview.startsWith("blob:") || thumbnailPreview.startsWith("http")
-                                                        ? thumbnailPreview
-                                                        : `${BASE_URL}${thumbnailPreview.startsWith("/uploads") ? "" : "/uploads/"}${thumbnailPreview}`;
-                                                setLightboxImage(fullUrl);
-                                                setLightboxOpen(true);
-                                            }}
-                                            className="w-24 h-24 object-cover rounded border cursor-pointer hover:opacity-80 transition"
-                                        />
+                                       <img
+  src={thumbnailPreview}
+  alt="thumb"
+  onClick={() => {
+    setLightboxImage(thumbnailPreview);
+    setLightboxOpen(true);
+  }}
+  className="w-24 h-24 object-cover rounded border cursor-pointer hover:opacity-80 transition"
+/>
+
                                         <button
                                             type="button"
                                             onClick={handleRemoveThumbnail}
@@ -768,15 +759,11 @@ export default function ProductsPage() {
 
                             {/* product images */}
                             <div>
-                                <label className="block text-xs font-medium mb-1">Product Images</label>
+                                <label className="block text-xs font-medium mb-1">Product Images (Image should be 1600 × 1200 px )</label>
 
                                 <div className="flex flex-wrap gap-2 mb-2">
                                     {imagePreviews.map((img, i) => {
-                                        const fullImgUrl = img.startsWith("blob:")
-                                            ? img // new uploads (local preview)
-                                            : img.startsWith("http")
-                                                ? img // external URLs
-                                                : `${BASE_URL}${img.startsWith("/uploads") ? "" : "/uploads/"}${img}`; // backend images
+                                       const fullImgUrl = img;
 
                                         return (
                                             <div key={i} className="relative group w-20 h-20">
