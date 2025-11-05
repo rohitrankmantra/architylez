@@ -57,14 +57,15 @@ export default function Home() {
     },
   ];
 
-  const clientLogos = [
-    "/logos/client1.png",
-    "/logos/client2.jpg",
-    "/logos/client3.jpg",
-    "/logos/client4.jpg",
-    "/logos/client5.jpg",
-    "/logos/client6.jpg",
-  ];
+const clientLogos = [
+  { src: "/logos/client1.png", url: "https://www.mmoser.com" },
+  { src: "/logos/client2.jpg", url: "#" },
+  { src: "/logos/client3.jpg", url: "#" },
+  { src: "/logos/client4.jpg", url: "#" },
+  { src: "/logos/client5.jpg", url: "#" },
+  { src: "/logos/client6.jpg", url: "#" },
+];
+
 
   const clientReviews = [
     {
@@ -598,17 +599,20 @@ const features = [
               to deliver exceptional design solutions.
             </p>
 
-            <Slider {...clientSliderSettings}>
-              {clientLogos.map((logo, index) => (
-                <div key={index} className="flex items-center justify-center p-4">
-                  <img
-                    src={logo}
-                    alt={`Client ${index + 1}`}
-                    className="max-h-60 object-contain mx-auto"
-                  />
-                </div>
-              ))}
-            </Slider>
+          <Slider {...clientSliderSettings}>
+  {clientLogos.map((client, index) => (
+    <div key={index} className="flex items-center justify-center p-4">
+      <a href={client.url} target="_blank" rel="noopener noreferrer">
+        <img
+          src={client.src}
+          alt={`Client ${index + 1}`}
+          className="max-h-60 object-contain mx-auto hover:scale-105 transition-transform duration-300"
+        />
+      </a>
+    </div>
+  ))}
+</Slider>
+
           </div>
         </section>
 
